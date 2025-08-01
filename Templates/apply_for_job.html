@@ -1,0 +1,46 @@
+{% extends 'header.html' %}
+
+{% block content %}
+{% include "Sidebar.html" %}
+{% load widget_tweaks %}
+{% load static %}
+<div class="ml-64 w-[calc(100%-16rem)] min-h-screen bg-gray-50 p-8">
+
+    <!-- Displaying messages -->
+    {% for message in messages %}
+        <div class="bg-white shadow-lg rounded-lg p-5 mb-6 flex items-center justify-between space-x-4">
+            <p id="messages" class="text-lg font-medium text-green-600">{{ message }}</p>
+            <svg class="w-6 h-6 text-green-600 cursor-pointer hover:text-green-800" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9l6 6 6-6" />
+            </svg>
+        </div>
+    {% endfor %}
+
+    <!-- Job Details Section -->
+    <div class="bg-white shadow-lg rounded-lg p-8 mb-8">
+        <h1 class="text-3xl font-semibold text-gray-800 mb-4">Apply for {{ job.title }}</h1>
+        <p class="text-lg text-gray-600 mb-6">{{ job.description }}</p>
+
+        <!-- Job Application Form -->
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Render Form Fields -->
+            <div class="space-y-4">
+                {{ form.as_p }}
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="w-full py-3 bg-blue-600 text-white text-lg font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                Submit Application
+            </button>
+        </form>
+
+        <br>
+        <!-- Back to Job Listings -->
+        <a href="{% url 'job_list' %}" class="text-blue-600 hover:text-blue-800">Back to job listings</a>
+    </div>
+</div>
+
+{% include "footer.html" %}
+{% endblock content %}

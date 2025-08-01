@@ -1,0 +1,13 @@
+{% for faq in faqs %}
+    <div>
+        <h3>{{ faq.question }}</h3>
+        <p>{{ faq.answer }}</p>
+    </div>
+    
+    </div>
+{% endfor %}
+<div class="text-center pb-12">
+    <a href="{% url 'add_faq' %}" class="inline-block bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-500">
+      ➕ Add FAQ
+    </a>
+  </div>

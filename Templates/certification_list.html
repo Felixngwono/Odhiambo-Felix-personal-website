@@ -1,0 +1,53 @@
+{% extends 'header.html' %}
+{% block content %}
+{% include "Sidebar.html" %}
+
+<div class="ml-64 w-[calc(100%-16rem)]">
+    <div class="container mx-auto p-6 bg-white shadow-md rounded-lg">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">🎓 Certifications</h1>
+            {% if request.user.is_superuser %}
+                <a href="{% url 'certification_add' %}" class="bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-500 transition-all">
+                    ➕ Add Certification
+                </a>
+            {% endif %}
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for certification in certifications %}
+                <div class="bg-gray-100 p-6 rounded-lg shadow-md hover:shadow-lg transition-all">
+                    <a href="{% url 'certification_detail' certification.id %}">
+
+                    {% if certification.certificate_image %}
+                    <img src="{{ certification.certificate_image.url }}" alt="{{ certification.title }}" class="w-48 h-48 rounded-full mx-auto mt-4">
+                    {% else %}
+                    <p class="text-gray-500 mt-4">No image available</p>
+                    {% endif %}
+                    <h2 class="text-xl font-semibold text-blue-600">
+                        <a href="{% url 'certification_detail' certification.pk %}">
+                            {{ certification.title }}
+                        </a>
+                    </h2>
+                    <p class="text-gray-700 font-medium">{{ certification.issuing_organization }}</p>
+                    <span class="text-sm text-gray-500 block mb-4">📅 {{ certification.date_issued }}</span>
+                </a>
+                    {% if request.user.is_superuser %}
+                        <div class="flex justify-between mt-4">
+                            <a href="{% url 'certification_update' certification.id %}" class="bg-green-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-500 transition-all">
+                                ✏️ Edit
+                            </a>
+                            <a href="{% url 'certification_delete' certification.pk %}" class="bg-red-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-500 transition-all">
+                                🗑️ Delete
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p class="text-gray-600">No certifications available yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% include "footer.html" %}
+{% endblock %}

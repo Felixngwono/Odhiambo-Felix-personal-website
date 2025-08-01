@@ -1,0 +1,19 @@
+{% extends "header.html" %}
+{% block content %}
+
+{% for y in contacts %}
+    
+
+    
+<div class="ml-64 w-[calc(100%-16rem)]">
+    <h1 class="text-3xl font-bold mb-4">Contact Details</h1>
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+        <p><strong>Name:</strong> {{ y.name }}</p>
+        <p><strong>Email:</strong> {{ y.email }}</p>
+        <p><strong>Phone:</strong> {{ y.phone }}</p>
+        <p><strong>Message:</strong> {{ y.message }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% include "footer.html" %}
+{% endblock content %}

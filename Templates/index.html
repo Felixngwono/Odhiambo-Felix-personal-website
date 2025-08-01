@@ -1,0 +1,221 @@
+{% extends "header.html" %}
+{% block content %}
+{% load static %}
+<script src="https://cdn.tailwindcss.com"></script>
+{% include "Sidebar.html" %}
+<div class="ml-64 w-[calc(100%-16rem)]">
+
+<div class="bg-white p-8 rounded-lg shadow-lg">
+    <!-- Sidebar Navigation -->
+
+        {% for message in messages %}
+            <p id="messages" class="font-semibold text-lg">{{ message }}</p>
+        {% endfor %}
+    
+    <!-- Main Content -->
+
+        <h1 class="text-4xl font-bold text-center text-gray-800">Welcome, {{user}} </h1>
+        <p class="text-lg  text-center text-gray-600 mt-2">My personal dashboard for insights, messages, and updates.</p>
+
+        <!-- Key Performance Indicators (KPIs) Section -->
+         <!-- Key Performance Indicators (KPIs) -->
+    <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6 ">
+        <div class=" p-6 rounded-lg shadow-lg hover:shadow-xl transition transform hover:scale-105">
+            <h3 class="text-2xl font-semibold text-gray-800">📅 Events Happening</h3>
+            <p class="text-gray-600 mt-2 text-lg">Total: <span class="font-bold text-green-600">{{ event_count }}</span></p>
+            <a href="{% url 'events' %}" class="inline-block mt-4 text-blue-600 font-semibold hover:underline">View Details</a>
+        </div>
+
+        <div class=" p-6 rounded-lg shadow-lg hover:shadow-xl transition transform hover:scale-105">
+            <h3 class="text-2xl font-semibold text-gray-800">👥 Active Users</h3>
+            <p class="text-gray-600 mt-2 text-lg">Total: <span class="font-bold text-yellow-600">{{ user_count }}</span></p>
+                <a href="{% url "myuser" %}" class="inline-block mt-4 text-blue-600 font-semibold hover:underline">View Details</a>
+        </div>
+
+        <div class=" p-6 rounded-lg shadow-lg hover:shadow-xl transition transform hover:scale-105">
+            <h3 class="text-2xl font-semibold text-gray-800">🖼️ Portfolio Posts</h3>
+            <p class="text-gray-600 mt-2 text-lg">Total: <span class="font-bold text-orange-600">{{ Portfolio_count }}</span></p>
+            <a href="{% url 'portfolio' %}" class="inline-block mt-4 text-blue-600 font-semibold hover:underline">View Details</a>
+        </div>
+
+        <div class=" p-6 rounded-lg shadow-lg hover:shadow-xl transition transform hover:scale-105">
+            <h3 class="text-2xl font-semibold text-gray-800">📝 Blog Posts</h3>
+            <p class="text-gray-600 mt-2 text-lg">Total: <span class="font-bold text-orange-600">{{ blog_count }}</span></p>
+            <a href="{% url 'blog' %}" class="inline-block mt-4 text-blue-600 font-semibold hover:underline">View Details</a>
+        </div>
+
+        <div class=" p-6 rounded-lg shadow-lg hover:shadow-xl transition transform hover:scale-105">
+            <h3 class="text-2xl font-semibold text-gray-800"><i class="fa fa-users" aria-hidden="true"></i>
+                Family</h3>
+            <p class="text-gray-600 mt-2 text-lg">Total: <span class="font-bold text-yellow-600">{{ sibling_count }}</span></p>
+                <a href="{% url "siblings_list" %}" class="inline-block mt-4 text-blue-600 font-semibold hover:underline">View Details</a>
+        </div>
+        <div class=" p-6 rounded-lg shadow-lg hover:shadow-xl transition transform hover:scale-105">
+            <h3 class="text-2xl font-semibold text-gray-800"><i class="fa fa-anchor" aria-hidden="true"></i>
+
+                Available Jobs</h3>
+            <p class="text-gray-600 mt-2 text-lg">Total: <span class="font-bold text-yellow-600">{{ jobs_count }}</span></p>
+                <a href="{% url "job_list" %}" class="inline-block mt-4 text-blue-600 font-semibold hover:underline">View Details</a>
+        </div>
+    </div>
+
+        <!-- Recent Activity Section -->
+        <section class="mt-12  p-8 rounded-lg shadow-lg min-h-[400px]">
+            <h2 class="text-3xl font-semibold text-gray-800">Recent Activity</h2>
+            <ul class="mt-6 space-y-4">
+                <li class="border-b border-gray-300 py-4">🔔 New user registration:<strong>  {{user}}</strong> </li>
+                {% for x in eventhappenings %}
+                <li class="border-b border-gray-300 py-4">💼 New Events Happening:<strong> {{x.eventhappening}} </strong></li>
+                {% endfor %}
+                <li class="border-b border-gray-300 py-4">📈 Analytics update completed</li>
+                <li class="border-b border-gray-300 py-4">🔧 System maintenance scheduled for tomorrow</li>
+            </ul>
+        </section>
+
+        <!-- Analytics & Graphs Section -->
+        <section id="analytics" class="mt-12  p-8 rounded-lg shadow-lg min-h-[400px]">
+            <h2 class="text-3xl font-semibold text-gray-800">User Analytics</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div class="h-40">
+                    <canvas id="userGrowthChart"></canvas>
+                </div>
+                <div class="h-40">
+                    <canvas id="trafficPieChart"></canvas>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+               
+                <div class="h-40">
+                    <canvas id="revenueDoughnutChart"></canvas>
+                </div>
+            </div>
+
+            <div class="h-40">
+                <canvas id="eventsVsPortfolioChart"></canvas>
+            </div>
+                <!-- Quick Actions -->
+    <div class="mt-6">
+        <a href="{% url 'download_report' %}" target="_blank" class="p-2 bg-green-500 text-white rounded">
+            📄 View Report
+        </a>
+    </div>
+
+        </section>
+
+   
+</div>
+
+<!-- JavaScript Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+
+
+        <!-- User Engagement & Support Section -->
+       
+</div>
+
+<!-- Chart.js for Analytics -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+   
+    var ctx1 = document.getElementById('userGrowthChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: [
+            {% for portfolio in portfolios %}
+                '{{portfolio.title}}',
+            {% endfor %}
+                ],
+            datasets: [{
+                label: 'New Users',
+                data: [50, 100, 200, 250, 300, 500, 600, 700, 800, 900, 1000, 1100],
+                backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    var ctx2 = document.getElementById('trafficPieChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'pie',
+        data: {
+            labels: [
+            {% for sibling in siblings %}
+                '{{sibling.name}}',
+            {% endfor %}
+                ],
+            datasets: [{
+                data: [40, 25, 20, 15,80,70,34,67],
+                backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0','#f46384', '#36a6eb', '#ff8e56', '#4b80c0']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    var ctx4 = document.getElementById('revenueDoughnutChart').getContext('2d');
+    new Chart(ctx4, {
+        type: 'doughnut',
+        data: {
+            labels: [
+            {% for portfolio in portfolios %}
+                '{{portfolio.title}}',
+            {% endfor %}
+                ],
+            datasets: [{
+                data: [40, 25, 20, 15,80,70,34,67],
+                backgroundColor: ['#ff6384', '#36a2eb', '#ffce56']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    var ctx5 = document.getElementById('eventsVsPortfolioChart').getContext('2d');
+    new Chart(ctx5, {
+        type: 'bar',
+        data: {
+            labels: [
+            {% for sibling in siblings %}
+                '{{sibling.name}}',
+            {% endfor %}
+                ],
+            datasets: [
+                {
+                    label: 'Age',
+                    data: [
+                    {% for x in siblings %}
+                        '{{x.age}}',
+                    {% endfor %}
+                        ],
+                    backgroundColor: 'rgba(75, 192, 192, 0.5)', 
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2
+                },
+                
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+</div>
+{% include "footer.html" %}
+{% endblock content %} 

@@ -1,0 +1,88 @@
+{% extends "header.html" %}
+{% block content %}
+{% load static %}
+
+{% include "sidebar.html" %}
+
+<div class="ml-64 w-[calc(100%-16rem)] min-h-screen bg-gray-100 p-8">
+
+    <!-- Flash Messages -->
+    <div class="w-1/2 text-center mx-auto text-green-600 font-semibold text-lg">
+        {% for message in messages %}
+            <p id="messages">{{ message }}</p>
+        {% endfor %}
+    </div>
+
+    <!-- Title Section -->
+    <div class="text-center mb-8">
+        <h2 class="text-4xl font-bold text-gray-800">📷 Image Gallery</h2>
+        <p class="mt-2 text-gray-600">Explore my gallery below. Click on an image to view it in full.</p>
+    </div>
+
+    <!-- Image Gallery -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+        {% for image in images %}
+        <div class="group">
+            <!-- Image -->
+            <img src="{{ image.image.url }}" alt="{{ image.title }}" class="w-full h-48 object-cover rounded-lg shadow-lg transform hover:scale-105 transition duration-300 cursor-pointer" onclick="openModal('{{ image.image.url }}')">
+            
+            <!-- Caption -->
+            <h3 class="mt-2 text-center text-sm font-medium text-gray-700">{{ image.caption }}</h3>
+            
+            {% if request.user.is_superuser %}
+            <!-- Action Buttons -->
+            <div class="text-center mt-2 flex justify-center space-x-4">
+                <a href="{% url 'update_image' image.id %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-500 transition-all shadow-md">
+                    ✏️ Update
+                </a>
+                <a href="{% url 'delete_image' image.id %}" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-500 transition-all shadow-md">
+                    🗑️ Delete
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if request.user.is_superuser %}
+    <!-- Admin Controls -->
+    <div class="text-center mt-8 space-x-4">
+        <a href="{% url 'add_image' %}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-500 transition-all shadow-md">
+            ➕ Add New Image
+        </a>
+        <a href="{% url 'about' %}" class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-500 transition-all shadow-md">
+            🔙 Go Back
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Slideshow Modal -->
+<div id="slideshow-modal" class="hidden fixed inset-0 bg-black bg-opacity-100 flex justify-center items-center z-50">
+    <div class="relative">
+        <!-- Close Button -->
+        <button onclick="closeModal()" class="absolute top-2 right-2 text-white text-3xl hover:text-gray-400">&times;</button>
+        <!-- Image Display -->
+        <img id="modal-image" src="" alt="Slideshow Image" class="max-w-full max-h-screen rounded-lg shadow-lg">
+    </div>
+</div>
+
+<script>
+    function openModal(imageSrc) {
+        document.getElementById("modal-image").src = imageSrc;
+        document.getElementById("slideshow-modal").classList.remove("hidden");
+    }
+
+    function closeModal() {
+        document.getElementById("slideshow-modal").classList.add("hidden");
+    }
+
+    document.addEventListener("click", (event) => {
+        if (event.target.id === "slideshow-modal") {
+            closeModal();
+        }
+    });
+</script>
+
+{% include "footer.html" %}
+{% endblock %}

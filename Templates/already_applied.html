@@ -1,0 +1,32 @@
+{% extends 'header.html' %}
+
+{% block content %}
+{% include "Sidebar.html" %}
+{% load widget_tweaks %}
+{% load static %}
+<div class="ml-64 w-[calc(100%-16rem)] min-h-screen bg-gray-50 p-8">
+
+    <!-- Displaying Messages -->
+    {% for message in messages %}
+        <div class="bg-white shadow-lg rounded-lg p-5 mb-6 flex items-center justify-between space-x-4">
+            <p id="messages" class="text-lg font-medium text-green-600">{{ message }}</p>
+            <svg class="w-6 h-6 text-green-600 cursor-pointer hover:text-green-800" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9l6 6 6-6" />
+            </svg>
+        </div>
+    {% endfor %}
+
+    <!-- "Already Applied" Section -->
+    <div class="bg-white shadow-xl rounded-lg p-8 mb-8 text-center">
+        <h1 class="text-3xl font-semibold text-gray-800 mb-4">You've Already Applied for This Job</h1>
+        <p class="text-lg text-gray-600 mb-4">Thank you for your interest in the position of <strong class="text-green-600">{{ job.title }}</strong> at our company!</p>
+        <p class="text-lg text-gray-600 mb-6">We have already received your application. Our team is currently reviewing applications, and if your profile matches, we will get in touch with you soon.</p>
+
+        <!-- Return to Home Link -->
+        <a href="{% url "job_list" %}" class="text-blue-600 hover:text-blue-800 text-lg font-semibold">Return to Home</a>
+    </div>
+
+</div>
+
+{% include "footer.html" %}
+{% endblock content %}

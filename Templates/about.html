@@ -1,0 +1,123 @@
+{% extends "header.html" %}
+{% load static %}
+{% block content %}
+{% include "Sidebar.html" %}
+
+<div class="ml-64 w-[calc(100%-16rem)] min-h-screen  p-8" style="background-image: url('{% static 'images/c.anvif' %}'); background-repeat: no-repeat; background-size: cover; background-position: center;">
+    <div class="p-8 rounded-lg shadow-lg" 
+    style="background-image: url('{% static 'images/c.avif' %}'); 
+           background-repeat: no-repeat; 
+           background-size: cover; 
+           background-position: center;">
+        <div class="text-center">
+            <h2 class="text-4xl font-bold text-gray-800">About Me</h2>
+            <p class="mt-4 text-2xl  max-w-2xl mx-auto">
+                Let me share a bit about who I am and what drives me.
+            </p>
+        </div>
+
+        <!-- Profile Image & Introduction -->
+        <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+            <div class="flex justify-center">
+                <img src="{% static 'images/Fel16.jpg' %}" 
+                     alt="Profile Picture" 
+                     class="w-80 h-80 object-cover rounded-full shadow-md border-4 border-blue-500">
+            </div>
+
+            <div class="space-y-5">
+                <h3 class="text-3xl font-bold text-gray-800">Hi, I'm Felix Odhiambo 👋</h3>
+                <p class=" text-3x1 leading-relaxed">
+                    I’m a <span class="font-medium text-2">Bachelor of Computer Science</span> graduate passionate about technology, problem-solving, and lifelong learning.
+                    Coming from a large and loving family of eight, my background has shaped my ambition and purpose.
+                </p>
+                <a href="{% url 'gallery' %}" 
+                   class="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white text-lg rounded-xl font-medium shadow-md hover:bg-green-500 transition-all">
+                    📸 View Gallery
+                </a>
+            </div>
+        </div>
+
+        <!-- Info Cards Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Family -->
+            <div class="bg-blue-50 p-6 rounded-xl shadow-sm hover:shadow-md transition">
+                <h4 class="text-xl font-semibold text-blue-700 mb-2">My Roots</h4>
+                <p class="text-gray-700">
+                    Born to my wonderful parents, <strong>John Olao & Grace Anyango</strong>, I cherish my family deeply.
+                    I'm a proud grandson of <strong>Olao & Omollo Masella</strong>, whose stories continue to guide me.
+                </p>
+                <a href="{% url 'siblings_list' %}" class="text-blue-600 font-medium inline-block mt-3 hover:underline">
+                    Learn more about my family →
+                </a>
+            </div>
+
+              <!-- Education -->
+              <div class="bg-orange-50 p-6 rounded-xl shadow-sm hover:shadow-md transition">
+                <h4 class="text-xl font-semibold text-orange-700 mb-2">My Education</h4>
+                <p class="text-gray-700">
+                    From <strong>Ratta Primary & Secondary School</strong> to <strong>Kabarak University</strong>, my learning journey has shaped my love for growth and innovation.
+                </p>
+                <a href="{% url 'education_journey' %}" class="text-orange-600 font-medium inline-block mt-3 hover:underline">
+                    View My Education Journey →
+                </a>
+            </div>
+
+            <!-- Passion -->
+            <div class="bg-green-50 p-6 rounded-xl shadow-sm hover:shadow-md transition">
+                <h4 class="text-xl font-semibold text-green-700 mb-2">My Passion</h4>
+                <p class="text-gray-700">
+                    I thrive on <strong>problem-solving, AI innovations, and impactful projects</strong>. 
+                    My mission is to create tech-driven solutions that transform lives.
+                </p>
+            </div>
+
+            <!-- Fun Facts -->
+            <div class="bg-purple-50 p-6 rounded-xl shadow-sm hover:shadow-md transition">
+                <h4 class="text-xl font-semibold text-purple-700 mb-2">Fun Facts</h4>
+                <p class="text-gray-700">
+                    I’ve memorized the <strong>periodic table</strong> for fun, dream of <strong>climbing Mt. Kilimanjaro</strong>, and love <strong>photography</strong>. 
+                    Favorite quote: <span class="italic">“The best way to predict the future is to invent it.” - Alan Kay</span>
+                </p>
+            </div>
+
+            <!-- Projects -->
+            <div class="bg-yellow-50 p-6 rounded-xl shadow-sm hover:shadow-md transition">
+                <h4 class="text-xl font-semibold text-yellow-700 mb-2">What I’m Working On</h4>
+                <p class="text-gray-700">
+                    Currently exploring <strong>AI & Machine Learning</strong> for fintech solutions and mentoring young tech enthusiasts to spark innovation.
+                </p>
+            </div>
+
+            <!-- Interests -->
+            <div class="bg-red-50 p-6 rounded-xl shadow-sm hover:shadow-md transition">
+                <h4 class="text-xl font-semibold text-red-700 mb-2">Outside of Tech</h4>
+                <p class="text-gray-700">
+                    I enjoy <strong>family time</strong>, tackling new challenges, and meeting people from different backgrounds to learn from their stories.
+                </p>
+            </div>
+
+            <!-- Achievements -->
+            <div class="bg-gray-50 p-6 rounded-xl shadow-sm hover:shadow-md transition col-span-1 md:col-span-2">
+                <h4 class="text-xl font-semibold text-gray-700 mb-3">My Achievements</h4>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2">
+                    <li>🏆 Winner of a <strong>regional coding competition</strong>.</li>
+                    <li>📱 Built a <strong>student progress tracking app</strong>.</li>
+                    <li>🤖 Created a <strong>smart home automation system</strong> using AI & IoT.</li>
+                    <li>👨‍🏫 Honored as a <strong>mentor</strong> for upcoming developers.</li>
+                </ul>
+            </div>
+
+            <!-- Volunteering -->
+            <div class="bg-teal-50 p-6 rounded-xl shadow-sm hover:shadow-md transition col-span-1 md:col-span-2">
+                <h4 class="text-xl font-semibold text-teal-700 mb-2">Giving Back</h4>
+                <p class="text-gray-700">
+                    I volunteer in <strong>coding bootcamps</strong> to empower underprivileged youth with digital skills. Sharing knowledge is my way of creating positive change.
+                </p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% include 'footer.html' %}
+{% endblock content %}

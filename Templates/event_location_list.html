@@ -1,0 +1,41 @@
+
+{% extends 'header.html' %}
+{% load widget_tweaks %}
+{% block content %}
+{% include "Sidebar.html" %}
+
+<div class="ml-64 w-[calc(100%-16rem)]">
+    <div class=" text-green-500 p-4 mb-6  w-1/2 text-center">
+    {% for message in messages %}
+        <p id="messages" class="font-semibold text-lg">{{ message }}</p>
+    {% endfor %}
+</div>
+<h2>Event Categories</h2>
+<form action='' method='POST'>
+    {% csrf_token %}
+    <div>
+        <label for="address" class="block text-gray-700 font-medium">Name</label>
+        {% render_field form.name class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" %}
+    </div>
+    <br>
+    <div>
+        <label for="address" class="block text-gray-700 font-medium">Address</label>
+        {% render_field form.address class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" %}
+    </div>
+    <br>
+     <!-- Submit Button -->
+     <div class="text-center">
+        <button type="submit" class="w-full sm:w-auto bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-500 transition">
+            ➕ Submit Location List
+        </button>
+        <br>
+        <div class="mt-6 text-center">
+            <a href="{% url 'add_event' %}" class="inline-block text-white bg-green-600 px-6 py-3 rounded-lg font-medium hover:bg-green-500 transition shadow-md">
+                ⬅ Back to Events
+            </a>
+        </div>
+    </div>  
+</div>
+{% include "footer.html" %}
+{% endblock %}
+

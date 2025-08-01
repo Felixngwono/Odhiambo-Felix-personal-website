@@ -1,0 +1,76 @@
+{% extends "header.html" %}
+{% block content %}
+{% include 'Sidebar.html' %}
+
+<div class="ml-64 w-[calc(100%-16rem)] min-h-screen bg-gray-100 p-8">
+    <div class="container ">
+
+        <!-- Event Image -->
+        {% if event.image %}
+        <div class="w-full h-80 rounded-lg overflow-hidden shadow-lg bg-gray-300">
+           <a href='{{ event.image.url }}' >  <img src="{{ event.image.url }}" alt="{{ event.title }}" class="w-full h-full object-cover"></a>
+        </div>
+        {% endif %}
+
+        <!-- Event Details -->
+        <div class="bg-white dark:bg-gray-900 shadow-lg rounded-lg p-8 mt-6">
+            <h2 class="text-4xl font-bold text-gray-800 dark:text-white text-center mb-6">{{ event.title }}</h2>
+            <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed text-center mb-6">{{ event.description }}</p>
+
+            <div class="grid grid-cols-2 gap-6 text-gray-800 dark:text-gray-300 text-lg">
+                <p><span class="font-semibold text-blue-500">📅 Date:</span> {{ event.date }}</p>
+                <p><span class="font-semibold text-blue-500">👤 Host:</span> {{ event.host }}</p>
+                <p><span class="font-semibold text-blue-500">🎟 Guests:</span> {{ event.guests }}</p>
+                <p><span class="font-semibold text-blue-500">📌 Category:</span> {{ event.category }}</p>
+                <p class="col-span-2"><span class="font-semibold text-blue-500">📍 Location:</span> {{ event.location }}</p>
+            </div>
+            {% if event.video %}
+            <video controls class="w-full h-auto mt-4">
+                <source src="{{ event.video.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        {% else %}
+            <p class="text-gray-500 mt-4">No video available</p>
+        {% endif %}
+        </div>
+
+        <!-- Admin Response Section -->
+        <div class="bg-gray-50 dark:bg-gray-800 shadow-lg rounded-lg p-8 mt-6">
+            <h3 class="text-2xl font-bold text-gray-700 dark:text-white mb-4">Admin Response</h3>
+            
+            <form method="POST" action="{% url 'send_event_response' event.id %}">
+                {% csrf_token %}
+                <label class="block text-gray-700 dark:text-gray-300 font-bold mb-2">Response Message:</label>
+                <textarea name="response_message" rows="4" required 
+                          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:text-white"></textarea>
+
+                <button type="submit" 
+                        class="mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg transition shadow-md">
+                    Send Response via SMS
+                </button>
+            </form>
+        </div>
+
+        {% if request.user.is_superuser %}
+        <div class="mt-4 space-x-2">
+            <a href="{% url 'update_event' event.id %}" 
+               class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-500 transition duration-300 shadow-md">
+                ✏️ Update 
+            </a>
+            <a href="{% url 'delete_event' event.id %}" 
+               class="bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-500 transition duration-300 shadow-md">
+                🗑️ Delete
+            </a>
+        </div>
+        {% endif %}
+        <!-- Back to Home Button -->
+        <div class="mt-8 flex justify-center">
+            <a href="{% url 'events' %}" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg transition duration-300 shadow-md flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}

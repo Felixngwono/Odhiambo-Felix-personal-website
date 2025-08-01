@@ -1,0 +1,99 @@
+{% extends "header.html" %}
+{% load static %}
+{% block content %}
+{% include "Sidebar.html" %}
+
+<div class="ml-64 w-[calc(100%-16rem)] min-h-screen bg-gray-50">
+
+  <!-- Success messages -->
+  {% for message in messages %}
+  <div class="w-full text-center py-4 bg-green-100 text-green-700 font-medium">
+    {{ message }}
+  </div>
+  {% endfor %}
+
+  <!-- Blog Intro Section -->
+  <div >
+    <h2 class="text-4xl text-center sm:text-5xl font-extrabold text-gray-800 mb-4">📚 My Blog Space</h2>
+    <p class=" text-center ">
+      Welcome to my blog! Here I share personal stories, technical tutorials, creative insights, and much more. 
+      Whether you're here to learn, explore, or just enjoy good reads, there's something for you. 
+    </p>
+    <hr class="my-6 border-t-2 border-gray-200 w-24 mx-auto">
+  </div>
+
+  <!-- Blog Grid -->
+  <div class="container w-screen px-4 py-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {% for post in blogs %}
+      <div class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col">
+        <a href="{% url 'blog_details' post.id %}">
+          {% if post.image %}
+          <img src="{{ post.image.url }}" alt="{{ post.title }}" class="w-full h-56 object-cover">
+          {% else %}
+          <div class="w-full h-56 bg-gray-200 flex items-center justify-center text-gray-500">No Image</div>
+          {% endif %}
+        </a>
+        <div class="p-6 flex-1 flex flex-col">
+          <h3 class="text-xl font-bold text-gray-800 hover:text-blue-600 mb-2">{{ post.title }}</h3>
+          
+          {% if post.author %}
+          <p class="text-sm text-gray-500 mb-1">By <span class="font-medium">{{ post.author }}</span></p>
+          {% endif %}
+          {% if post.created_at %}
+          <p class="text-sm text-gray-400 mb-4">📅 {{ post.created_at|date:"F j, Y" }}</p>
+          {% endif %}
+
+          <p class="text-gray-700 text-sm flex-1">{{ post.content|truncatewords:30 }}</p>
+
+          <div class="mt-4">
+            <a href="{% url 'blog_details' post.id %}" class="inline-block text-sm font-medium text-blue-600 hover:underline">
+              🔍 Read More
+            </a>
+          </div>
+        </div>
+
+        <!-- Admin Buttons -->
+        {% if request.user.is_superuser %}
+        <div class="flex justify-between px-6 pb-4">
+          <a href="{% url 'update_blog' post.pk %}" class="text-sm text-white bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-500">✏️ Update</a>
+          <a href="{% url 'delete_blog' post.pk %}" class="text-sm text-white bg-red-600 px-4 py-2 rounded-lg hover:bg-red-500">🗑️ Delete</a>
+        </div>
+        {% endif %}
+      </div>
+      {% empty %}
+      <p class="col-span-3 text-center text-gray-500">No blogs available at the moment. Please check back soon!</p>
+      {% endfor %}
+    </div>
+
+    <!-- Pagination (if using Django pagination in views) -->
+    {% if blogs.has_other_pages %}
+    <div class="mt-10 flex justify-center space-x-2">
+      {% if blogs.has_previous %}
+      <a href="?page={{ blogs.previous_page_number }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">⬅️ Prev</a>
+      {% endif %}
+
+      <span class="px-4 py-2 text-gray-700 font-semibold">Page {{ blogs.number }} of {{ blogs.paginator.num_pages }}</span>
+
+      {% if blogs.has_next %}
+      <a href="?page={{ blogs.next_page_number }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Next ➡️</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Add Blog Button -->
+  {% if request.user.is_superuser %}
+  <div class="text-center pb-12">
+    <a href="{% url 'add_blog' %}" class="inline-block bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-500">
+      ➕ Add Blog
+    </a>
+  </div>
+  {% endif %}
+
+ 
+
+</div>
+
+{% include "footer.html" %}
+{% endblock content %}

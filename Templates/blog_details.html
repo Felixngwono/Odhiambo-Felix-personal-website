@@ -1,0 +1,58 @@
+{% extends "header.html" %}
+
+{% block content %}
+{% include "Sidebar.html" %}
+<div class="ml-64 w-[calc(100%-16rem)]">
+
+{% for message in messages %}
+<p id="messages" class="font-semibold text-lg">{{ message }}</p>
+{% endfor %}
+
+<div class="flex justify-center">
+    <div class="max-w-4xl w-full bg-white shadow-lg rounded-lg p-8">
+        {% if detailedblog.image %}
+        <a href='{{detailedblog.image.url}}'><img src="{{ detailedblog.image.url }}" alt="{{ detailedblog.title }}" class="w-48 h-48 rounded-full mx-auto mt-4"></a>
+        {% else %}
+        <p class="text-gray-500 mt-4">No image available</p>
+        {% endif %}
+        <h2 class="text-4xl font-bold text-center mb-6 text-gray-900">{{ detailedblog.title }}</h2>
+        <p class="text-lg text-center mb-6 text-gray-500">{{ detailedblog.content }}</p>
+        
+        <div class="text-lg text-gray-700 mb-6">
+            <strong>User:</strong> {{ detailedblog.created_at }}
+        </div>
+
+        
+
+        <div class="text-lg text-gray-700 mb-6">
+            <strong>Updated At:</strong> {{ detailedblog.updated_at }}
+        </div>
+        {% if detailedblog.video %}
+    <video controls class="w-full h-auto mt-4">
+        <source src="{{ detailedblog.video.url }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+{% else %}
+    <p class="text-gray-500 mt-4">No video available</p>
+{% endif %}
+
+        {% if request.user.is_superuser %}
+        <div class="mt-4 text-center flex justify-center space-x-4">
+            <a href="{% url 'update_blog' detailedblog.id %}" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-500 transition-all shadow-md">
+                ✏️ Update 
+            </a>
+
+            <a href="{% url 'delete_blog' detailedblog.id %}" class="inline-block bg-red-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-500 transition-all shadow-md">
+                🗑️ Delete 
+            </a>
+            <a href="{% url 'blog' %}" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-500 transition-all shadow-md">
+                No, Go Back
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+</div>
+{% include "footer.html" %}
+
+{% endblock %}

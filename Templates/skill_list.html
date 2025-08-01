@@ -1,0 +1,29 @@
+{% extends "header.html" %}
+{% block content %}
+{% include "Sidebar.html" %}
+
+<div class="ml-64 w-[calc(100%-16rem)]">
+
+<div class="container ">
+    <h2 class="text-2xl font-bold">Skills</h2>
+    <a href="{% url 'skill_create' %}" class="bg-green-500 text-white px-4 py-2 rounded-lg">Add New Skill</a>
+    <ul class="mt-4">
+        {% for skill in skills %}
+            <li class="p-4 border-b flex justify-between">
+                <span>{{ skill.name }} - {{ skill.proficiency }}%</span>
+                <div>
+                    <a href="{% url 'skill_detail' skill.pk %}" class="text-blue-500">View</a> |
+                    <a href="{% url 'skill_edit' skill.pk %}" class="text-yellow-500">Edit</a> |
+                    <a href="{% url 'skill_delete' skill.pk %}" class="text-red-500">Delete</a>
+                </div>
+            </li>
+        {% empty %}
+            <li>No skills added yet.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+</div>
+{% include "footer.html" %}
+
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "header.html" %}
+
+{% block content %}
+<div class="container mx-auto my-6 px-4">
+
+    <!-- Success or info messages -->
+    <div class="text-center my-4">
+        {% for message in messages %}
+            <p id="messages" class="font-semibold text-lg text-green-600">{{ message }}</p>
+        {% endfor %}
+    </div>
+
+    <!-- Sidebar inclusion -->
+    {% include "Sidebar.html" %}
+
+    <!-- Main content section -->
+    <div class="ml-64 w-[calc(100%-16rem)] bg-white p-6 shadow-lg rounded-lg">
+        <script src="https://cdn.tailwindcss.com"></script>
+        
+        <!-- Blog Post Content -->
+        <div class="mb-8">
+            <h2 class="text-3xl font-semibold text-gray-800 mb-4">{{ blog_post.title }}</h2>
+            <p class="text-lg text-gray-600 mb-4">{{ blog_post.content }}</p>
+            <p class="text-sm text-gray-500"><strong>Author:</strong> {{ blog_post.author.username }}</p>
+            <p class="text-sm text-gray-500 mb-6"><strong>Published on:</strong> {{ blog_post.created_at|date:"F j, Y" }}</p>
+        </div>
+
+        <!-- Comments Section -->
+       
+
+        <!-- Leave a Comment Form -->
+        <div class="mt-8">
+            <h3 class="text-2xl font-semibold text-gray-800 mb-4">Leave a Comment</h3>
+            <form method="POST" class="space-y-4">
+                {% csrf_token %}
+                {{ form.as_p }}
+
+                <!-- Button for submitting the comment -->
+                <button type="submit" class="bg-blue-600 text-white py-2 px-6 rounded-md hover:bg-blue-700 transition">
+                    Post Comment
+                </button>
+            </form>
+        </div>
+
+        <!-- Back to Blog List -->
+        <div class="mt-8">
+            <a href="{% url 'blog' %}" class="text-blue-600 hover:text-blue-800 font-medium">
+                Back to Blog List
+            </a>
+        </div>
+    </div>
+</div>
+
+{% include "footer.html" %}
+{% endblock content %}

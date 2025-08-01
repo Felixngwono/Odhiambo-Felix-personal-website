@@ -1,0 +1,56 @@
+{% extends "header.html" %}
+
+{% block content %}
+    {% include "Sidebar.html" %}
+    {% load widget_tweaks %}
+    <div class="ml-64 w-[calc(100%-16rem)]">
+        <h2 class="text-3xl font-bold text-center text-gray-800">Update Activity</h2>
+
+        <div class="max-w-6xl mx-auto p-8">
+            <form action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">Activity Details</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <!-- Name -->
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">title</label>
+                            {% render_field form.title class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">description</label>
+                            {% render_field form.description class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">created_at</label>
+                            {% render_field form.created_at class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+                        </div>
+                       
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">user</label>
+                            {% render_field form.user class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+                        </div>
+                       
+                    </div>
+                    <div class="mt-6 text-center">
+                        <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-500 transition-all">
+                            ✏️ Update 
+                        </button>
+                        <div class="mt-4 text-center">
+                            <a href="{% url 'activity_list' %}" class="inline-block bg-gray-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-500 transition-all">
+                                🔙 Back to Activities
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            
+
+            
+        </div>
+    </div>
+
+    {% include "footer.html" %}
+{% endblock %}

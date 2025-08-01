@@ -1,0 +1,62 @@
+{% extends "header.html" %}
+{% block content %}
+{% include "Sidebar.html" %}
+
+<div class="ml-64 w-[calc(100%-16rem)] p-8">
+    <h2 class="text-3xl font-bold text-gray-900 text-center mb-8">📂 Projects</h2>
+
+    <!-- Project Grid Container -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        {% for project in projects %}
+        <div class="bg-white shadow-lg rounded-lg p-6 transition-transform duration-300 hover:scale-105">
+            <a href="{% url 'project_detail' project.id %}">
+
+                {% if project.image %}
+                <div class="mb-4">
+                    <img src="{{ project.image.url }}" alt="{{ project.title }}" class="w-full h-40 object-cover rounded-lg">
+                </div>
+                {% endif %}
+
+                <!-- Project Title -->
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                    <a href="{% url 'project_detail' project.id %}" class="hover:text-blue-600 transition-colors">
+                        {{ project.title }}
+                    </a>
+                </h3>
+                
+                <!-- Project Description -->
+                <p class="text-gray-700 mt-2">{{ project.description|truncatewords:20 }}</p>
+            </a>
+
+            <!-- Admin Controls (Visible to Superuser) -->
+            {% if request.user.is_superuser %}
+            <div class="mt-6 flex flex-wrap gap-4 justify-start">
+                <a href="{% url 'edit_project' project.id %}" 
+                   class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-500 transition-all shadow-md">
+                    ✏️ Edit
+                </a>
+                <a href="{% url 'delete_project' project.id %}" 
+                   class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-500 transition-all shadow-md">
+                    ❌ Delete
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p class="text-gray-600 text-center col-span-3">No projects available.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Add Project Button (Visible to Superuser) -->
+    {% if request.user.is_superuser %}
+    <div class="mt-10 text-center">
+        <a href="{% url 'add_project' %}" 
+           class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-500 transition-all shadow-md">
+            ➕ Add Project
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+{% include "footer.html" %}
+{% endblock %}

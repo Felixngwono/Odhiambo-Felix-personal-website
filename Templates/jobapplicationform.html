@@ -1,0 +1,15 @@
+{% extends 'header.html' %}
+
+{% block content %}
+{% include "Sidebar.html" %}
+{% load widget_tweaks %}
+{% load static %}
+<div class="ml-64 w-[calc(100%-16rem)] min-h-screen bg-gray-100 p-8">
+<form action='' method='POST'>
+   {% csrf_token %}
+   {{form.as_p}}
+<button type='submit'>submit application form</button>
+</div>
+ 
+{% include "footer.html" %}
+{% endblock content %}

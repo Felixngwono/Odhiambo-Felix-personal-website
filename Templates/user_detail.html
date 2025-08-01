@@ -1,0 +1,24 @@
+{% extends "header.html" %}
+{% block content %}
+<div class="ml-64 w-[calc(100%-16rem)]">
+    
+    {% for users in  user%}
+        
+   
+        
+    <h1 class="text-3xl font-bold mb-4">User Details</h1>
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+        <p><strong>Name:</strong> {{ users.name }}</p>
+        <p><strong>Email:</strong> {{ users.email }}</p>
+        <p><strong>Gender:</strong> {{ users.gender }}</p>
+        <p><strong>Profile Picture:</strong></p>
+        {% if user.profile_picture %}
+            <img src="{{ user.profile_picture.url }}" alt="{{ user.name }}" class="w-48 h-48 rounded-full">
+        {% else %}
+            <p>No profile picture available.</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% include "footer.html" %}
+{% endblock content %}

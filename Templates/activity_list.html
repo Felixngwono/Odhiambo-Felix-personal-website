@@ -1,0 +1,70 @@
+{% extends "header.html" %}
+
+{% block content %}
+    <!-- Sidebar and Main Content -->
+    <div class="flex">
+        <!-- Sidebar -->
+        {% include "Sidebar.html" %}
+        
+        <!-- Main Content Area -->
+        <div class="ml-64 w-[calc(100%-16rem)]">
+            <!-- Recent Activities Section -->
+            <div class="max-w-6xl mx-auto p-8">
+                <h2 class="text-4xl font-bold text-center mb-6 text-gray-900">Recent Activities</h2>
+                <p class="text-lg text-center mb-6 text-gray-500">Track the activities that have taken place recently.</p>
+        
+                <!-- Activity Log -->
+                <div class="bg-white p-6 rounded-lg shadow-lg max-w-3xl mx-auto mb-8">
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-800">Activity Log</h2>
+                    <ul class="space-y-4">
+                        <li class="text-lg text-gray-700">📅 Task "Complete report" was assigned to you.</li>
+                        <li class="text-lg text-gray-700">📝 You updated the status of task "Review project details."</li>
+                        <li class="text-lg text-gray-700">📤 You sent a message to John regarding the project update.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- User Activities Section -->
+            <section id="projects" class="bg-gray-100 py-16">
+                <div class="container mx-auto px-6 text-center">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-8">My Activities</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+                      {% for x in activities %}
+                      <div class="bg-white shadow-lg rounded-lg p-6 transition-transform duration-300 hover:scale-105">
+                          <a href="{% url 'activity_detail' x.id %}">
+                              <h3 class="text-xl sm:text-2xl font-semibold text-gray-900">Title: {{ x.title }}</h3>
+                              <p class="text-gray-700 mt-2"><strong>Description:</strong> {{ x.description }}</p>
+                              <p class="text-gray-700 mt-2"><strong>User:</strong> {{ x.user }}</p>
+                          </a>
+                          
+                          <!-- Update/Delete buttons for Superuser -->
+                          {% if request.user.is_superuser %}
+                          <div class="mt-4 text-center flex justify-center space-x-4">
+                              <a href="{% url 'update_activity' x.id %}" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-500 transition-all shadow-md">
+                                  ✏️ Update 
+                              </a>
+                  
+                              <a href="{% url 'delete_activity' x.id %}" class="inline-block bg-red-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-500 transition-all shadow-md">
+                                  🗑️ Delete 
+                              </a>
+                          </div>
+                          {% endif %}
+                      </div>
+                  {% endfor %}
+                  
+                    </div>
+        
+                    <!-- Add Activity Button -->
+                    <div class="mt-10 text-center">
+                        <a href="{% url 'add_activity' %}" class="inline-block bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-500 transition-all shadow-md">
+                            ➕ Add Activity
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    {% include "footer.html" %}
+{% endblock %}

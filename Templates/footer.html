@@ -1,0 +1,72 @@
+{% load static %}
+<div class="ml-64 w-[calc(100%-16rem)]">
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white w-full py-12 mt-auto   ">
+        <div class="container mx-auto px-6  grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- Company Info -->
+            <div>
+                <a  class="flex items-center mb-4 space-x-3 rtl:space-x-reverse">
+                    <img src="{% static 'images/f1.jpg' %}" class="h-12" alt="FelloMarley Logo" />
+                    <span class="text-2xl font-semibold text-white">FelloMarley</span>
+                </a>
+                <p class="mt-2 text-gray-400">Building innovative tech solutions for a better future.</p>
+            </div>
+
+            <!-- Navigation Links -->
+            <div>
+                <h3 class="text-lg font-semibold text-white">Quick Links</h3>
+                <ul class="mt-4 space-y-3">
+                    <li><a href="{% url 'index' %}" class="text-gray-400 hover:text-white transition duration-300">Home</a></li>
+                    <li><a href="{% url 'projects_list' %}" class="text-gray-400 hover:text-white transition duration-300">Projects</a></li>
+                    <li><a href="{% url 'about' %}" class="text-gray-400 hover:text-white transition duration-300">About Me</a></li>
+                    <li><a href="{% url 'contactus' %}" class="text-gray-400 hover:text-white transition duration-300">Contact</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact & Socials -->
+            <div>
+                <h3 class="text-lg font-semibold text-white">Contact Me</h3>
+                <p class="mt-4 text-gray-400">Email: felixngwono@gmail.com</p>
+                <p class="text-gray-400">Phone: +254 700 369300</p>
+                <div class="mt-6 flex space-x-6">
+                    <a href="https://facebook.com/felixodhiambo" class="text-gray-400 hover:text-blue-600 transition duration-300" target="_blank">
+                        <i class="fab fa-facebook text-2xl"></i>
+                    </a>
+                    <a href="https://twitter.com/felixodhiambo" class="text-gray-400 hover:text-blue-400 transition duration-300" target="_blank">
+                        <i class="fab fa-twitter text-2xl"></i>
+                    </a>
+                    <a href="https://linkedin.com/in/felixodhiambo" class="text-gray-400 hover:text-blue-700 transition duration-300" target="_blank">
+                        <i class="fab fa-linkedin text-2xl"></i>
+                    </a>
+                    <a href="https://github.com/felixngwono" class="text-gray-400 hover:text-gray-300 transition duration-300" target="_blank">
+                        <i class="fab fa-github text-2xl"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Newsletter Subscription -->
+            <div>
+                <h3 class="text-lg font-semibold text-white">Stay Updated</h3>
+                <p class="mt-4 text-gray-400">Subscribe to my newsletter for the latest updates.</p>
+               
+            </div>
+        </div>
+
+        <!-- Footer Bottom -->
+        <div class="mt-8 text-center text-gray-400 text-sm">
+                © 2025-{% now "d/m/y" %} Felix Odhiambo • Built with Django 
+            
+            <p class="mt-2">
+                <a href="#" class="text-gray-400 hover:text-white transition duration-300">Privacy Policy</a> | 
+                <a href="#" class="text-gray-400 hover:text-white transition duration-300">Terms of Service</a>
+            </p>
+        </div>
+    </footer>
+</div>
+<script>
+    document.getElementById("sidebarToggle").addEventListener("click", function() {
+        document.getElementById("default-sidebar").classList.toggle("-translate-x-full");
+    });
+</script>
+</div>

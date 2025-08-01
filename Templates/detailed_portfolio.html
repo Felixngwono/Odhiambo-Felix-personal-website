@@ -1,0 +1,64 @@
+{% extends "header.html" %}
+
+{% block content %}
+{% include "Sidebar.html" %}
+<div class="ml-64 w-[calc(100%-16rem)]">
+
+{% for message in messages %}
+<p id="messages" class="font-semibold text-lg">{{ message }}</p>
+{% endfor %}
+
+<div class="flex ">
+    <div class="w-full h-full max-w-full bg-white shadow-lg rounded-lg p-8">
+        {% if detailedportfolio.image %}
+      <a href='{{ detailedportfolio.image.url }}' > <img src="{{ detailedportfolio.image.url }}" alt="{{ detailedportfolio.title }}" class="w-48 h-48 rounded-full mx-auto mt-4"></a>
+        {% else %}
+        <p class="text-gray-500 mt-4">No image available</p>
+        {% endif %}
+        <h2 class="text-4xl font-bold text-center mb-6 text-gray-900">{{ detailedportfolio.title }}</h2>
+        <p class="text-lg text-center mb-6 text-gray-500">{{ detailedportfolio.description }}</p>
+        
+        
+
+        <div class="text-lg text-gray-700 mb-6">
+            <strong>Date Created:</strong> {{ detailedportfolio.date_created }}
+        </div>
+        <div class="text-lg text-gray-700 mb-6">
+            <strong>category:</strong> {{ detailedportfolio.category }}
+        </div>
+        <div class="text-lg text-gray-700 mb-6">
+            <strong>author:</strong> {{ detailedportfolio.author }}
+        </div>
+        <div class="text-lg text-gray-700 mb-6">
+            <strong>technology:</strong> {{ detailedportfolio.technology }}
+        </div>
+        {% if detailedportfolio.video %}
+        <video controls class="w-84 h-68 rounded-lg mx-auto mt-4">
+            <source src="{{ detailedportfolio.video.url }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    {% else %}
+        <p class="text-gray-500 mt-4">No video available</p>
+    {% endif %}
+    
+
+        {% if request.user.is_superuser %}
+        <div class="mt-4 text-center flex justify-center space-x-4">
+            <a href="{% url 'update_portfolio' detailedportfolio.id %}" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-500 transition-all shadow-md">
+                ✏️ Update 
+            </a>
+
+            <a href="{% url 'delete_portfolio' detailedportfolio.id %}" class="inline-block bg-red-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-500 transition-all shadow-md">
+                🗑️ Delete 
+            </a>
+            <a href="{% url 'portfolio' %}" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-500 transition-all shadow-md">
+                No, Go Back
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+</div>
+{% include "footer.html" %}
+
+{% endblock %}

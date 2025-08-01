@@ -1,0 +1,26 @@
+{% extends "header.html" %}
+{% block content %}
+{% include "Sidebar.html" %}
+
+<div class="ml-64 w-[calc(100%-16rem)]">
+    <div class="max-w-xl mx-auto bg-white shadow-lg rounded-lg p-6 text-center">
+        <h2 class="text-2xl font-bold text-gray-900">Are you sure?</h2>
+        <p class="text-gray-700 mt-2">You are about to delete <strong>{{ notify.title }}</strong>. This action cannot be undone.</p>
+
+        <div class="mt-6 flex justify-center gap-4">
+            <form method="POST" action="">
+                {% csrf_token %}
+                <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-red-500 transition-all shadow-md">
+                    ✅ Confirm Delete
+                </button>
+            </form>
+
+            <a href="{% url 'notifications' %}" class="bg-gray-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-400 transition-all shadow-md">
+                ❌ Cancel
+            </a>
+        </div>
+    </div>
+</div>
+
+{% include "footer.html" %}
+{% endblock %}

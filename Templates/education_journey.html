@@ -1,0 +1,68 @@
+{% extends "header.html" %}
+{% block content %}
+{% load widget_tweaks %}
+<div class=" text-green-500 p-4 mb-6  w-1/2 text-center">
+    {% for message in messages %}
+        <p id="messages" class="font-semibold text-lg">{{ message }}</p>
+    {% endfor %}
+
+</div>
+{% include "Sidebar.html" %}
+
+<div class="ml-64 w-[calc(100%-16rem)]">
+    <section class="bg-gray-100 py-16">
+        
+        <div class="container mx-auto px-6 lg:px-8">
+            <h3 class="text-3xl font-bold text-gray-800 text-center">My Education Journey</h3>
+            <p class="text-gray-600 text-center mt-4">A glimpse into the different academic levels that shaped me.</p>
+            <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {% for edu in education_levels %}
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h4 class="text-lg font-semibold text-gray-800">{{ edu.level }}</h4>
+                        <p class="text-gray-600 mt-2"><strong>School:</strong> {{ edu.school }}</p>
+                        <p class="text-gray-600 mt-2">{{ edu.description }}</p>
+                        <p class="text-gray-600 mt-2"><strong>Year:</strong> {{ edu.Year }}</p>
+                        <p class="text-gray-600 mt-2"><strong>Grade:</strong> {{ edu.Grade }}</p>
+                        
+                        {% if edu.pdf_proof %}
+                        <div class="mt-4">
+                            <a href="{{ edu.pdf_proof.url }}" target="_blank" class="text-blue-600 hover:text-blue-500">
+                                Download Proof (PDF)
+                            </a>
+                        </div>
+                        {% else %}
+                        <p class="text-red-600 mt-2">No proof available.</p>
+                        {% endif %}
+                
+                        <!-- Edit Button -->
+                        <div class="mt-4">
+                            <a href="{% url 'update_education' education_id=edu.id %}" class="inline-block px-6 py-3 text-white bg-yellow-600 rounded-lg font-medium shadow-md hover:bg-yellow-500 transition">
+                                ✏️ Edit Education
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+                
+            </div>
+        </form>
+
+            <div class="mt-10 text-center">
+                <a href="{% url 'about' %}" class="inline-block px-6 py-3 text-white bg-blue-600 rounded-lg font-medium shadow-md hover:bg-blue-500 transition">
+                    Back to About Me
+                </a>
+            </div>
+
+            <div class="mb-4">
+                <a href="{% url 'education_level' %}" class="inline-block px-6 py-3 text-white bg-green-600 rounded-lg font-medium shadow-md hover:bg-blue-500 transition">
+                    ➕ Add Education Details
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "header.html" %}
+{% block content %}
+{% load widget_tweaks %}
+{% load static %}
+{% include "sidebar.html" %}
+
+<div class="ml-64 w-[calc(100%-16rem)] min-h-screen bg-gray-100 p-10 flex flex-col items-center space-y-10">
+
+    <div class="w-full bg-gradient-to-r from-green-600 to-green-400 text-white py-8 px-6 rounded-xl shadow-lg text-center">
+        <h1 class="text-4xl font-extrabold tracking-tight drop-shadow-sm">{{ support.title }}</h1>
+    </div>
+
+    <div class="bg-white w-full max-w-4xl p-8 rounded-2xl shadow-md space-y-6 text-gray-700">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <p><span class="font-semibold text-gray-800">Category:</span> {{ support.get_category_display }}</p>
+            <p><span class="font-semibold text-gray-800">Priority:</span> {{ support.get_priority_display }}</p>
+            <p><span class="font-semibold text-gray-800">Status:</span> {{ support.get_status_display }}</p>
+        </div>
+        <div>
+            <p class="font-semibold text-gray-800 mb-1">Description:</p>
+            <p class="bg-gray-100 p-4 rounded-md text-gray-600 leading-relaxed">{{ support.description }}</p>
+        </div>
+        {% if support.attachment %}
+            <div>
+                <p class="font-semibold text-gray-800 mb-1">Attachment:</p>
+                <a href="{{ support.attachment.url }}" target="_blank" class="inline-block bg-blue-50 text-blue-600 font-medium px-4 py-2 rounded-md hover:underline hover:bg-blue-100 transition-all">
+                    📎 View File
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="flex flex-wrap justify-center gap-4 mt-4">
+        <a href="{% url 'support_update' support.pk %}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-3 rounded-lg shadow-md transition-all">
+            ✏️ Edit
+        </a>
+        <a href="{% url 'support_delete' support.pk %}" class="bg-red-600 hover:bg-red-700 text-white font-semibold px-5 py-3 rounded-lg shadow-md transition-all">
+            🗑️ Delete
+        </a>
+        <a href="{% url 'support' %}" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-5 py-3 rounded-lg shadow-md transition-all">
+            🔙 Back to List
+        </a>
+    </div>
+
+</div>
+
+{% include "footer.html" %}
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "header.html" %}
+
+{% block content %}
+{% load widget_tweaks %}
+{% include "Sidebar.html" %}
+
+<div class="ml-64 w-[calc(100%-16rem)]">
+    <div class=" text-green-500 p-4 mb-6  w-1/2 text-center">
+    {% for message in messages %}
+        <p id="messages" class="font-semibold text-lg">{{ message }}</p>
+    {% endfor %}
+</div>
+
+    <section class="bg-gray-100 py-16">
+        <div class="container mx-auto px-6 lg:px-8">
+            <h3 class="text-3xl font-bold text-gray-800 text-center">Update Education Details</h3>
+            <p class="text-gray-600 text-center mt-4">Modify your education details below.</p>
+            <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                <div class="space-y-4">
+                    <!-- Level -->
+                    <div class="form-group">
+                        <label for="level" class="block text-lg font-medium text-gray-700">Education Level</label>
+                        {% render_field form.level class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" %}
+                    </div>
+
+                    <!-- School -->
+                    <div class="form-group">
+                        <label for="school" class="block text-lg font-medium text-gray-700">School/University</label>
+                        {% render_field form.school class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Name of the school or university"%}
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-group">
+                        <label for="description" class="block text-lg font-medium text-gray-700">Description</label>
+                        {% render_field form.description class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" %}
+                    </div>
+
+                    <!-- Year -->
+                    <div class="form-group">
+                        <label for="year" class="block text-lg font-medium text-gray-700">Year</label>
+                        {% render_field form.Year class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" %}
+                    </div>
+
+                    <!-- Grade -->
+                    <div class="form-group">
+                        <label for="grade" class="block text-lg font-medium text-gray-700">Grade</label>
+                        {% render_field form.Grade class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"%}
+                    </div>
+
+                    <!-- PDF Proof -->
+                    <div class="form-group">
+                        <label for="pdf_proof" class="block text-lg font-medium text-gray-700">Upload Education Proof (PDF)</label>
+                        {% render_field form.pdf_proof class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"%}
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" class="w-full sm:w-auto bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-500 transition">
+                        ➕ Update Education Level
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-10 text-center">
+                <a href="{% url 'about' %}" class="inline-block px-6 py-3 text-white bg-blue-600 rounded-lg font-medium shadow-md hover:bg-blue-500 transition">
+                    Back to About Me
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}

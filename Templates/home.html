@@ -1,0 +1,206 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>FelloMarley Foundation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="{% static 'images/logo.png' %}" rel="icon" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen   font-sans leading-relaxed tracking-wide" style="background-image: url('{% static 'images/du.jpg' %}');background-repeat: no-repeat; opacity-90; background-size: cover; background-position: center;">
+    <!-- Overlay to add slight tint (optional for contrast) -->
+    <div class="bg-black bg-opacity-60 min-h-screen">
+        <div class="flex flex-col md:flex-row min-h-screen">
+            <!-- Sidebar -->
+            <aside class="w-full md:w-1/4 bg-gray-900 text-white flex flex-col items-center py-10 px-6 shadow-lg">
+                <!-- Profile Picture -->
+                <img class="w-36 h-36 rounded-full border-4 border-green-500 mb-4 shadow-lg object-cover" src="{% static 'images/Fel14.jpg' %}" alt="Profile Picture" />
+                
+                <!-- Name & Title -->
+                <h1 class="text-2xl font-extrabold mt-2">Felix Odhiambo</h1>
+                <p class="text-green-400 mt-1 text-sm tracking-wide text-center">Software Developer | Tech Enthusiast</p>
+
+                <!-- Short Bio -->
+                <p class="text-sm text-gray-400 mt-4 text-center leading-relaxed">
+                    Passionate about building impactful software solutions. Focused on innovation, community, and lifelong learning.
+                </p>
+
+                <!-- Social Media Links -->
+                <div class="flex mt-6 space-x-4">
+                    <a href="https://x.com/felixngwono" class="p-2 bg-gray-800 rounded-full hover:bg-green-600 transition duration-300">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="https://facebook.com" class="p-2 bg-gray-800 rounded-full hover:bg-blue-600 transition duration-300">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://linkedin.com" class="p-2 bg-gray-800 rounded-full hover:bg-blue-700 transition duration-300">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="https://instagram.com" class="p-2 bg-gray-800 rounded-full hover:bg-pink-600 transition duration-300">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+
+                <!-- Download CV Button -->
+                <a href="{% static 'files/Felix_Odhiambo_CV.pdf' %}" download class="mt-6 inline-block bg-green-600 text-white py-2 px-5 rounded-full shadow hover:bg-green-500 transition duration-300">
+                    <i class="fas fa-download mr-2"></i>Download CV
+                </a>
+
+                <!-- Tech Stack Icons -->
+                <div class="mt-8 text-center w-full">
+                    <h4 class="text-white font-semibold mb-3 text-lg">Tech Stack</h4>
+                    <div class="grid grid-cols-3 gap-4 justify-items-center text-2xl text-gray-300">
+                        <i class="fab fa-python" title="Python"></i>
+                        <i class="fab fa-js-square" title="JavaScript"></i>
+                        <i class="fab fa-html5" title="HTML5"></i>
+                        <i class="fab fa-css3-alt" title="CSS3"></i>
+                        <i class="fas fa-database" title="SQL / Databases"></i>
+                        <i class="fab fa-react" title="React"></i>
+                    </div>
+                </div>
+
+                <!-- Call to Action -->
+                <div class="mt-8 bg-green-700 px-4 py-3 rounded-lg text-center shadow-md hover:bg-green-600 transition duration-300">
+                    <p class="text-sm font-medium">🚀 Open to freelance and collaboration</p>
+
+                   
+                </div>
+                <!-- Contact Section -->
+                <div class="mt-8 text-center w-full">
+                    <h4 class="text-white font-semibold mb-3 text-lg">Contact Me</h4>
+                    <p class="text-sm text-gray-400 mb-4">Feel free to reach out for collaborations or just a friendly chat!</p>
+                    <div class="space-y-2">
+                        <p class="text-sm text-gray-300">
+                            <i class="fas fa-envelope mr-2"></i> Email: <a href="mailto:felixngwono@gmail.com" class="text-green-400 hover:underline">felixngwono@gmail.com</a>
+                        </p>
+                        <p class="text-sm text-gray-300">
+                            <i class="fas fa-phone-alt mr-2"></i> Phone: <a href="tel:+254700369300" class="text-green-400 hover:underline">+254700369300</a>
+                        </p>
+                    </div>
+                </div>
+                <!-- Newsletter Subscription -->
+                <div class="mt-8 text-center w-full">
+                    <h4 class="text-white font-semibold mb-3 text-lg">Subscribe to Newsletter</h4>
+                    <p class="text-sm text-gray-400 mb-4">Stay updated with the latest news and updates from me!</p>
+                    <form action="{% url 'subscribe_newsletter' %}" method="post" class="flex flex-col items-center space-y-3">
+                        {% csrf_token %}
+                        <input type="email" name="email" placeholder="Enter your email" class="w-full px-4 py-2 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                        <button type="submit" class="bg-green-600 text-white py-2 px-5 rounded-full shadow hover:bg-green-500 transition duration-300">
+                            Subscribe
+                        </button>
+                    </form>
+                </div>
+                <!-- Achievements Section -->
+                <div class="mt-8 text-center w-full">
+                    <h4 class="text-white font-semibold mb-3 text-lg">Achievements</h4>
+                    <ul class="list-disc list-inside text-gray-300 text-sm">
+                        <li>Certified Django Developer</li>
+                        <li>Top 10 Finalist in Hackathon 2023</li>
+                        <li>Published 5+ Open Source Projects</li>
+                        <li>Speaker at TechCon 2022</li>
+                    </ul>
+                </div>
+
+                <!-- Hobbies Section -->
+                <div class="mt-8 text-center w-full">
+                    <h4 class="text-white font-semibold mb-3 text-lg">Hobbies</h4>
+                    <p class="text-sm text-gray-400">
+                        When I'm not coding, I enjoy hiking, photography, and playing chess.
+                    </p>
+                </div>
+              
+
+                <!-- Volunteer Work Section -->
+                <div class="mt-8 text-center w-full">
+                    <h4 class="text-white font-semibold mb-3 text-lg">Volunteer Work</h4>
+                    <p class="text-sm text-gray-400">
+                        Actively involved in mentoring aspiring developers and contributing to open-source projects that empower communities.
+                    </p>
+                </div>
+
+                <!-- Fun Facts Section -->
+                <div class="mt-8 text-center w-full">
+                    <h4 class="text-white font-semibold mb-3 text-lg">Fun Facts</h4>
+                    <p class="text-sm text-gray-400">
+                        I once built a fully functional app in under 24 hours during a hackathon!
+                    </p>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="flex-1">
+                <!-- Navbar -->
+                <header class="p-4 flex justify-between items-center shadow-md">
+                    <h1 class="text-xl text-white font-bold">FelloMarley Foundation</h1>
+                    <nav class="space-x-6 text-white text-sm">
+                        <a href="{% url 'signup' %}" class="hover:text-green-500"><i class="fa-solid fa-user-plus"></i> Sign Up</a>
+                        <a href="{% url 'login' %}" class="hover:text-blue-500"><i class="fas fa-sign-in-alt"></i> Sign In</a>
+                    </nav>
+                </header>
+
+                <!-- Hero Section -->
+                <section class="py-12 text-center text-white">
+                    <h1 class="text-4xl font-bold">Welcome to FelloMarley Foundation</h1>
+                    <p class="mt-4 text-lg">Explore my projects, skills, and journey as a software developer.</p>
+                </section>
+
+                <!-- About Me -->
+                <section class="py-12 text-center px-4 text-white">
+                    <h2 class="text-3xl font-bold">About Me</h2>
+                    <p class="max-w-2xl mx-auto mt-4">
+                        I am a passionate software developer dedicated to building innovative solutions that enhance user experience.
+                        My journey into tech stems from a love for problem-solving and continuous learning.
+                    </p>
+                </section>
+
+                <!-- Skills -->
+                <section class=" py-12 text-center">
+                    <h2 class="text-3xl text-white font-bold">Skills</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8 px-6">
+                        {% for x in skill %}
+                        <div class="bg-gray-100 p-4 rounded-xl shadow hover:shadow-lg transition duration-300">
+                            <h3 class="text-lg font-semibold text-gray-800">{{ x.name }}</h3>
+                            <p class="text-sm text-gray-500 mt-1">Proficiency: {{ x.proficiency }}%</p>
+                            <div class="w-full bg-gray-300 h-2 rounded-full mt-2">
+                                <div class="bg-green-500 h-2 rounded-full" style="width: {{ x.proficiency }}%;"></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                <!-- Projects -->
+                <section class="py-12 text-center  ">
+                    <h2 class="text-3xl text-white font-bold">Projects</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 px-6 mt-6">
+                        {% for project in projects %}
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
+                            <img src="{{ project.image.url }}" class="w-full h-48 object-cover" alt="Project Image"/>
+                            <div class="p-6 text-left">
+                                <h3 class="text-xl font-bold">{{ project.title }}</h3>
+                                <p class="text-gray-600 mt-2">{{ project.description|truncatechars:100 }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                <!-- Testimonials -->
+                <section class="py-12 text-center  bg-opacity-90">
+                    <h2 class="text-3xl text-white font-bold">What People Say</h2>
+                    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6">
+                        {% for testimonial in testimonials %}
+                        <div class="bg-gray-100 p-6 rounded-xl shadow hover:shadow-lg transition">
+                            <img src="{{ testimonial.image.url }}" alt="{{ testimonial.name }}" class="w-20 h-20 rounded-full mx-auto mb-4 shadow-md object-cover">
+                            <p class="text-gray-700 italic">“{{ testimonial.message }}”</p>
+                            <h4 class="mt-4 font-bold text-gray-800">- {{ testimonial.name }}</h4>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+</body>
+</html>

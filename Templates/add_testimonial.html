@@ -1,0 +1,38 @@
+{% extends "header.html" %}
+{% load static %}
+{% block content %}
+{% include "Sidebar.html" %}
+{% load widget_tweaks %}
+
+<div class="ml-64 w-[calc(100%-16rem)] p-8 flex justify-center">
+    <div class="max-w-lg w-full bg-white shadow-lg rounded-lg p-6">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Add Testimonial</h2>
+
+        <form method="POST" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div>
+                    <label for="{{ field.id_for_label }}" class="block text-gray-700 font-medium mb-1">
+                        {{ field.label }}
+                    </label>
+                    {{ field|add_class:"w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" }}
+                    {% if field.help_text %}
+                        <p class="text-xs text-gray-500 mt-1">{{ field.help_text }}</p>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <p class="text-sm text-red-500">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" 
+                class="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-500 transition-all shadow-md">
+                ➕ Submit Testimonial
+            </button>
+        </form>
+    </div>
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}

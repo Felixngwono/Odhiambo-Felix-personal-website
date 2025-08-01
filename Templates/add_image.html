@@ -1,0 +1,136 @@
+{% extends "header.html" %}
+{% block content %}
+<script src="https://cdn.tailwindcss.com"></script>
+{% load static %}
+{% include "Sidebar.html" %}
+
+<div >
+  {% for message in messages %}
+      <p id="messages" class="font-semibold text-lg">{{ message }}</p>
+  {% endfor %}
+</div>
+{% if success %}
+  <div class="mt-8 p-4 bg-green-200 text-green-800 text-center rounded-lg shadow-lg">
+    <p class="font-semibold">Image added successfully!</p>
+  </div>
+{% endif %}
+<div class="ml-64 w-[calc(100%-16rem)]">
+
+  <div class="ml-64 p-8 w-full pb-20 bg-green-100" >
+    <div class="container mx-auto px-6 lg:px-8 max-w-3xl">
+      <div class="text-center mb-8">
+        <h2 class="text-4xl font-bold text-gray-800">Add New Image</h2>
+        <p class="mt-2 text-lg text-gray-600">Fill out the form below to add a new image to the gallery.</p>
+      </div>
+
+      <form method="POST" enctype="multipart/form-data" class="bg-green-100 shadow-lg rounded-lg p-8 space-y-6">
+        {% csrf_token %}
+        
+        <div class="space-y-4">
+          <!-- Image Title Field -->
+          <div>
+            <label for="id_title" class="block text-sm font-medium text-gray-700">Image Title</label>
+            <input type="text" name="title" id="id_title" class="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-600" placeholder="Enter image title">
+            {% if form.title.errors %}
+              <p class="mt-2 text-red-500 text-sm">{{ form.title.errors }}</p>
+            {% endif %}
+          </div>
+
+          <!-- Upload Image Field -->
+          <div>
+            <label for="id_image" class="block text-sm font-medium text-gray-700">Upload Image</label>
+            <input type="file" name="image" id="id_image" class="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-600" accept="image/*">
+            {% if form.image.errors %}
+              <p class="mt-2 text-red-500 text-sm">{{ form.image.errors }}</p>
+            {% endif %}
+          </div>
+
+          <!-- Image Caption Field -->
+          <div>
+            <label for="id_caption" class="block text-sm font-medium text-gray-700">Image Caption</label>
+            <textarea name="caption" id="id_caption" class="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-600" rows="4" placeholder="Enter image caption"></textarea>
+            {% if form.caption.errors %}
+              <p class="mt-2 text-red-500 text-sm">{{ form.caption.errors }}</p>
+            {% endif %}
+          </div>
+
+          <!-- Submit Button -->
+          <div class="text-center">
+            <button type="submit" class="w-full bg-green-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-green-700 transition duration-300">
+              Add Image
+            </button>
+            <br>
+            <br>
+          </div>
+          <a href="{% url 'gallery' %}" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-500 transition-all shadow-md">
+            No, Go Back
+        </a>
+          </div>
+        </div>
+      </form>
+
+      <!-- Success Message Section (hidden by default) -->
+      {% if success %}
+        <div class="mt-8 p-4 bg-green-200 text-green-800 text-center rounded-lg shadow-lg">
+          <p class="font-semibold">Image added successfully!</p>
+        </div>
+      {% endif %}
+      
+      <!-- Loading State (hidden by default) -->
+      <div id="loading" class="mt-8 hidden text-center">
+        <p class="text-gray-700 font-semibold">Uploading...</p>
+        <div class="loader"></div>
+      </div>
+      
+    </div>
+  </div>
+<script>
+  // Show the loading spinner when the form is submitted
+  document.querySelector('form').addEventListener('submit', function () {
+    document.getElementById('loading').classList.remove('hidden');
+  });
+</script>
+
+<!-- CSS for Loading Spinner -->
+<style>
+  .loader {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #4CAF50;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+
+<script>
+  // Show the loading spinner when the form is submitted
+  document.querySelector('form').addEventListener('submit', function () {
+    document.getElementById('loading').classList.remove('hidden');
+  });
+</script>
+
+<!-- CSS for Loading Spinner -->
+<style>
+  .loader {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #4CAF50;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+</div>
+{% include "footer.html" %}
+{% endblock content %}

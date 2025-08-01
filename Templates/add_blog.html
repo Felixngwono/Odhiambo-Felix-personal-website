@@ -1,0 +1,60 @@
+{% extends 'header.html' %}
+
+{% block content %}
+{% include "Sidebar.html" %}
+{% load widget_tweaks %}
+{% load static %}
+<div class="ml-64 w-[calc(100%-16rem)]">
+    {% for message in messages %}
+        <p id="messages" class="font-semibold text-lg text-green-500">{{ message }}</p>
+    {% endfor %}
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold mb-6">Add New Blog Post</h1>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <!-- Name -->
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700">Title</label>
+                    {% render_field form.title class="w-60 mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full name" %}
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- Name -->
+                    <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700">Content</label>
+                        {% render_field form.content class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full name" %}
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700">author</label>
+                        {% render_field form.author class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full name" %}
+                    </div>
+                    
+                    <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700">status</label>
+                        {% render_field form.status class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full name" %}
+                    </div>
+                   
+                   
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Upload Image</label>
+                        {% render_field form.image class="w-full h-50 mt-1 p-3 border rounded-lg cursor-pointer focus:ring-blue-500 focus:border-blue-500" type="file" %}
+                    </div><br> <!-- Render the form fields as paragraphs -->
+            <button type="submit" class="py-2 px-4 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700">Add Blog</button>
+            <div id="loading" class="mt-8 hidden text-center">
+                <p class="text-gray-700 font-semibold">Uploading...</p>
+                <div class="loader"></div>
+              </div>
+              <a href="{% url 'blog' %}" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-500 transition-all shadow-md">
+                No, Go Back
+            </a>
+        </form>
+    </div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+{% include "footer.html" %}
+{% endblock %}

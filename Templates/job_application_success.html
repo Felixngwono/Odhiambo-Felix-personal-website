@@ -1,0 +1,28 @@
+{% extends "header.html" %}
+{% block content %}
+{% include "Sidebar.html" %}
+{% load widget_tweaks %}
+{% load static %}
+
+<div class="ml-64 w-[calc(100%-16rem)] min-h-screen bg-gray-50 p-8">
+
+    <!-- Success Message Section -->
+    <div class="bg-white shadow-lg rounded-lg p-8 mb-8 max-w-lg mx-auto text-center">
+        <div class="mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-green-600 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
+        <h1 class="text-3xl font-semibold text-green-600 mb-4">Application Submitted Successfully!</h1>
+        <p class="text-lg text-gray-600 mb-6">Your application for the job has been submitted. We'll get back to you soon.</p>
+
+        <!-- Back to Job Listings Link -->
+        <a href="{% url 'job_list' %}" class="text-blue-600 hover:text-blue-800 text-lg font-semibold underline">
+            Back to Job Listings
+        </a>
+    </div>
+
+</div>
+
+{% include "footer.html" %}
+{% endblock content %}

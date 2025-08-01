@@ -1,0 +1,41 @@
+{% extends 'header.html' %}
+
+{% block content %}
+{% include "Sidebar.html" %}
+{% load widget_tweaks %}
+{% load static %}
+<div class="ml-64 w-[calc(100%-16rem)] min-h-screen bg-gray-100 p-8">
+  <h2 class="text-3xl font-semibold mb-6">Job Application Form</h2>
+
+  <form method="post" enctype="multipart/form-data" class="bg-white shadow-md rounded-lg p-8 space-y-6">
+    {% csrf_token %}
+
+   <div class="sm:col-span-2">
+                <label class="block text-sm font-medium text-gray-700">Job</label>
+                {% render_field form.job class="w-screen mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+            </div>
+
+    <div class="sm:col-span-2">
+                <label class="block text-sm font-medium text-gray-700"> applicants_name</label>
+                {% render_field form.applicants_name class="w-screen mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full applicants_name" %}
+            </div>
+            <div class="sm:col-span-2">
+                <label class="block text-sm font-medium text-gray-700">Resume</label>
+                {% render_field form.resume class="w-screen mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500"  %}
+                <div class="text-sm text-gray-500 mt-1">Upload your resume. Accepted formats: PDF, DOCX.</div>
+            </div>
+
+    <div class="sm:col-span-2">
+                <label class="block text-sm font-medium text-gray-700">Cover_letter</label>
+                {% render_field form.cover_letter class="w-screen mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500"  %}
+                <div class="text-sm text-gray-500 mt-1">Upload your resume. Accepted formats: PDF, DOCX.</div>
+            </div>
+
+    
+
+    <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Submit Application</button>
+  </form>
+</div>
+
+{% include "footer.html" %}
+{% endblock content %}

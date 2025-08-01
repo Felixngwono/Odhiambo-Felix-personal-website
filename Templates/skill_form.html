@@ -1,0 +1,37 @@
+{% extends "header.html" %}
+{% block content %}
+
+{% include "sidebar.html" %}
+
+<div class="ml-64 w-[calc(100%-16rem)] p-8 bg-gray-100 min-h-screen">
+    
+    <div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">
+            {% if skill %} ✏️ Edit Skill {% else %} ➕ Add New Skill {% endif %}
+        </h2>
+        
+        <!-- Skill Form -->
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            <div class="space-y-2">
+                {{ form.as_p }}
+            </div>
+
+            <!-- Save Button -->
+            <button type="submit" class="w-full bg-green-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-green-500 transition-all">
+                💾 Save Skill
+            </button>
+        </form>
+
+        <!-- Back to List -->
+        <div class="mt-4 text-center">
+            <a href="{% url 'skills' %}" class="text-gray-600 hover:text-gray-900 font-medium">
+                ← Back to Skill List
+            </a>
+        </div>
+    </div>
+
+</div>
+
+{% include "footer.html" %}
+{% endblock %}

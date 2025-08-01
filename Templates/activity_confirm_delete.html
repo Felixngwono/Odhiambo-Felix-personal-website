@@ -1,0 +1,35 @@
+{% extends "header.html" %}
+
+{% block content %}
+    {% include "Sidebar.html" %}
+
+    <div class="ml-64 w-[calc(100%-16rem)]">
+        <h1 class="text-3xl font-bold mb-4 text-center text-gray-800">Delete Activity</h1>
+        <div class="max-w-6xl mx-auto p-8">
+            <h2 class="text-4xl font-bold text-center mb-6 text-gray-900">Are you sure you want to delete this activity?</h2>
+            <p class="text-lg text-center mb-6 text-gray-500">This action cannot be undone.</p>
+
+            <div class="bg-white p-6 rounded-lg shadow-lg max-w-3xl mx-auto mb-8">
+                <h3 class="text-2xl font-semibold text-gray-800">{{ activity.title }}</h3>
+                <p class="text-gray-600">{{ activity.description }}</p>
+                <p class="text-gray-400 text-sm">{{ activity.created_at|date:"F j, Y, g:i a" }}</p>
+            </div>
+
+            <!-- Confirmation Form -->
+            <div class="flex justify-center space-x-4">
+                <form action="{% url 'delete_activity' activity.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-red-500 transition-all shadow-md">
+                        Yes, Delete Activity
+                    </button>
+                </form>
+
+                <a href="{% url 'activity_list' %}" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-500 transition-all shadow-md">
+                    No, Go Back
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% include "footer.html" %}
+{% endblock %}

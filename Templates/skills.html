@@ -1,0 +1,43 @@
+{% extends "header.html" %}
+{% block content %}
+
+{% include "sidebar.html" %}
+
+<div class="ml-64 w-[calc(100%-16rem)] p-8 bg-gray-100 min-h-screen">
+    
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">🚀 My Skills</h2>
+        
+        <!-- Add Skill Button -->
+        <div class="mb-6 text-right">
+            <a href="{% url 'skill_create' %}" class="bg-green-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-green-500 transition-all">
+                ➕ Add New Skill
+            </a>
+        </div>
+
+        <!-- Skill List -->
+        <ul class="space-y-4">
+            {% for skill in skills %}
+                <li class="flex justify-between items-center p-4 border border-gray-300 rounded-lg shadow-sm hover:shadow-md transition-all">
+                    <div class="text-lg font-medium text-gray-800">
+                        <span class="font-semibold">{{ skill.name }}</span> - 
+                        <span class="text-gray-600">{{ skill.proficiency }}%</span>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="space-x-4">
+                        <a href="{% url 'skill_detail' skill.pk %}" class="text-blue-600 hover:text-blue-500 font-medium">🔍 View</a>
+                        <a href="{% url 'skill_edit' skill.pk %}" class="text-yellow-600 hover:text-yellow-500 font-medium">✏️ Edit</a>
+                        <a href="{% url 'skill_delete' skill.pk %}" class="text-red-600 hover:text-red-500 font-medium">🗑️ Delete</a>
+                    </div>
+                </li>
+            {% empty %}
+                <li class="text-gray-600 text-center p-4 bg-gray-50 rounded-lg">No skills added yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}

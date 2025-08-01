@@ -1,0 +1,100 @@
+{% extends "header.html" %}
+{% load static %}
+{% block content %}
+{% include "Sidebar.html" %}
+{% load widget_tweaks %}
+<div class="ml-64 w-[calc(100%-16rem)]">
+  <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update Blog - {{ blog.title }}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+  {% for message in messages %}
+      <p id="messages" class="font-semibold text-lg">{{ message }}</p>
+  {% endfor %}
+<body class="bg-gray-50 text-gray-800">
+
+  <section id="update-blog" class="py-16">
+    <div class="container mx-auto px-6 text-center">
+      <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-8">Update Blog Post: {{ blog.title }}</h2>
+
+      <div class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-8">
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <!-- Name -->
+            <div class="sm:col-span-2">
+                <label class="block text-sm font-medium text-gray-700">Title</label>
+                {% render_field form.title class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-sm font-medium text-gray-700">author</label>
+              {% render_field form.author class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+          </div>
+            <div class="sm:col-span-2">
+                <label class="block text-sm font-medium text-gray-700">content</label>
+                {% render_field form.content class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+            </div>
+           
+           
+            <div class="sm:col-span-2">
+                <label class="block text-sm font-medium text-gray-700">image</label>
+                {% render_field form.image class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+            </div>
+           
+          <!-- Display the existing image if available -->
+          {% if blog.video %}
+          <!-- If the video exists, display the video player -->
+          <video controls class="w-full h-auto mt-4">
+              <source src="{{ blog.video.url }}" type="video/mp4">
+              Your browser does not support the video tag.
+          </video>
+      {% else %}
+          <!-- If no video exists, display a fallback message -->
+          <p class="text-gray-500 mt-4">No video available</p>
+      {% endif %}
+
+          <div class="sm:col-span-2">
+            <label class="block text-sm font-medium text-gray-700">video</label>
+            {% render_field form.video class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+        </div>
+       
+      <!-- Display the existing video if available -->
+     
+
+
+          <div class="mt-6 text-center">
+            <button type="submit" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-500 transition-all shadow-md">
+              Update Blog Post
+            </button>
+          </div>
+          <a href="{% url 'blog' %}" class="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-500 transition-all shadow-md">
+            No, Go Back
+        </a>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <div class="text-red-500">
+    <ul>
+        {% for field in form %}
+            {% for error in field.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+</div>
+
+</body>
+
+</html>
+</div>
+</div>
+
+{% include "footer.html" %}
+{% endblock content %}

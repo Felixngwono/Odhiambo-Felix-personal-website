@@ -1,0 +1,134 @@
+{% load static %}
+<link href="{% static 'images/logo.png' %}" rel="icon" />
+<title>FelloMarley Foundation</title>
+<!-- Font Awesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<div class="ml-64 w-[calc(100%-16rem)]">
+
+<!-- Header -->
+<nav class=" fixed bg-gray-700  text-white z-40 relative size-cover w-full   "> <!-- Added ml-64 to move it right after the sidebar -->
+  <div class="mx-auto max-w-7xl text-white   lg:px-8">
+    <div class="relative flex h-16 items-center justify-between">
+      <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
+        <!-- Mobile menu button -->
+        <button id="sidebarToggle" class="p-2 text-white bg-gray-800 sm:hidden fixed top-4 left-4 z-50">
+          ☰ Menu
+        </button>
+      </div>
+      
+      <div class="flex flex-1 w-30 items-center justify-center sm:items-stretch sm:justify-start">
+        <div class="flex flex-shrink-0 items-center">
+          <a href="#" class="flex items-center">
+            <img src="{% static 'images/logo.png' %}" class="mr-3 h-6 sm:h-9" alt="Flowbite Logo" />
+            <span class="self-center text-xl font-semibold whitespace-nowrap text-green-500">FelloMarley Foundation</span>
+          </a>
+        </div>
+
+        <div class="hidden sm:block sm:ml-6">
+          <div class="flex space-x-8">
+            <!-- Changed text-sm for smaller font size -->
+            <a href="{% url 'index' %}" class="text-sm text-green-500 hover:text-green-500">
+              <i class="fa-solid fa-house mr-2"></i> Home
+            </a>
+            <a href="{% url 'about' %}" class="text-sm text-green-500 hover:text-green-500">
+              <i class="fas fa-info-circle mr-2"></i> About Me
+            </a>
+            <a href="{% url 'contactus' %}" class="text-sm text-green-500 hover:text-green-500">
+              <i class="fa-solid fa-envelope mr-2"></i> Contact Me
+            </a>
+            <a href="{% url 'blog' %}" class="text-sm text-green-500 hover:text-green-500">
+              <i class="fa-solid fa-newspaper mr-2"></i> Blog
+            </a>
+            <a href="{% url 'portfolio' %}" class="text-sm text-green-500 hover:text-green-500">
+              <i class="fa-solid fa-briefcase mr-2"></i> Portfolio
+            </a>
+            <a href="{% url 'events' %}" class="text-sm text-green-500 hover:text-green-500">
+              <i class="fa-solid fa-calendar-day"></i> Events
+            </a>
+            <a href="{% url 'testimonials_list' %}" class="text-sm text-green-500 hover:text-green-500">
+              <i class="fa-solid fa-comments mr-2"></i> Testimonials
+            </a>
+            {% if request.user.is_superuser %}
+            <a href="{% url 'admins' %}" class="text-sm text-green-500 hover:text-green-500">
+              <i class="fa-solid fa-user-shield"></i> Admins
+            </a>
+            
+            {% endif %}
+            <div class="relative">
+              <button id="profileDropdown" class="flex items-center space-x-2 text-white hover:text-green-500 focus:outline-none">
+                <i class="fa-solid fa-user-circle text-xl"></i>
+                <span>{{ request.user.email }}</span>
+              </button>
+              <div id="profileMenu" class="absolute hidden right-0 bg-white text-gray-700 shadow-lg w-48 mt-2 rounded-md">
+                <a href="{% url "update_user" user.pk %}" class="block px-4 py-2 text-sm">Update Profile</a>
+                <a href="{% url "delete_profile" user.pk %}" class="block px-4 py-2 text-sm">Delete Profile</a>
+                <a href="{% url 'logoutuser' %}" class="block px-4 py-2 text-sm"><i class="fa-solid fa-right-from-bracket mr-2"></i>Sign Out</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+        <button type="button" class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+          <span class="absolute -inset-1.5"></span>
+          <span class="sr-only">View notifications</span>
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+          </svg>
+        </button>
+        <div x-show="open" @click.away="open = true" class="hidden right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-blue py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
+          <!-- Active: "bg-gray-100", Not Active: "" -->
+          {{users.image.url}}
+          <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Update profile</a>
+          <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Delete profile</a>
+          <a href="{% url 'logoutuser' %}" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2"><i class="fa-solid fa-right-from-bracket mr-2"></i>Sign out</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile menu, show/hide based on menu state. -->
+  <div class="sm:hidden" id="mobile-menu">
+    <div class="space-y-1 px-2 pb-3 pt-2">
+      <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
+        <li><a href="#" class="block py-2 pr-4 pl-3 text-green-500 hover:bg-gray-700">Home</a></li>
+        <li><a href="{% url 'about' %}" class="block py-2 pr-4 pl-3 text-gray-700 hover:text-green-500">About Us</a></li>
+        <li><a href="{% url 'contactus' %}" class="block py-2 pr-4 pl-3 text-gray-700 hover:text-green-500">Contact Us</a></li>
+        <li><a href="{% url 'portfolio' %}" class="block py-2 pr-4 pl-3 text-gray-700 hover:text-green-500">Portfolio</a></li>
+        {% if request.user.is_superuser %}
+        <li><a href="{% url 'admins' %}" class="block py-2 pr-4 pl-3 text-yellow-500 hover:text-yellow-700">Admins</a></li>
+        {% endif %}
+        
+      </ul>
+    </div>
+  </div>
+  
+  
+  <form class="max-w-md mx-auto mt-4" method="GET" action="{% url 'search' %}">
+    {% csrf_token %}
+    <div class="relative">
+      <input type="search" name="searched" class="w-full p-3 pl-10 rounded-lg border border-black-300 focus:ring-green-500 focus:border-green-500 bg-white text-black" placeholder="Search...">
+      <i class="fa-solid fa-search absolute left-3 top-3 text-black-600"></i>
+      <button type="submit" class="absolute right-2 top-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">Search</button>
+    </div>
+    <br>
+  </form>
+
+
+</nav>
+
+<script src="{% static 'js/header.js' %}"></script>
+<script>
+  document.getElementById("sidebarToggle").addEventListener("click", function() {
+      document.getElementById("mobile-menu").classList.toggle("hidden");
+  });
+
+  document.getElementById("profileDropdown").addEventListener("click", function() {
+      document.getElementById("profileMenu").classList.toggle("hidden");
+  });
+</script>
+</div>
+{% block content %}
+{% endblock %}

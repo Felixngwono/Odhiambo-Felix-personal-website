@@ -1,0 +1,12 @@
+<form action='' method='POST'>
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit" class="py-2 px-4 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700">Add Blog</button>
+            <div id="loading" class="mt-8 hidden text-center">
+                <p class="text-gray-700 font-semibold">Uploading...</p>
+                <div class="loader"></div>
+              </div>
+              <a href="{% url 'faq_list' %}" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-500 transition-all shadow-md">
+                No, Go Back
+            </a>
+</form>

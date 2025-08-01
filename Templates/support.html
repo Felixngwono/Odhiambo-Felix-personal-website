@@ -1,0 +1,75 @@
+{% extends "header.html" %}
+{% block content %}
+{% load static %}
+{% include "Sidebar.html" %}
+{% load widget_tweaks %}
+
+<div class="ml-64 w-[calc(100%-16rem)] min-h-screen bg-gray-100 p-8">
+    <div class="w-full h-full max-w-full p-6 bg-white rounded-lg shadow-lg">
+        <h1 class="text-4xl font-bold text-center text-gray-800 mb-6">Support</h1>
+        <p class="text-lg text-center text-gray-600 mb-6">
+            How can we assist you today? Please select a support option below:
+        </p>
+
+        <!-- Support Options -->
+        <div class="bg-blue-50 p-6 rounded-lg shadow-md mb-8">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Available Support Options</h2>
+            <ul class="space-y-2">
+                <li class="text-lg flex items-center gap-2">
+                    📞 <span>Call Support</span>
+                </li>
+                <li class="text-lg flex items-center gap-2">
+                    📧 <span>Email Support</span>
+                </li>
+                <li class="text-lg flex items-center gap-2">
+                    💬 <span>Live Chat</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- My Support Tickets -->
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">My Support Tickets</h2>
+
+      
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for support in supports %}
+            <div class="bg-white shadow-md rounded-lg p-6 transition-transform duration-300 hover:scale-105">
+                <a href="{% url 'support_detail' support.id %}" class="block">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">📌 {{ support.title }}</h3>
+                    <p class="text-gray-700"><strong>Description:</strong> {{ support.description }}</p>
+                </a>
+
+                <!-- Update & Delete Buttons (Visible to Superuser) -->
+                {% if request.user.is_superuser %}
+                <div class="mt-4 flex justify-between">
+                    <a href="{% url 'support_update' support.id %}" 
+                       class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-500 transition shadow-md">
+                        ✏️ Update 
+                    </a>
+                    <a href="{% url 'support_delete' support.id %}" 
+                       class="bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-500 transition shadow-md">
+                        🗑️ Delete 
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            {% empty %}
+            <p class="text-gray-600 text-center col-span-3">No support tickets available.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Add Support Button (Visible to Superuser) -->
+        {% if request.user.is_superuser %}
+        <div class="mt-10 text-center">
+            <a href="{% url 'support_create' %}" 
+               class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition shadow-md">
+                ➕ Add Support
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% include "footer.html" %}
+{% endblock %}

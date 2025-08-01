@@ -1,0 +1,40 @@
+{% extends "header.html" %}
+{% load static %}
+{% block content %}
+{% include "Sidebar.html" %}
+
+<div class="container mx-auto p-6">
+    <h2 class="text-3xl font-bold text-center text-blue-600 mb-6">Make a Donation</h2>
+    
+    <!-- Display Messages -->
+    {% for message in messages %}
+        <p class="text-green-500 text-center font-bold">{{ message }}</p>
+    {% endfor %}
+
+    <form method="POST" class="max-w-lg mx-auto bg-white shadow-lg rounded-lg p-6">
+        {% csrf_token %}
+
+        <label class="block font-semibold">Full Name</label>
+        <input type="text" name="name" class="w-full p-2 border rounded-lg" required>
+
+        <label class="block mt-4 font-semibold">Email</label>
+        <input type="email" name="email" class="w-full p-2 border rounded-lg" required>
+
+        <label class="block mt-4 font-semibold">Amount (USD)</label>
+        <input type="number" name="amount" class="w-full p-2 border rounded-lg" required>
+
+        <label class="block mt-4 font-semibold">Payment Method</label>
+        <select name="payment_method" class="w-full p-2 border rounded-lg">
+            <option value="mpesa">M-Pesa</option>
+            <option value="paypal">PayPal</option>
+            <option value="credit_card">Credit Card</option>
+            <option value="bank_transfer">Bank Transfer</option>
+        </select>
+
+        <button type="submit" class="mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg w-full">
+            <i class="fas fa-donate"></i> Donate Now
+        </button>
+    </form>
+</div>
+{% include "footer.html" %}
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends "header.html" %}
+{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Notifications</title>
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+</head>
+ 
+
+
+<body class="bg-gray-100">
+    {% include "sidebar.html" %}
+    <div class="ml-64 w-[calc(100%-16rem)]">
+      <div class="max-w-6xl mx-auto p-8">
+            {% for message in messages %}
+                <p id="messages" class="font-semibold bg-green-800 text-white">{{ message }}</p>
+            {% endfor %}
+        
+        <h1 class="text-4xl font-bold text-center mb-6">Notifications Management</h1>
+        <p class="text-lg text-center mb-6">Stay updated with your notifications. Below are the latest alerts:</p>
+
+        <!-- Notification List -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-semibold mb-4">Recent Notifications</h2>
+            <ul>
+                <li class="text-lg">🔔 You have a new task assigned: "Complete the report."</li>
+                <li class="text-lg">🔔 New comment on your task "Review project details."</li>
+                <li class="text-lg">🔔 Upcoming meeting in 1 hour.</li>
+            </ul>
+        </div>
+    </div>
+    <section id="projects" class="bg-gray-100 py-16">
+      <div class="container mx-auto px-6 text-center">
+        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-8">My Notifications.</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+    {% for x in notify %}
+    <div class="bg-white shadow-lg rounded-lg p-6 transition-transform duration-300 hover:scale-105">
+        <h3 class="text-xl sm:text-2xl font-semibold text-gray-900">Title:{{ x.title }}</h3>
+        <br>
+        <p class="text-gray-700 mt-2"><h2>Description:{{ x.description }}</h2></p>
+<br>
+<p class="text-gray-700 mt-2"><h2>created_at:{{ x.created_at }}</h2></p>
+<br>
+<p class="text-gray-700 mt-2"><h2>read:{{ x.read }}</h2></p>
+<br>
+<p class="text-gray-700 mt-2"><h2>user:{{ x.user }}</h2></p>
+
+        <!-- Update Portfolio Button (Visible to Superuser) -->
+        {% if request.user.is_superuser %}
+        <div class="mt-4 text-center">
+          <a href="{% url 'update_notification' x.id %}" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-500 transition-all shadow-md">
+            ✏️ Update 
+          </a>
+          <a href="{% url 'delete_notifications' x.pk  %}" class="inline-block bg-red-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-red-500 transition-all shadow-md">🗑️ Delete </a>
+
+        </div>
+        {% endif %}
+      </div>
+      {% empty %}
+      <p class="text-gray-600">No projects available.</p>
+      {% endfor %}
+
+    </div>
+    <div class="mt-10 text-center">
+        <a href="{% url 'add_notification' %}" class="inline-block bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-500 transition-all shadow-md">
+          ➕ Add Notification
+        </a>
+      </div>  
+<br>
+</body>
+</html>
+</div>
+</div>
+
+{% include "sidebar.html" %}
+{% include "footer.html" %}
+{% endblock %}

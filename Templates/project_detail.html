@@ -1,0 +1,50 @@
+{% extends "header.html" %}
+{% block content %}
+{% include 'sidebar.html' %}
+
+<div class="ml-64 w-[calc(100%-16rem)] p-6 bg-gray-100 min-h-screen">
+    <div class="bg-white shadow-md rounded-lg p-6 max-w-4xl mx-auto">
+        {% if project.image %}
+            <div class="w-full h-72 overflow-hidden rounded-lg shadow-md group">
+              <a href='{{ project.image.url }}'>  <img src="{{ project.image.url }}" 
+                     alt="{{ project.title }}" 
+                     class="w-full h-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"></a>
+            </div>
+        {% else %}
+            <div class="w-full h-72 bg-gray-200 flex items-center justify-center rounded-lg shadow-md">
+                <span class="text-gray-500">No Image Available</span>
+            </div>
+        {% endif %}
+
+        <h2 class="text-3xl font-bold text-gray-800 mt-4">{{ project.title }}</h2>
+        <p class="text-gray-600 mt-2">{{ project.description }}</p>
+
+        <div class="mt-4 space-y-2">
+            {% if project.github_link %}
+                <p class="text-gray-700"><b>GitHub:</b> 
+                    <a href="{{ project.github_link }}" target="_blank" class="text-blue-600 hover:underline">{{ project.github_link }}</a>
+                </p>
+            {% endif %}
+            {% if project.live_demo %}
+                <p class="text-gray-700"><b>Live Demo:</b> 
+                    <a href="{{ project.live_demo }}" target="_blank" class="text-blue-600 hover:underline">{{ project.live_demo }}</a>
+                </p>
+            {% endif %}
+        </div>
+
+        <div class="mt-6 flex space-x-3">
+            <a href="{% url 'projects_list' %}" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-500 transition-all shadow-md">
+                Back to Projects
+            </a>
+            <a href="{% url 'edit_project' project.id %}" class="bg-yellow-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-yellow-400 transition-all shadow-md">
+                Edit
+            </a>
+            <a href="{% url 'delete_project' project.id %}" class="bg-red-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-red-500 transition-all shadow-md">
+                Delete
+            </a>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}

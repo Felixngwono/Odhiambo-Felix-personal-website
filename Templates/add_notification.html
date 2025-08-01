@@ -1,0 +1,66 @@
+{% extends "header.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+{% include "Sidebar.html" %}
+
+<div class="ml-64 w-[calc(100%-16rem)]">
+
+<body style="background-image: url({% static 'images/wst.jpg' %}); background-repeat: no-repeat; background-size:cover; background-attatchment:fixed;">
+        {% for message in messages %}
+            <p id="messages" class="font-semibold text-lg">{{ message }}</p>
+        {% endfor %}
+    
+
+        <div class="max-w-3xl mx-auto bg-indigo-200 p-8 rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">Add a New Notification</h2>
+            
+            <form action="" method="POST" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- Name -->
+                    <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700">Title</label>
+                        {% render_field form.title class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full name" %}
+                    </div>
+
+      
+
+                    
+                
+
+                <!-- Full Description -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700"> Description</label>
+                    {% render_field form.description class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Detailed description" %}
+                </div>
+
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700">Read</label>
+                    {% render_field form.read class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" %}
+                </div>
+
+               
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700">User</label>
+                    {% render_field form.user class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" %}
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" class="w-full sm:w-auto bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-500 transition">
+                        ➕ Submit Notification
+                    </button>
+                </div>
+            </form>
+            <a href="{% url 'notifications' %}" class="bg-gray-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-500 transition-all shadow-md">
+                No, Go Back
+            </a>
+        </div>
+    </div>
+</div>
+
+</div>
+{% include "footer.html" %}
+{% endblock %}

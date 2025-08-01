@@ -1,0 +1,116 @@
+{% extends "header.html" %}
+
+{% block content %}
+{% include "Sidebar.html" %}
+{% load widget_tweaks %}
+<div class="ml-64 w-[calc(100%-16rem)]">
+    <!-- Display success message if there is one -->
+       <div class=" text-green-500 p-4 mb-6  w-1/2 text-center">
+        {% for message in messages %}
+            <p id="messages" class="font-semibold text-lg">{{ message }}</p>
+        {% endfor %}
+    </div>
+<section class="bg-gray-100 py-16">
+    <div class="container mx-auto px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold text-gray-800 text-center">Update {{ event.title }}</h2>
+            <form method="POST" enctype="multipart/form-data" class="mt-6">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- Name -->
+                    <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700">Title</label>
+                        {% render_field form.title class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700">description</label>
+                        {% render_field form.description class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+                    </div>
+                    
+                   
+                    <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700">image</label>
+                        {% render_field form.image class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+                    </div>
+                   
+                  <!-- Display the existing image if available -->
+                  {% if event.image %}
+                    <div class="mt-4">
+                      <h3 class="text-lg font-semibold text-gray-700">Current Image:</h3>
+                      <img src="{{ event.image.url }}" alt="{{ event.title }}" class="w-48 h-48 rounded-full mx-auto mt-4">
+                    </div>
+                  {% endif %}
+                  <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700">start_date</label>
+                    {% render_field form.start_date type='date' class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700">end_date</label>
+                    {% render_field form.end_date type='date' class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700">host</label>
+                    {% render_field form.host class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700">guests</label>
+                    {% render_field form.guests class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700">category</label>
+                    {% render_field form.category class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700">location</label>
+                    {% render_field form.location class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+                </div>
+                {% if event.video %}
+          <video controls class="w-full h-auto mt-4">
+              <source src="{{ event.video.url }}" type="video/mp4">
+              Your browser does not support the video tag.
+          </video>
+      {% else %}
+          <!-- If no video exists, display a fallback message -->
+          <p class="text-gray-500 mt-4">No video available</p>
+      {% endif %}
+    
+              <div class="sm:col-span-2">
+                <label class="block text-sm font-medium text-gray-700">video</label>
+                {% render_field form.video class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+            </div>
+            {% if form.errors %}
+            <div class="text-red-500">
+                <ul>
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+               </div>
+                </div>
+                
+                <div class="mt-6 flex justify-center space-x-4">
+                    <button type="submit" 
+                            class="bg-yellow-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-yellow-500 transition duration-300 shadow-md">
+                        ✅ Save Changes
+                    </button>
+                    <a href="{% url 'events' %}" 
+                       class="text-white bg-gray-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-500 transition duration-300 shadow-md">
+                       ❌ Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+<div id="loading" class="mt-8 hidden text-center">
+    <p class="text-gray-700 font-semibold">Uploading...</p>
+    <div class="loader"></div>
+  </div>
+</div>
+
+  {% include 'footer.html' %}
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "header.html" %}
+{% block content %}
+{% include 'Sidebar.html' %}
+
+<div class="ml-64 w-[calc(100%-16rem)] min-h-screen bg-gray-100 p-8">
+
+    <div class="container mx-auto max-w-4xl bg-white shadow-lg rounded-lg p-6">
+        <!-- Contact Image -->
+        {% if contdetail.image %}
+        <div class="w-full h-72 bg-gray-200 rounded-lg overflow-hidden shadow-md">
+            <img src="{{ contdetail.image.url }}" alt="{{ contdetail.title }}" class="w-full h-full object-cover">
+        </div>
+        {% endif %}
+
+        <!-- Contact Details -->
+        <div class="mt-6 text-center">
+            <h2 class="text-3xl font-bold text-gray-800">{{ contdetail.name }}</h2>
+            <p class="text-lg text-gray-600 mt-2">{{ contdetail.email }}</p>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-800">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-phone text-blue-500 text-xl"></i>
+                <p class="text-lg font-medium">{{ contdetail.phone }}</p>
+            </div>
+            <div class="flex items-start gap-3">
+                <i class="fa-solid fa-envelope text-blue-500 text-xl"></i>
+                <p class="text-lg font-medium">{{ contdetail.message }}</p>
+            </div>
+        </div>
+
+        <!-- Admin Response Form -->
+        <div class="mt-8">
+            <form method="POST" action="{% url 'send_response' contdetail.id %}">
+                {% csrf_token %}
+                <label class="block text-gray-700 font-bold mb-2">Response Message:</label>
+                <textarea name="response_message" rows="4" required 
+                          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+                
+                <button type="submit" 
+                        class="mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg transition shadow-md">
+                    Send Response
+                </button>
+            </form>
+        </div>
+
+        <!-- Back Button -->
+        <div class="mt-8 flex justify-center">
+            <a href="{% url 'admins' %}" 
+               class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition shadow-md flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}

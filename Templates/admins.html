@@ -1,0 +1,107 @@
+{% extends "header.html" %}
+{% block content %}
+
+<div class="text-center my-4">
+    {% for message in messages %}
+        <p id="messages" class="font-semibold text-lg text-green-600">{{ message }}</p>
+    {% endfor %}
+</div>
+
+{% include "Sidebar.html" %}
+
+<div class="ml-64 w-[calc(100%-16rem)] p-6 space-y-12">
+
+    <!-- Contact Information Section -->
+    <div>
+        <h2 class="text-center text-3xl font-extrabold text-gray-800 dark:text-white mb-6">📞 Contact Information</h2>
+        <div class="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-300">
+                    <tr>
+                        <th class="px-6 py-4">Name</th>
+                        <th class="px-6 py-4">Email</th>
+                        <th class="px-6 py-4 text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contact in contactinfo %}
+                        <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ contact.name }}</td>
+                            <td class="px-6 py-4">{{ contact.email }}</td>
+                            <td class="px-6 py-4 flex justify-center">
+                                <a href="{% url 'contact_details' contact.id %}"
+                                   class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-lg transition">
+                                   View Details
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Events Information Section -->
+    <div>
+        <h2 class="text-center text-3xl font-extrabold text-gray-800 dark:text-white mb-6">🎉 Events Information</h2>
+        <div class="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-300">
+                    <tr>
+                        <th class="px-6 py-4">Title</th>
+                        <th class="px-6 py-4">Date</th>
+                        <th class="px-6 py-4 text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for z in eventinfo %}
+                        <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ z.title }}</td>
+                            <td class="px-6 py-4">{{ z.date }}</td>
+                            <td class="px-6 py-4 flex justify-center">
+                                <a href="{% url 'event_detail' z.id %}"
+                                   class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-lg transition">
+                                   View Details
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Job Applicants Section -->
+    <div>
+        <h2 class="text-center text-3xl font-extrabold text-gray-800 dark:text-white mb-6">👷 Job Applicants</h2>
+        <div class="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-300">
+                    <tr>
+                        <th class="px-6 py-4">Job Title</th>
+                        <th class="px-6 py-4">Applicant Name</th>
+                        <th class="px-6 py-4 text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for job in jobapplicants %}
+                        <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ job.job }}</td>
+                            <td class="px-6 py-4">{{ job.applicant_name }}</td>
+                            <td class="px-6 py-4 flex justify-center">
+                                <a href="{% url 'jobdetails' pk=job.pk %}"
+                                   class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg transition">
+                                   View Details
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+{% include "footer.html" %}
+{% endblock content %}

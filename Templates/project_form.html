@@ -1,0 +1,67 @@
+{% extends "header.html" %}
+{% load widget_tweaks %}
+{% block content %}
+{% include "Sidebar.html" %}
+
+<div class="ml-64 w-[calc(100%-16rem)] p-8">
+    <div class="w-full bg-white shadow-lg rounded-lg p-8 space-y-6">
+        <h2 class="text-3xl font-bold text-gray-900 text-center mb-6">
+            {% if form.instance.pk %}Edit{% else %}Add{% endif %} Project
+        </h2>
+
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <!-- Title -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Title</label>
+                {% render_field form.title class="w-full mt-2 p-4 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+            </div>
+
+            <!-- Description -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Description</label>
+                {% render_field form.description class="w-full mt-2 p-4 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter description" %}
+            </div>
+
+            <!-- Image -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Image</label>
+                {% render_field form.image class="w-full mt-2 p-4 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" %}
+            </div>
+
+            <!-- GitHub Link -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">GitHub Link</label>
+                {% render_field form.github_link class="w-full mt-2 p-4 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter GitHub link" %}
+            </div>
+
+            <!-- Live Demo Link -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Live Demo</label>
+                {% render_field form.live_demo class="w-full mt-2 p-4 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Live demo link" %}
+            </div>
+
+            <!-- Technologies Used -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Technology Used</label>
+                {% render_field form.technologies_used class="w-full mt-2 p-4 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Technologies used" %}
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-between mt-8">
+                <a href="{% url 'projects_list' %}" 
+                   class="bg-gray-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-600 transition-all shadow-md">
+                    ❌ Cancel
+                </a>
+                <button type="submit" 
+                        class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-all shadow-md">
+                    💾 Save Project
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% include "footer.html" %}
+{% endblock %}

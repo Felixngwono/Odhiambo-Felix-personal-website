@@ -1,0 +1,71 @@
+{% extends "header.html" %}
+
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+    {% for message in messages %}
+    <div class="alert alert-info">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% include "Sidebar.html" %}
+
+    <div class="ml-64 w-[calc(100%-16rem)]">
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        
+            
+       
+            
+        <div class="space-y-4">
+            <!-- Level -->
+            <div class="form-group">
+                <label for="level" class="block text-lg font-medium text-gray-700">Education Level</label>
+                {% render_field form.level class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" %}
+            </div>
+
+            <!-- School -->
+            <div class="form-group">
+                <label for="school" class="block text-lg font-medium text-gray-700">School/University</label>
+                {% render_field form.school class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Name of the school or university"%}
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+                <label for="description" class="block text-lg font-medium text-gray-700">Description</label>
+                {% render_field form.description class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter a brief description of your education" rows="4"%}
+            </div>
+
+            <!-- Year -->
+            <div class="form-group">
+                <label for="year" class="block text-lg font-medium text-gray-700">Year</label>
+                {% render_field form.Year  class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g., 2020"%}
+            </div>
+
+            <!-- Grade -->
+            <div class="form-group">
+                <label for="grade" class="block text-lg font-medium text-gray-700">Grade</label>
+                {% render_field form.Grade  class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g., A, B+"%}
+            </div>
+
+            <!-- PDF Proof -->
+            <div class="form-group">
+                <label for="pdf_proof" class="block text-lg font-medium text-gray-700">Upload Education Proof (PDF)</label>
+                {% render_field form.pdf_proof  class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="file"%}
+            </div>
+        </div>
+        
+        <!-- Submit Button -->
+        <div class="text-center">
+            <button type="submit" class="w-full sm:w-auto bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-500 transition">
+                ➕ Submit Education Level
+            </button>
+        </div>
+    </form>
+</div>
+</div>
+    {% include "footer.html" %}
+
+
+{% endblock content %}

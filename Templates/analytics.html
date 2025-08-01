@@ -1,0 +1,237 @@
+{% include "header.html" %}
+{% load static %}
+{% block content %}
+{% include "sidebar.html" %}
+
+    <title>Analytics</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+
+<body class="bg-gray-100">
+    <div class="ml-64 w-[calc(100%-16rem)]">
+        <div>
+            <h1 class="text-4xl font-bold text-center mb-6">Analytics Overview</h1>
+            <p class="text-lg text-center mb-6">Analyze your performance, user engagement, and other key metrics here.</p>
+
+            <!-- Analytics Grid (compact graphs) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <!-- User Metrics -->
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold mb-4">User Metrics</h2>
+                    <p class="text-lg mb-4">Total Users: {{ total_users }}</p>
+                    <h3 class="text-lg font-semibold mb-4">Gender Distribution</h3>
+                    <canvas id="genderChart" class="w-full h-48"></canvas>
+                </div>
+
+                <!-- Events Analytics by Category -->
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold mb-4">Event Category Analytics</h2>
+                    <h3 class="text-lg font-semibold mb-4">Events by Category</h3>
+                    <canvas id="eventsByCategoryChart" class="w-full h-48"></canvas>
+                </div>
+
+                <!-- Events Analytics by Location -->
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold mb-4">Event Location Analytics</h2>
+                    <h3 class="text-lg font-semibold mb-4">Events by Location</h3>
+                    <canvas id="eventsByLocationChart" class="w-full h-48"></canvas>
+                </div>
+
+                <!-- Comparative Chart: Gender vs Event Category -->
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold mb-4">Comparative Analytics</h2>
+                    <h3 class="text-lg font-semibold mb-4">Gender vs Event Categories</h3>
+                    <canvas id="comparativeChart" class="w-full h-48"></canvas>
+                </div>
+
+                <!-- Blog Post Analytics -->
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold mb-4">Blog Post Analytics</h2>
+                    <h3 class="text-lg font-semibold mb-4">Posts Over Time</h3>
+                    <canvas id="blogPostsOverTimeChart" class="w-full h-48"></canvas>
+                </div>
+
+                <!-- Portfolio Item Analytics -->
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold mb-4">Portfolio Item Analytics</h2>
+                    <h3 class="text-lg font-semibold mb-4">Portfolio Items Over Time</h3>
+                    <canvas id="portfolioItemsOverTimeChart" class="w-full h-48"></canvas>
+                </div>
+
+                <!-- Education Level Analytics -->
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold mb-4">Education Level Analytics</h2>
+                    <h3 class="text-lg font-semibold mb-4">Education Levels</h3>
+                    <canvas id="educationLevelChart" class="w-full h-48"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js Script -->
+    <script>
+        // Gender Distribution Chart (Pie Chart)
+        var genderChartData = {
+            labels: [{% for gender in gender_distribution %}"{{ gender.gender }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Gender Distribution',
+                data: [{% for gender in gender_distribution %}{{ gender.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: ['#3490dc', '#f97316', '#6b7280'],
+            }]
+        };
+        new Chart(document.getElementById("genderChart"), {
+            type: 'pie',
+            data: genderChartData
+        });
+
+        // Events by Category (Bar Chart)
+        var eventsByCategoryChartData = {
+            labels: [{% for event in events_by_category %}"{{ event.category__name }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Events by Category',
+                data: [{% for event in events_by_category %}{{ event.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: '#4CAF50',
+            }]
+        };
+        new Chart(document.getElementById("eventsByCategoryChart"), {
+            type: 'bar',
+            data: eventsByCategoryChartData,
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Events by Location (Bar Chart)
+        var eventsByLocationChartData = {
+            labels: [{% for event in events_by_location %}"{{ event.location__name }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Events by Location',
+                data: [{% for event in events_by_location %}{{ event.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: '#ff6347',
+            }]
+        };
+        new Chart(document.getElementById("eventsByLocationChart"), {
+            type: 'bar',
+            data: eventsByLocationChartData,
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Comparative Chart: Gender vs Event Categories (Stacked Bar Chart)
+        var comparativeChartData = {
+            labels: [{% for category in events_by_category %}"{{ category.category__name }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Male',
+                data: [{% for category in events_by_category %}{{ category.male_count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: '#3490dc',
+            },
+            {
+                label: 'Female',
+                data: [{% for category in events_by_category %}{{ category.female_count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: '#f97316',
+            }]
+        };
+        new Chart(document.getElementById("comparativeChart"), {
+            type: 'bar',
+            data: comparativeChartData,
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    },
+                    y: {
+                        stacked: true
+                    }
+                }
+            }
+        });
+
+        // Blog Posts Over Time (Line Chart)
+        var blogPostsOverTimeChartData = {
+            labels: [{% for post in blog_posts_over_time %}"{{ post.month }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Blog Posts Over Time',
+                data: [{% for post in blog_posts_over_time %}{{ post.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: '#42A5F5',
+                borderColor: '#42A5F5',
+                fill: false,
+                tension: 0.1
+            }]
+        };
+        new Chart(document.getElementById("blogPostsOverTimeChart"), {
+            type: 'line',
+            data: blogPostsOverTimeChartData,
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Portfolio Items Over Time (Line Chart)
+        var portfolioItemsOverTimeChartData = {
+            labels: [{% for item in portfolio_items_over_time %}"{{ item.month }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Portfolio Items Over Time',
+                data: [{% for item in portfolio_items_over_time %}{{ item.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: '#8e44ad',
+                borderColor: '#8e44ad',
+                fill: false,
+                tension: 0.1
+            }]
+        };
+        new Chart(document.getElementById("portfolioItemsOverTimeChart"), {
+            type: 'line',
+            data: portfolioItemsOverTimeChartData,
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Education Levels (Pie Chart)
+       // Education Levels (Pie Chart)
+var educationLevelChartData = {
+    labels: [{% for level in education_levels %}"{{ level.level }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+    datasets: [{
+        label: 'Education Levels',
+        data: [{% for level in education_levels %}{{ level.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+        backgroundColor: 'green',
+    }]
+};
+new Chart(document.getElementById("educationLevelChart"), {
+    type: 'pie',
+    data: educationLevelChartData
+});
+
+    </script>
+</body>
+</html>
+{% include "footer.html" %}
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "header.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+{% include "Sidebar.html" %}
+
+    {% for message in messages %}
+        <p id="messages" class="font-semibold text-lg">{{ message }}</p>
+    {% endfor %}
+    <div class="ml-64 w-[calc(100%-16rem)]"
+        style="background-image: url({% static 'images/wst.jpg' %}); background-repeat: no-repeat; background-size:cover; background-attatchment:fixed;">
+    <div class="container mx-auto px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">Add Tasks</h2>
+            
+            <form action="" method="POST" >
+                {% csrf_token %}
+
+               <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- Name -->
+                    <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700">Title</label>
+                        {% render_field form.title class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+                    </div>
+
+                    <!-- description Field with Calendar -->
+<div class="sm:col-span-2">
+    <label class="block text-sm font-medium text-gray-700">Description</label>
+    {% render_field form.description  class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder=" Describe your tasks"%}
+</div>
+
+
+<div class="sm:col-span-2">
+    <label class="block text-sm font-medium text-gray-700">Due_date</label>
+    {% render_field form.due_date type='date' class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" %}
+</div>
+<div class="sm:col-span-2">
+    <label class="block text-sm font-medium text-gray-700">completed</label>
+    {% render_field form.completed class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" %}
+</div>
+<div class="sm:col-span-2">
+    <label class="block text-sm font-medium text-gray-700">completed_at</label>
+    {% render_field form.completed_at class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Type date" %}
+</div>
+
+<div class="sm:col-span-2">
+    <label class="block text-sm font-medium text-gray-700">Assigned_to</label>
+    {% render_field form.assigned_to  class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter Assignee"%}
+</div>
+<div class="sm:col-span-2">
+    <label class="block text-sm font-medium text-gray-700">created_by</label>
+    {% render_field form.created_by  class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" %}
+</div>
+                   
+               
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" class="w-full sm:w-auto bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-500 transition">
+                        ➕ Add Task
+                    </button>
+                </div>
+            </form>
+            <a href="{% url 'tasks' %}" class="bg-gray-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-500 transition-all shadow-md">
+                No, Go Back
+            </a>
+        </div>
+    </div>
+</div>
+</div>
+{% include "footer.html" %}
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends 'header.html' %}
+{% block content %}
+{% include "Sidebar.html" %}
+{% load widget_tweaks %}
+<div class="ml-64 w-[calc(100%-16rem)]">
+    <div class="container mx-auto p-6">
+    <h1 class="text-2xl font-bold mb-4">{% if form.instance.pk %}Edit{% else %}Add{% endif %} Certification</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <!-- Name -->
+            <div class="sm:col-span-2">
+              
+                <label class="block text-sm font-medium text-gray-700">title</label>
+                {% render_field form.title class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+            </div>
+            <div class="sm:col-span-2">
+                <label class="block text-sm font-medium text-gray-700">issuing_organization</label>
+                {% render_field form.issuing_organization class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+            </div>
+            <div class="sm:col-span-2">
+                <label class="block text-sm font-medium text-gray-700">date_issued</label>
+                {% render_field form.date_issued class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+            </div>
+            <div class="sm:col-span-2">
+                <label class="block text-sm font-medium text-gray-700">credential_url</label>
+                {% render_field form.credential_url class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+            </div>
+            <div class="sm:col-span-2">
+                <label class="block text-sm font-medium text-gray-700">certificate_pdf</label>
+                {% render_field form.certificate_pdf class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+            </div>
+            {% if certification.image %}
+            <div class="mt-4">
+              <h3 class="text-lg font-semibold text-gray-700">Current Image:</h3>
+              <img src="{{ certification.certificate_pdf.url }}" alt="{{ certification.title }}" class="w-48 h-48 rounded-full mx-auto mt-4">
+            </div>
+          {% endif %}
+
+            <div class="sm:col-span-2">
+                <label class="block text-sm font-medium text-gray-700">certificate_image</label>
+                {% render_field form.certificate_image class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+            </div>
+            
+            
+          {% if certification.image %}
+          <div class="mt-4">
+            <h3 class="text-lg font-semibold text-gray-700">Current Image:</h3>
+            <img src="{{ certification.certificate_image.url }}" alt="{{ certification.title }}" class="w-48 h-48 rounded-full mx-auto mt-4">
+          </div>
+        {% endif %}
+            
+        </div>
+        <div class="mt-4">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Save</button>
+            <a href="{% url 'certification_list' %}" class="bg-gray-600 text-white px-4 py-2 rounded">Cancel</a>
+        </div>
+        
+    </form>
+</div>
+</div>
+
+{% include "footer.html" %}
+{% endblock %}

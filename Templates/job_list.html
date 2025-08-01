@@ -1,0 +1,56 @@
+{% extends 'header.html' %}
+
+{% block content %}
+{% include "Sidebar.html" %}
+{% load widget_tweaks %}
+{% load static %}
+<div class="ml-64 w-[calc(100%-16rem)] min-h-screen bg-gray-100 p-8">
+    {% for message in messages %}
+        <p id="messages" class="font-semibold text-lg text-green-500 bg-white shadow-md p-3 rounded-lg text-center mb-4">{{ message }}</p>
+    {% endfor %}
+
+    <div class="container mx-auto">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">Available Jobs</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for job in jobs %}
+            <div class="bg-white shadow-lg rounded-lg p-6 transition-transform duration-300 hover:scale-105">
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ job.title }}</h3>
+                <p class="text-gray-700 font-medium"><strong>Company:</strong> <span class="font-semibold">{{ job.company }}</span></p>
+                <p class="text-gray-700 font-medium"><strong>Type:</strong> <span class="font-semibold">{{ job.job_type }}</span></p>
+                <p class="text-gray-700 font-medium"><strong>location:</strong> <span class="font-semibold">{{ job.location }}</span></p>
+                <p class="text-gray-700 font-medium"><strong>description:</strong> <span class="font-semibold">{{ job.description }}</span></p>
+                <p class="text-gray-700 font-medium"><strong>requirements:</strong> <span class="font-semibold">{{ job.requirements }}</span></p>
+                <p class="text-gray-700 font-medium"><strong>posted_at: </strong><span class="font-semibold">{{ job.posted_at }}</span></p>
+                <p class="text-gray-700 font-medium">due_at: <span class="font-semibold">{{ job.due_at }}</span></p>
+                <p class="text-gray-700 font-medium">salary_range: <span class="font-semibold">{{ job.salary_range }}</span></p>
+
+                <div class="mt-4 text-center">
+                    <a href="{% url "apply_for_job" job.id %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-500">Apply Now</a>
+                    
+                    <br>
+                    <br>
+                    <br>
+                    <a href="{% url 'update_job' job.pk %}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-blue-500">
+                        ✏️ Update
+                      </a>
+                      <a href="{% url 'delete_job' job.pk  %}" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-500">
+                        🗑️ Delete
+                      </a>
+                </div>
+
+            </div>
+            {% empty %}
+            <p class="text-gray-600 text-center col-span-3">No jobs available.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Post Job Button -->
+        <div class="mt-10 text-center">
+            <a href="{% url 'post_job' %}" class="inline-block bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-500">➕ Post a Job</a>
+        </div>
+    </div>
+</div>
+
+{% include "footer.html" %}
+{% endblock content %}
