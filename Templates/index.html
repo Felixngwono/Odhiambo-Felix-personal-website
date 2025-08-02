@@ -3,17 +3,22 @@
 {% load static %}
 <script src="https://cdn.tailwindcss.com"></script>
 {% include "Sidebar.html" %}
-<div class="ml-64 w-[calc(100%-16rem)]">
-
-<div class="bg-white p-8 rounded-lg shadow-lg">
-    <!-- Sidebar Navigation -->
+<div class="ml-64 w-[calc(100%-16rem)] min-h-screen p-8" ">
+    <div class="bg-white p-8 rounded-lg shadow-lg">
+        <!-- Sidebar Navigation -->
 
         {% for message in messages %}
             <p id="messages" class="font-semibold text-lg">{{ message }}</p>
         {% endfor %}
     
     <!-- Main Content -->
-
+     {% if request.user.is_superuser %}
+         <p class=" text-center text-green-600 uppercase mt-2">Admin's Dashboard</p>
+     {% else %}
+         <p class="text-lg text-center uppercase text-green-600 mt-2">User's Dashboard</p>
+     {% endif %}
+<div class="text-center mt-8">
+    <p>
         <h1 class="text-4xl font-bold text-center text-gray-800">Welcome, {{user}} </h1>
         <p class="text-lg  text-center text-gray-600 mt-2">My personal dashboard for insights, messages, and updates.</p>
 

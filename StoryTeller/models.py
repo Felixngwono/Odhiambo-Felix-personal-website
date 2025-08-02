@@ -17,7 +17,7 @@ class MyUser(AbstractUser):
     gender = models.CharField(max_length=10, choices=mygender, blank=True, null=True, default='male')
     is_enduser = models.BooleanField(default=False, null=True)
     USERNAME_FIELD='email'
-    REQUIRED_FIELDS=['name']
+    REQUIRED_FIELDS=['username']
 
     def __str__(self):
         return self.username

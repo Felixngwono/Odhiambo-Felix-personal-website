@@ -106,7 +106,10 @@
 <button id="sidebarToggle" class="p-2 bg-gray-800 text-white rounded-md fixed top-4 left-4 sm:hidden">
     ☰
 </button>
-
+{% block content %}
+<main>
+</main>
+{% endblock content %}
 <!-- JavaScript for Sidebar -->
 <script>
     document.getElementById("sidebarToggle").addEventListener("click", function () {
