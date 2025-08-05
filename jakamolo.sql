@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 12, 2025 at 09:43 AM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.2.4
+-- Generation Time: Aug 05, 2025 at 12:36 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -201,7 +201,19 @@ INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALU
 (137, 'Can add news', 35, 'add_news'),
 (138, 'Can change news', 35, 'change_news'),
 (139, 'Can delete news', 35, 'delete_news'),
-(140, 'Can view news', 35, 'view_news');
+(140, 'Can view news', 35, 'view_news'),
+(141, 'Can add my new model', 36, 'add_mynewmodel'),
+(142, 'Can change my new model', 36, 'change_mynewmodel'),
+(143, 'Can delete my new model', 36, 'delete_mynewmodel'),
+(144, 'Can view my new model', 36, 'view_mynewmodel'),
+(145, 'Can add my external model', 37, 'add_myexternalmodel'),
+(146, 'Can change my external model', 37, 'change_myexternalmodel'),
+(147, 'Can delete my external model', 37, 'delete_myexternalmodel'),
+(148, 'Can view my external model', 37, 'view_myexternalmodel'),
+(149, 'Can add my new model2', 38, 'add_mynewmodel2'),
+(150, 'Can change my new model2', 38, 'change_mynewmodel2'),
+(151, 'Can delete my new model2', 38, 'delete_mynewmodel2'),
+(152, 'Can view my new model2', 38, 'view_mynewmodel2');
 
 -- --------------------------------------------------------
 
@@ -228,8 +240,13 @@ CREATE TABLE `auth_user` (
 --
 
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
-(1, 'pbkdf2_sha256$260000$R91kWn8igEXz5iycZGZxJr$Y3gKrV3WNRqQcIJAyfXcsKfjqEJAbSRiq7KfoVxBrag=', '2025-04-12 07:38:53.377615', 1, 'StoryTeller', '', '', 'fellomarley@gmail.com', 1, 1, '2025-02-17 15:30:37.955084'),
-(4, 'pbkdf2_sha256$260000$L7lkQNRaCPA7Tp0Olbg2nX$RNMc6hUFAmM/QeXafjaDOmM0cvmURfpH9Xmkz02cKT8=', '2025-03-02 20:36:58.915290', 0, 'Amanda', '', '', 'amanda@gmail.com', 0, 1, '2025-03-02 20:36:44.364255');
+(1, 'pbkdf2_sha256$600000$tsPQxClAHFYGagEs0cZ2uW$tdiGUzEhL8jFPVzv3FvN311GVtmoFdhyyzAF9Jwi8yc=', '2025-07-05 11:14:08.807958', 1, 'StoryTeller', '', '', 'fellomarley@gmail.com', 1, 1, '2025-02-17 15:30:37.955084'),
+(4, 'pbkdf2_sha256$600000$FxdyW4jX1bYfuA5kqPa5zW$eOtSL7kw9XQpIgEbTPYPE6Uod7zNVT5qaiR6w/s2rKw=', '2025-04-14 11:18:26.001818', 0, 'Amanda', '', '', 'amanda@gmail.com', 0, 1, '2025-03-02 20:36:44.364255'),
+(5, 'pbkdf2_sha256$600000$oF1xrtm7x3dHxEWJD75mKW$rozWrm1QSu2kBJSgdDqcPIchKIE+JljsmPiBRnsxFCo=', '2025-04-12 16:43:16.000000', 0, 'Ynnot', '', '', 'ynnoty@gmail.com', 0, 1, '2025-04-12 16:40:52.000000'),
+(6, 'pbkdf2_sha256$600000$JjmRrm4zSFyiFND6gHZLnZ$5lKNBe4pqrtf4tij2OADasA9FK7CNI2Wl6HoMu9Yens=', NULL, 0, 'omondi', '', '', 'omondi@gmail.com', 0, 1, '2025-04-14 10:29:48.619330'),
+(7, 'pbkdf2_sha256$600000$CsSkGmeJX5vdKt7jp7UIhs$aiihcEH+PhjvH9wvNnbc4ht4vjwRzgmpec65dZ1EfTI=', '2025-04-14 10:37:50.797711', 0, 'Fred', '', '', 'fred@gmail.com', 0, 1, '2025-04-14 10:36:01.529283'),
+(8, 'pbkdf2_sha256$600000$wJFIr7tPpKFUKbvZhrwGwy$nMQsSoejNRgNdNNUqpVj5yew/cUEksyKN3GAorpU0UU=', '2025-04-14 10:50:48.348881', 0, 'Salima7', '', '', 'salima@gmail.com', 0, 1, '2025-04-14 10:47:03.974487'),
+(9, 'pbkdf2_sha256$600000$Pkb2zydsCrP8DCB1c4dziG$0LjaACbzhh3OJci5XFIkQ0IGUSRKhVqv3xiRk0svWZs=', '2025-04-14 10:56:35.201002', 0, 'Kamau5', '', '', 'kamau@gmail.com', 0, 1, '2025-04-14 10:55:24.686199');
 
 -- --------------------------------------------------------
 
@@ -272,6 +289,13 @@ CREATE TABLE `django_admin_log` (
   `user_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `django_admin_log`
+--
+
+INSERT INTO `django_admin_log` (`id`, `action_time`, `object_id`, `object_repr`, `action_flag`, `change_message`, `content_type_id`, `user_id`) VALUES
+(1, '2025-04-14 06:31:18.687685', '5', 'Ynnot', 2, '[{\"changed\": {\"fields\": [\"Email address\"]}}]', 4, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -311,6 +335,9 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 (29, 'StoryTeller', 'job'),
 (33, 'StoryTeller', 'jobapplication'),
 (13, 'StoryTeller', 'message'),
+(37, 'StoryTeller', 'myexternalmodel'),
+(36, 'StoryTeller', 'mynewmodel'),
+(38, 'StoryTeller', 'mynewmodel2'),
 (14, 'StoryTeller', 'myuser'),
 (35, 'StoryTeller', 'news'),
 (24, 'StoryTeller', 'newslettersubscriber'),
@@ -399,7 +426,14 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 (54, 'StoryTeller', '0036_alter_event_options_remove_event_date_and_more', '2025-03-21 18:56:49.569271'),
 (55, 'StoryTeller', '0037_newspaper', '2025-04-12 07:30:04.455675'),
 (56, 'StoryTeller', '0038_delete_newspaper', '2025-04-12 07:30:05.310843'),
-(57, 'StoryTeller', '0039_auto_20250412_1029', '2025-04-12 07:30:07.215559');
+(57, 'StoryTeller', '0039_auto_20250412_1029', '2025-04-12 07:30:07.215559'),
+(58, 'StoryTeller', '0040_mynewmodel', '2025-04-12 08:57:40.889870'),
+(59, 'StoryTeller', '0041_auto_20250412_1159', '2025-04-12 09:03:04.082923'),
+(60, 'StoryTeller', '0042_myexternalmodel', '2025-04-12 09:09:22.770213'),
+(61, 'StoryTeller', '0043_mynewmodel2_delete_myexternalmodel', '2025-04-12 09:11:03.813750'),
+(62, 'StoryTeller', '0044_remove_mynewmodel2_my_new_model_delete_news_and_more', '2025-04-12 09:12:01.031146'),
+(63, 'StoryTeller', '0045_imagegallery_video', '2025-04-15 15:25:52.691524'),
+(64, 'StoryTeller', '0002_alter_myuser_email_alter_myuser_profilepic', '2025-07-29 12:45:33.679931');
 
 -- --------------------------------------------------------
 
@@ -420,9 +454,19 @@ CREATE TABLE `django_session` (
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
 ('0vf8glxb0px7ujy9kia5wt8dpgwv77i4', '.eJxVjEEOwiAQRe_C2hCGFgGX7nsGMjNMpWpoUtqV8e7apAvd_vfef6mE21rS1mRJU1YXBer0uxHyQ-oO8h3rbdY813WZSO-KPmjTw5zleT3cv4OCrXzr7uwFHZA1vePQA7ELhnzMzkbmESgIjS6C80ZCxxzQg0GLlG0UQ6DeH9nwN_E:1tuU4w:K7NF5X6QaxOuvaUjb4TRLEyAii4F5RVx9Tbai8YxHng', '2025-04-01 10:21:46.090775'),
 ('186izwip6mbsxuzbx2i04pkyl0hlxl3s', '.eJxVjEEOwiAQRe_C2hCGFgGX7nsGMjNMpWpoUtqV8e7apAvd_vfef6mE21rS1mRJU1YXBer0uxHyQ-oO8h3rbdY813WZSO-KPmjTw5zleT3cv4OCrXzr7uwFHZA1vePQA7ELhnzMzkbmESgIjS6C80ZCxxzQg0GLlG0UQ6DeH9nwN_E:1u3VS1:ED1jVt1Xk5OmlmGF8GwEIrPHQum6iOcSZrBLNphbdSw', '2025-04-26 07:38:53.528874'),
+('1d53bhbu1c6dtplf8rntjw0ptnzr6i3d', '.eJxVjEEOwiAQRe_C2pCBFgou3fcMZIYZpWpoUtqV8e7apAvd_vfef6mE21rS1mRJE6uzMur0uxHmh9Qd8B3rbdZ5rusykd4VfdCmx5nleTncv4OCrXzrTthGL8w2GIDowXkHYANKTxAdoSe5wkAxRMgRiQf2HYtkNtQbDOr9Adc1OCs:1uY0qO:LE3Z6NR4FlAsjZkvzmp_u64U82HeX-TTc1YpLgEykXQ', '2025-07-19 11:14:08.813975'),
 ('2f67ne8t8c99ku6hrl33c844ncvls06u', '.eJxVjEEOwiAQRe_C2hCGFgGX7nsGMjNMpWpoUtqV8e7apAvd_vfef6mE21rS1mRJU1YXBer0uxHyQ-oO8h3rbdY813WZSO-KPmjTw5zleT3cv4OCrXzr7uwFHZA1vePQA7ELhnzMzkbmESgIjS6C80ZCxxzQg0GLlG0UQ6DeH9nwN_E:1tvBUv:hwPa07I7lp_ul2mvvfRxjeCUn-mOKibpRUpixHduPuQ', '2025-04-03 08:43:29.360033'),
+('3k8yaoe9ahfafwogwr0jdeebexsjohr4', '.eJxVjDsOwyAQRO9CHSE-4pcyfc6AFnYJTiKQjF1ZuXtsyUVSzrw3s7EI61LjOmiOE7Irk-zy2yXIL2oHwCe0R-e5t2WeEj8UftLB7x3pfTvdv4MKo-5rhQI9aFVssEpZksIZnaBQDhL3DNb5hMkID4aKN0hGG5lTCU6gUJp9vuSYN_8:1ug6XR:4pajxMalgNYlzhUzuxqxroK5A2t-t1LdwdmlYnWEui4', '2025-08-10 18:56:01.852658'),
 ('aee332csv9rkqczm9iheszy1pr4cp5is', '.eJxVjEEOwiAQRe_C2hCGFgGX7nsGMjNMpWpoUtqV8e7apAvd_vfef6mE21rS1mRJU1YXBer0uxHyQ-oO8h3rbdY813WZSO-KPmjTw5zleT3cv4OCrXzr7uwFHZA1vePQA7ELhnzMzkbmESgIjS6C80ZCxxzQg0GLlG0UQ6DeH9nwN_E:1tp1vw:tBm7-UmSspuAUsaiRH0zXbCW4cshqh2kxMazhyO8G1Q', '2025-03-17 09:17:56.631703'),
+('c7pss34tuz196pzkktf7nb8vtewbk0ul', '.eJxVjEEOwiAQRe_C2pDC2MK4dN8zEIYZbNVAUtqV8e7apAvd_vfef6kQt3UKW5MlzKwuyhh1-h0ppoeUnfA9llvVqZZ1mUnvij5o02NleV4P9-9gim361rmPxnbAMEhCQGI7YCYXxTsgQAPZokcmy-BS14s9AyORp96QSyLq_QEIvDhv:1ui8l3:X6H7_CWJVmqFtSkg6pmasbTO_tYHGEHkeWVzWg5Iw5c', '2025-08-16 09:42:29.654517'),
+('l1m9su51fcb4hpaauvf16hew4pfiq5i1', '.eJxVjDsOwyAQRO9CHSE-4pcyfc6AFnYJTiKQjF1ZuXtsyUVSzrw3s7EI61LjOmiOE7Irk-zy2yXIL2oHwCe0R-e5t2WeEj8UftLB7x3pfTvdv4MKo-5rhQI9aFVssEpZksIZnaBQDhL3DNb5hMkID4aKN0hGG5lTCU6gUJp9vuSYN_8:1uhvB2:ZORHN5zyplmd9x4-12u0-cYtTdp7So04wBfPsemjf4I', '2025-08-15 19:12:24.571655'),
+('llp25o72vqufnrwcoe7iacanl26v8kq0', '.eJxVjEEOwiAQRe_C2pCBFgou3fcMZIYZpWpoUtqV8e7apAvd_vfef6mE21rS1mRJE6uzMur0uxHmh9Qd8B3rbdZ5rusykd4VfdCmx5nleTncv4OCrXzrTthGL8w2GIDowXkHYANKTxAdoSe5wkAxRMgRiQf2HYtkNtQbDOr9Adc1OCs:1uLH0Y:Z4_3vaY9N85Me8lWQ8o4s7h6Lel9cdSlc9tKBw54c-s', '2025-06-14 07:51:58.762853'),
+('m78j49bx7yyo1k79iovmbdxg9fag8dc7', '.eJxVjEEOwiAQRe_C2pCBFgou3fcMZIYZpWpoUtqV8e7apAvd_vfef6mE21rS1mRJE6uzMur0uxHmh9Qd8B3rbdZ5rusykd4VfdCmx5nleTncv4OCrXzrTthGL8w2GIDowXkHYANKTxAdoSe5wkAxRMgRiQf2HYtkNtQbDOr9Adc1OCs:1uHYIO:0XlFtQ4oh8tJMxwDN2oB2dAZvJEjzt4vy7MKhjUeU30', '2025-06-04 01:31:00.064233'),
 ('mes3zbqcranjv27v2z3ekjgbwfu5byrv', '.eJxVjEEOwiAQRe_C2hCGFgGX7nsGMjNMpWpoUtqV8e7apAvd_vfef6mE21rS1mRJU1YXBer0uxHyQ-oO8h3rbdY813WZSO-KPmjTw5zleT3cv4OCrXzr7uwFHZA1vePQA7ELhnzMzkbmESgIjS6C80ZCxxzQg0GLlG0UQ6DeH9nwN_E:1tkgWU:wFXr-jPeM5ptuPQv1sOkcR_4_XV9PKH-G_pp8TBGeJU', '2025-03-05 09:37:42.564933'),
+('o6yufqzd26fx7hraxtesekmy1p6irj2x', '.eJxVjEEOwiAQRe_C2pCBFgou3fcMZIYZpWpoUtqV8e7apAvd_vfef6mE21rS1mRJE6uzMur0uxHmh9Qd8B3rbdZ5rusykd4VfdCmx5nleTncv4OCrXzrTthGL8w2GIDowXkHYANKTxAdoSe5wkAxRMgRiQf2HYtkNtQbDOr9Adc1OCs:1u4MVQ:9kxg2XBJqYRfD8Ff_xNuK63T9UmjDZkJq4N3L6llPKQ', '2025-04-28 16:17:56.793748'),
+('q3dr2g4qvsu893ndl8hgaxelc3k5bnof', '.eJxVjEEOwiAQRe_C2pCBFgou3fcMZIYZpWpoUtqV8e7apAvd_vfef6mE21rS1mRJE6uzMur0uxHmh9Qd8B3rbdZ5rusykd4VfdCmx5nleTncv4OCrXzrTthGL8w2GIDowXkHYANKTxAdoSe5wkAxRMgRiQf2HYtkNtQbDOr9Adc1OCs:1uEsuK:eT5uj-QaEoT7HdUVnwZTSOrYEZZ6g8zx6mNRMVviloU', '2025-05-27 16:55:08.375082'),
+('qjjq3hzhyyhgnbrle8ug6p0sojxn1jkm', '.eJxVjDsOwjAQBe_iGlne9TeU9JzBWv9wANlSnFSIu0OkFNC-mXkv5mlbq99GXvyc2JkBsNPvGCg-cttJulO7dR57W5c58F3hBx382lN-Xg7376DSqN8aDYEU2UUI5IREo0qygFZoKx2SwpIBRYmYyCaMGlSYoKAkoybQRrP3B-L1NvU:1ujEew:NzB5ZlcSzu5DaEOwxiDTIPF5cGGFxALWQFRKVrWUnKg', '2025-08-19 10:12:42.936464'),
+('rg1tm0oazd6g7zz9rcgaria4p8bjiv1n', '.eJxVjEEOwiAQRe_C2hAqMBSX7nsGMsOAVA0kpV0Z765NutDtf-_9lwi4rSVsPS1hZnERgxKn35EwPlLdCd-x3pqMra7LTHJX5EG7nBqn5_Vw_w4K9vKtIVvOPltKygOOYCLSEK0ip_1ZZ5XRAeSolXEqeWYgC2wNMCNYGEm8PxrpOHU:1ugjyC:EQNlsPBDEwdiYP5zCsMMkBAvL4_Xee04xJlktZLB-M0', '2025-08-12 13:02:16.978680'),
 ('tkqpfk6crf7e856cf1qt0p0nck6wlf5m', '.eJxVjEEOwiAQRe_C2hCGFgGX7nsGMjNMpWpoUtqV8e7apAvd_vfef6mE21rS1mRJU1YXBer0uxHyQ-oO8h3rbdY813WZSO-KPmjTw5zleT3cv4OCrXzr7uwFHZA1vePQA7ELhnzMzkbmESgIjS6C80ZCxxzQg0GLlG0UQ6DeH9nwN_E:1tvhK1:wp7WzR95L_5R2_pW0excGKW3kpFaJjoLbD6aXv9li3U', '2025-04-04 18:42:21.273363'),
 ('tx06ccix4cz2kmxrlsqgw9e5xipzyz01', '.eJxVjEEOwiAQRe_C2hCGFgGX7nsGMjNMpWpoUtqV8e7apAvd_vfef6mE21rS1mRJU1YXBer0uxHyQ-oO8h3rbdY813WZSO-KPmjTw5zleT3cv4OCrXzr7uwFHZA1vePQA7ELhnzMzkbmESgIjS6C80ZCxxzQg0GLlG0UQ6DeH9nwN_E:1tqy2T:tghg9Do8rT7_DqEFYuQTPf4nujhbJMoDME5nc7gUwN0', '2025-03-22 17:32:41.137311'),
 ('zv349pwy1w0noxxczjro9ychfk0sdc27', '.eJxVjEEOwiAQRe_C2hCGFgGX7nsGMjNMpWpoUtqV8e7apAvd_vfef6mE21rS1mRJU1YXBer0uxHyQ-oO8h3rbdY813WZSO-KPmjTw5zleT3cv4OCrXzr7uwFHZA1vePQA7ELhnzMzkbmESgIjS6C80ZCxxzQg0GLlG0UQ6DeH9nwN_E:1tr0Qr:Zis-mOgaVUIn5ZtiDV52exL8vVq7XrV5yCQCar7_6PY', '2025-03-22 20:06:01.845302');
@@ -500,9 +544,8 @@ CREATE TABLE `storyteller_certification` (
 --
 
 INSERT INTO `storyteller_certification` (`id`, `title`, `issuing_organization`, `date_issued`, `credential_url`, `certificate_pdf`, `certificate_image`) VALUES
-(1, 'ghertyhjk', 'jhgtrfdedtyguijol;', '2025-01-30', 'https://github.com/Felixngwono/FelloMarley', 'certificates/IMG-20240124-WA0033.jpg', 'certificate_images/Architecture-Portfolio-Cover-1024x683.webp'),
-(3, 'HJKK', 'bnghbvfgtyui', '2025-01-28', 'https://github.com/Felixngwono/FelloMarley', 'certificates/IMG_20240405_150049_1.jpg', 'certificate_images/mylivewallpapers.com-Nissan-GTR-Sports-Car.mp4'),
-(4, 'Django Certification', 'Linked In', '2025-02-05', 'https://github.com/Felixngwono/FelloMarleys', 'certificates/Felix_Odhiambos_CV.docx', 'certificate_images/33.png');
+(1, 'Cyberrity', 'link', '2025-01-31', 'https://www.linkedin.com/learning/the-cybersecurity-threat-landscape-18018064/examine-the-cybersecurity-threat-landscape?anchor=CERTIFICATE_LEARNING&autoplay=false', 'certificates/CertificateOfCompletion_The_Cybersecurity_Threat_Landscape.pdf', 'certificate_images/cybersecurity.png'),
+(4, 'Django Certification', 'Linked In', '2025-04-05', 'https://www.linkedin.com/learning/certificates/e740ae141644dc59fb9a8aea2f8295f5928af84e8fb549f121a3d31b42400f6f', 'certificates/CertificateOfCompletion_Advanced_Python_Projects_Build_AI_Applications.pdf', 'certificate_images/django-certification.png');
 
 -- --------------------------------------------------------
 
@@ -680,23 +723,27 @@ CREATE TABLE `storyteller_imagegallery` (
   `title` varchar(255) NOT NULL,
   `image` varchar(100) NOT NULL,
   `caption` longtext NOT NULL,
-  `created_at` datetime(6) NOT NULL
+  `created_at` datetime(6) NOT NULL,
+  `video` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `storyteller_imagegallery`
 --
 
-INSERT INTO `storyteller_imagegallery` (`id`, `title`, `image`, `caption`, `created_at`) VALUES
-(1, 'South B', 'gallery_images/IMG_20240404_181640_1_dUiNaD7.jpg', 'Watching FKF gamese', '2025-02-18 18:18:25.647814'),
-(2, 'In Kinoo', 'gallery_images/IMG_20240203_190720_2_3TEzvuH.jpg', 'Metropolitan in Kinoo with my brother Tonny during my attatchment at Anniversary Towers, computer department', '2025-02-18 18:19:38.035690'),
-(3, 'Metropolitan in Kinoo with my brother Tonny during my attatchment at Anniversary Towers, computer department', 'gallery_images/IMG_202308225_223618276_UXMIaNB.jpg', 'on my way to Kakures for job purpose', '2025-02-18 18:20:31.957441'),
-(4, 'Innovation Day', 'gallery_images/IMG-20231128-WA0006_mgIqM53.jpg', 'Innovation day at Kabarak', '2025-02-18 18:21:28.862004'),
-(5, 'Kabarak University', 'gallery_images/IMG-20231206-WA0003_pVXNbXU.jpg', 'I mean business inside these walls', '2025-02-18 18:22:14.961469'),
-(6, 'Oloika Lodge', 'gallery_images/Fel14.jpg', 'recreational day', '2025-02-18 18:23:12.973279'),
-(7, 'Visiting Ouko Mboya', 'gallery_images/IMG-20240216-WA0005_Dgvxf6l.jpg', 'Paying a visit to our hero the late Tom for the achievements and freedom he gave to our luo community. Tom your name will not rest with us only,  but promise the generation will come to know how great you were to us.\r\n\r\nThanks Tom', '2025-02-18 18:26:37.469995'),
-(8, 'KICC event', 'gallery_images/IMG-20240124-WA0048_lCMKbIk.jpg', 'Meeting with the strong delegates from Azimio chairedby Jadwong Raila and Martha Karua', '2025-02-18 18:27:42.478038'),
-(9, 'Westgate', 'gallery_images/wst.jpg', 'When duty calls', '2025-02-19 09:50:43.540125');
+INSERT INTO `storyteller_imagegallery` (`id`, `title`, `image`, `caption`, `created_at`, `video`) VALUES
+(1, 'South B', 'gallery_images/IMG_20240404_181640_1_dUiNaD7.jpg', 'Watching FKF gamese', '2025-02-18 18:18:25.647814', NULL),
+(2, 'In Kinoo', 'gallery_images/IMG_20240203_190720_2_3TEzvuH.jpg', 'Metropolitan in Kinoo with my brother Tonny during my attatchment at Anniversary Towers, computer department', '2025-02-18 18:19:38.035690', NULL),
+(3, 'Metropolitan in Kinoo with my brother Tonny during my attatchment at Anniversary Towers, computer department', 'gallery_images/IMG_202308225_223618276_UXMIaNB.jpg', 'on my way to Kapkures for job purpose', '2025-02-18 18:20:31.957441', ''),
+(4, 'Innovation Day', 'gallery_images/IMG-20250724-WA0011.jpg', 'Innovation day at Kabarak', '2025-02-18 18:21:28.862004', ''),
+(5, 'Kabarak University', 'gallery_images/IMG-20231206-WA0003_vNaOA0k.jpg', 'I mean business inside these walls', '2025-02-18 18:22:14.961469', ''),
+(6, 'Oloika Lodge', 'gallery_images/Fel14.jpg', 'recreational day', '2025-02-18 18:23:12.973279', NULL),
+(7, 'Visiting Ouko Mboya', 'gallery_images/IMG_20250330_142610_1.jpg', 'Paying a visit to our hero the late Tom for the achievements and freedom he gave to our luo community. Tom your name will not rest with us only,  but promise the generation will come to know how great you were to us.\r\n\r\nThanks Tom', '2025-02-18 18:26:37.469995', ''),
+(8, 'KICC event', 'gallery_images/IMG-20240124-WA0049.jpg', 'Meeting with the strong delegates from Azimio chairedby Jadwong Raila and Martha Karua', '2025-02-18 18:27:42.478038', ''),
+(9, 'Westgate', 'gallery_images/wst.jpg', 'When duty calls', '2025-02-19 09:50:43.540125', NULL),
+(12, 'Football my passion', 'gallery_images/74c1e581e08c4cb6849db13eb598fbc9.jpg', 'Showcasing my talent', '2025-04-16 06:37:32.645371', ''),
+(13, 'Football locating big men', 'gallery_images/IMG-20250330-WA0007.jpg', 'On our way to Nyayo stadium to spaketate our own Gor Mahia on a derby with AFC Leopords', '2025-04-16 06:41:43.007534', ''),
+(15, 'Africa International University', 'gallery_images/IMG_20250704_094113_HDR.jpg', 'At graduation ceremony at Karen- Africa International University', '2025-07-05 11:15:59.219063', '');
 
 -- --------------------------------------------------------
 
@@ -723,10 +770,8 @@ CREATE TABLE `storyteller_job` (
 --
 
 INSERT INTO `storyteller_job` (`id`, `title`, `company`, `location`, `job_type`, `description`, `requirements`, `posted_at`, `due_at`, `application_link`, `salary_range`) VALUES
-(1, 'm,jkhuijhyujh', 'njhuyiojkl,', 'kjmhyu879iol', 'full-time', 'm,kjnhuy8iujk', 'm,njbhvfyulj', '2025-03-03 08:58:49.452886', NULL, NULL, NULL),
-(2, 'nnnnnn', 'jgfytuj', 'jhgytuj', 'part-time', 'ljhgb', 'mjkhgftyujh', '2025-03-03 09:01:05.940380', NULL, NULL, NULL),
-(3, 'Youth Employment programs', 'open source', 'Kisumu, Nairobi and Kisii County', 'contract', 'this jobs have been set to create emplyment opportunities among the youths and reduce the crime rates due to frequent enemployment rates.', 'ID card', '2025-03-03 20:15:33.712353', NULL, NULL, NULL),
-(4, 'mnbvb', 'mnbv', 'bvn', 'full-time', 'nbgvfygh', 'm,njhjm', '2025-03-04 15:21:34.175718', NULL, NULL, NULL);
+(3, 'Youth Employment programs', 'open source', 'Kisumu, Nairobi and Kisii County', 'contract', 'this jobs have been set to create emplyment opportunities among the youths and reduce the crime rates due to frequent enemployment rates.', 'ID card', '2025-03-03 20:15:33.712353', '2025-04-06', 'https://github.com/Felixngwono/Personal-Web', '50000-78000'),
+(5, 'Receptionist/Front Office Assistant', 'NOVATECH', 'Nairobi', 'contract', 'Our client, a leading company in the branding sector, is seeking to recruit a Receptionist/Front Office Assistant. The ideal candidate will be the first point of contact for visitors and clients, ensuring a welcoming and professional experience. This role requires excellent communication skills, strong organizational abilities, and the ability to multitask in a fast-paced environment.', '• Greet and welcome visitors in a friendly and professional manner.\r\n• Answer and direct phone calls, emails, and inquiries to the appropriate departments.\r\n• Manage front office operations, including handling correspondence and scheduling appointments.\r\n• Maintain a clean and organized reception area.\r\n• Assist with administrative tasks such as data entry, filing, and preparing reports.\r\n• Coordinate meetings, book conference rooms, and ensure meeting areas are set up appropriately.\r\n• Manage office supplies inventory and place orders as needed.\r\n• Receive and distribute mail, packages, and deliveries efficiently.\r\n• Support the sales and customer service teams by providing necessary information to clients.\r\n• Maintain records of visitors and ensure adherence to security and safety protocols.', '2025-04-12 08:38:42.997333', '2025-04-06', 'https://github.com/Felixngwono/Personal-Web', '37000-70000');
 
 -- --------------------------------------------------------
 
@@ -751,7 +796,8 @@ CREATE TABLE `storyteller_jobapplication` (
 --
 
 INSERT INTO `storyteller_jobapplication` (`id`, `resume`, `cover_letter`, `status`, `applied_at`, `updated_at`, `job_id`, `applicant_name`, `applicant_id`) VALUES
-(1, 'job_applications/resumes/KABARAK_UNIVERSITY.docx', 'Applicant\'s cover letter/image_demonstration.docx', 'under_review', '2025-04-07 14:20:48.198627', '2025-04-07 14:20:48.198627', 3, 'Felix Omondi', 1);
+(1, 'job_applications/resumes/KABARAK_UNIVERSITY.docx', 'Applicant\'s cover letter/image_demonstration.docx', 'under_review', '2025-04-07 14:20:48.198627', '2025-04-07 14:20:48.198627', 3, 'Felix Omondi', 1),
+(2, 'job_applications/resumes/Bills_cv.pdf', 'Applicant\'s cover letter/Bills_cv.docx', 'under_review', '2025-04-12 16:47:15.832723', '2025-04-12 16:47:15.832859', 3, 'Felix Omondi', 5);
 
 -- --------------------------------------------------------
 
@@ -779,7 +825,7 @@ CREATE TABLE `storyteller_myuser` (
   `username` varchar(150) NOT NULL,
   `first_name` varchar(150) NOT NULL,
   `last_name` varchar(150) NOT NULL,
-  `email` varchar(254) NOT NULL,
+  `email` varchar(254) DEFAULT NULL,
   `is_staff` tinyint(1) NOT NULL,
   `is_active` tinyint(1) NOT NULL,
   `date_joined` datetime(6) NOT NULL,
@@ -796,8 +842,13 @@ CREATE TABLE `storyteller_myuser` (
 --
 
 INSERT INTO `storyteller_myuser` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`, `name`, `bio`, `profilepic`, `birthdate`, `gender`, `is_enduser`) VALUES
-(1, 'pbkdf2_sha256$260000$C4KivyQkJG0lqrHJ2Q1p92$Gw7LGQT4vifxoj5NuiO2I9hgmjSDUuCtu1L2eVak3AI=', NULL, 0, 'Jakamolo', '', '', 'jakamolo@outlook.com', 0, 1, '2025-02-17 15:32:16.154366', NULL, NULL, 'profile_pics/24.jpg', '1990-10-23', 'male', 1),
-(2, 'pbkdf2_sha256$260000$CuYTnIEp3ruiZDqUI6TOfR$IOnzTMpm7J4DsUqA/zjfDoyR0tGQ/1TsBqbLviNJIR0=', NULL, 0, 'Salima', '', '', 'salima@gmail.com', 0, 1, '2025-02-19 10:22:55.502790', NULL, NULL, 'default.png', '1990-10-23', 'female', 1);
+(1, 'pbkdf2_sha256$600000$Sg15T71IcMFGi2RySmPfq7$52+rQuX20wy4IDs31cF0Bz+C5gSggLmt58sHz8/K2mU=', '2025-08-04 17:24:55.511925', 0, 'Jakamolo', '', '', 'jakamolo@outlook.com', 0, 1, '2025-02-17 15:32:16.154366', NULL, NULL, 'profile_pics/24.jpg', '1990-10-23', 'male', 1),
+(2, 'pbkdf2_sha256$600000$nBuSYDQMjfJTr8wh8prgzI$uoobDx1ug6/6iA45fNzJ9Fi+ZObmYi8bgN6O3cWBReY=', '2025-07-29 12:35:11.244390', 0, 'Salima', '', '', 'salima@gmail.com', 0, 1, '2025-02-19 10:22:55.502790', NULL, NULL, 'default.png', '1990-10-23', 'female', 1),
+(3, 'pbkdf2_sha256$600000$L962lgx7bnmxKCdQDZuVao$TQPXCFywxIs/iVX8/w/xYSoHcV1c83hpZsPJt3nw32M=', '2025-07-29 12:31:47.878149', 0, 'Angie', '', '', 'angie@gmail.com', 0, 1, '2025-07-28 09:23:47.591845', 'Angela Valdes', NULL, 'default.png', NULL, 'female', 1),
+(6, 'pbkdf2_sha256$600000$oqg3oFLGhFB90ZykAy4P3F$0o7HlO58KlGD3IopWHfX1yb/df9C5azEJU3Axlp0/Ow=', '2025-07-29 12:37:49.267646', 0, 'max', '', '', 'max@gmail.com', 0, 1, '2025-07-29 12:37:32.464488', 'carl Max', NULL, 'default.png', NULL, 'male', 0),
+(8, 'pbkdf2_sha256$600000$UT6jaYlG7Jqp65UoyhnIOM$dEg5/HW0y6ExsPPztkp/rGLAIwIePguwQ8jjbiR+Ue0=', '2025-07-29 12:52:42.641396', 0, 'Wanjiku', '', '', 'faith@gmail.com', 0, 1, '2025-07-29 12:52:27.471243', 'Faith Wanjiku', NULL, 'avatar.png', NULL, 'male', 0),
+(9, 'pbkdf2_sha256$600000$W82CLP2KyHBqElGLzX2Wnf$VDXG0EAUGE9M/9FY73sVMSYBoA9SsuFlCTwkjmPsA9o=', '2025-07-29 12:58:06.523841', 0, 'young', '', '', 'young@gmail.com', 0, 1, '2025-07-29 12:57:50.598915', 'Disney Onyango', NULL, 'avatar.png', NULL, 'male', 1),
+(11, 'pbkdf2_sha256$600000$z4Ruy8VvHTbowCm9mp2t9M$BLEuF+5G4rmjfOPWGhjtF0dFQwNHNWEiXEjrANmt0d4=', '2025-08-05 10:12:42.929388', 1, 'FelloMarley', '', '', 'felixodhiambo@gmail.com', 1, 1, '2025-08-02 09:39:48.669872', 'Felix Odhiambo', 'im a software engineering', 'profiles/IMG_20250731_104429_1.jpg', NULL, 'male', 0);
 
 -- --------------------------------------------------------
 
@@ -826,17 +877,6 @@ CREATE TABLE `storyteller_myuser_user_permissions` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `storyteller_news`
---
-
-CREATE TABLE `storyteller_news` (
-  `id` bigint(20) NOT NULL,
-  `title` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `storyteller_newslettersubscriber`
 --
 
@@ -845,6 +885,13 @@ CREATE TABLE `storyteller_newslettersubscriber` (
   `email` varchar(254) NOT NULL,
   `subscribed_at` datetime(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `storyteller_newslettersubscriber`
+--
+
+INSERT INTO `storyteller_newslettersubscriber` (`id`, `email`, `subscribed_at`) VALUES
+(1, 'fellomarley@gmail.com', '2025-04-15 06:37:50.195975');
 
 -- --------------------------------------------------------
 
@@ -919,7 +966,9 @@ CREATE TABLE `storyteller_project` (
 --
 
 INSERT INTO `storyteller_project` (`id`, `title`, `description`, `image`, `github_link`, `live_demo`, `technologies_used`, `video`) VALUES
-(2, 'Government Tracking website', 'The aim of this web was to try the oversee of the following:\r\ni) Tracking projects that th government ae working on\r\nii) Providing the accountability among governmnent officials\r\niii)user involvement in goverment works\r\niv) Providing Transparency in government works', 'project_images/welcoing.PNG', 'https://github.com/Felixngwono/doverment--project.git', 'https://github.com/Felixngwono/FelloMarley.git', 'Python-Django', '');
+(2, 'Government Tracking website', 'The aim of this web was to try the oversee of the following:\r\n\r\ni) Tracking projects that th government ae working on\r\n\r\nii) Providing the accountability among governmnent officials\r\n\r\niii)user involvement in goverment works\r\n\r\niv) Providing Transparency in government works', 'project_images/Screenshot_2025-08-05_131400.png', 'https://github.com/Felixngwono/doverment--project.git', 'https://github.com/Felixngwono/FelloMarley.git', 'Python-Django', ''),
+(3, 'Personal website', 'This is a personal project that tells the story of my life—my roots, my journey, my struggles, and my dreams. It\'s more than just a portfolio—it\'s a digital reflection of who I am. Through it, I share my family background, my educational path, the projects I\'ve worked on, and the lessons I\'ve learned along the way. My goal is to inspire others and leave a digital legacy that speaks not just of what I do, but who I truly am.\"', 'project_images/Screenshot_2025-08-05_131142.png', 'https://github.com/Felixngwono/personal-website.git', 'https://github.com/Felixngwono/personal-website.git', 'Python-Django, tailwind css, js and html', ''),
+(4, 'loaning System', 'The Loaning System is a reliable platform designed to assist individuals in financial need by providing quick, secure, and accessible loan services. Whether you\'re seeking personal, emergency, or business support, our system allows you to request, track, and manage your loans with ease.', 'project_images/Screenshot_2025-08-05_132054.png', 'https://github.com/Felixngwono/Loaning-System', 'https://github.com/Felixngwono/Loaning-System', 'Python-Django, bootstrap css, js', '');
 
 -- --------------------------------------------------------
 
@@ -980,7 +1029,9 @@ INSERT INTO `storyteller_siblingimage` (`id`, `image`, `description`, `uploaded_
 (4, 'sibling_images/414ecbd4d8b74db7a55771b052e55150_WFPrVkn.jpg', '', '2025-03-21 19:03:26.244794', 5, ''),
 (5, 'sibling_images/1f320bd56766414bba14f4fa36290b40_bUCjbul.jpg', '', '2025-03-21 19:03:42.050209', 5, ''),
 (6, 'sibling_images/IMG_20240124_132402_suKOm30.jpg', '', '2025-03-21 19:04:16.224199', 7, ''),
-(7, 'sibling_images/89ddd60d68c5437998ca1200e03d95f6_TCN5hQ9.jpg', '', '2025-03-21 19:04:57.793088', 6, '');
+(7, 'sibling_images/89ddd60d68c5437998ca1200e03d95f6_TCN5hQ9.jpg', '', '2025-03-21 19:04:57.793088', 6, ''),
+(8, 'sibling_images/IMG_20250330_151627_1.jpg', '', '2025-04-15 16:03:57.546856', 1, ''),
+(9, 'sibling_images/20230823_232505.jpg', '', '2025-04-15 16:07:36.130178', 1, '');
 
 -- --------------------------------------------------------
 
@@ -999,9 +1050,12 @@ CREATE TABLE `storyteller_skill` (
 --
 
 INSERT INTO `storyteller_skill` (`id`, `name`, `proficiency`) VALUES
-(1, 'music', 60),
-(2, 'Programming', 80),
-(3, 'Football', 80);
+(3, 'Football', 80),
+(4, 'Python-django', 90),
+(5, 'data science', 50),
+(6, 'Tailwind. css/ Bootstrap.css', 80),
+(7, 'React js', 50),
+(8, 'Machine Learning', 50);
 
 -- --------------------------------------------------------
 
@@ -1083,7 +1137,7 @@ CREATE TABLE `storyteller_testimonial` (
 --
 
 INSERT INTO `storyteller_testimonial` (`id`, `name`, `designation`, `message`, `image`, `created_at`, `user_id`) VALUES
-(1, 'Assiello Nomar', 'Amanda Nicky', 'Hes a well capable ma and always determined with his work. Work under miniml or even no supervission, i highly recommend him', 'testimonials/images.jpeg', '2025-03-04 09:52:25.340245', 1),
+(1, 'Assiello Nomar', 'Amanda Nicky', 'He\'s a capable man and always determined with his work. He works under minimal or even no supervision. I highly recommend him', 'testimonials/images.jpeg', '2025-03-04 09:52:25.340245', 1),
 (2, 'Tonny Odhiambo', 'felix Odhiambo', 'Fello once said, \"Genious are never made from success nor failure but through hardwork \"', 'testimonials/pacho.jpg', '2025-03-04 14:55:47.607836', 1),
 (3, 'Nancy Odhiambo', 'felix Odhiambo', 'My mentor, my role model, my supervisor. Always good at what he does', 'testimonials/Dr._Sarah_Tancredi.PNG', '2025-04-07 18:09:56.643437', 1);
 
@@ -1289,7 +1343,8 @@ ALTER TABLE `storyteller_message`
 --
 ALTER TABLE `storyteller_myuser`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `username` (`username`);
+  ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `StoryTeller_myuser_email_a10080e3_uniq` (`email`);
 
 --
 -- Indexes for table `storyteller_myuser_groups`
@@ -1306,12 +1361,6 @@ ALTER TABLE `storyteller_myuser_user_permissions`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `StoryTeller_myuser_user__myuser_id_permission_id_1eced865_uniq` (`myuser_id`,`permission_id`),
   ADD KEY `StoryTeller_myuser_u_permission_id_7727afc4_fk_auth_perm` (`permission_id`);
-
---
--- Indexes for table `storyteller_news`
---
-ALTER TABLE `storyteller_news`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `storyteller_newslettersubscriber`
@@ -1409,13 +1458,13 @@ ALTER TABLE `auth_group_permissions`
 -- AUTO_INCREMENT for table `auth_permission`
 --
 ALTER TABLE `auth_permission`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=141;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=153;
 
 --
 -- AUTO_INCREMENT for table `auth_user`
 --
 ALTER TABLE `auth_user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `auth_user_groups`
@@ -1433,19 +1482,19 @@ ALTER TABLE `auth_user_user_permissions`
 -- AUTO_INCREMENT for table `django_admin_log`
 --
 ALTER TABLE `django_admin_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `django_content_type`
 --
 ALTER TABLE `django_content_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `django_migrations`
 --
 ALTER TABLE `django_migrations`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 
 --
 -- AUTO_INCREMENT for table `storyteller_activity`
@@ -1511,19 +1560,19 @@ ALTER TABLE `storyteller_faq`
 -- AUTO_INCREMENT for table `storyteller_imagegallery`
 --
 ALTER TABLE `storyteller_imagegallery`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `storyteller_job`
 --
 ALTER TABLE `storyteller_job`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `storyteller_jobapplication`
 --
 ALTER TABLE `storyteller_jobapplication`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `storyteller_message`
@@ -1535,7 +1584,7 @@ ALTER TABLE `storyteller_message`
 -- AUTO_INCREMENT for table `storyteller_myuser`
 --
 ALTER TABLE `storyteller_myuser`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `storyteller_myuser_groups`
@@ -1550,16 +1599,10 @@ ALTER TABLE `storyteller_myuser_user_permissions`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `storyteller_news`
---
-ALTER TABLE `storyteller_news`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `storyteller_newslettersubscriber`
 --
 ALTER TABLE `storyteller_newslettersubscriber`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `storyteller_notification`
@@ -1577,7 +1620,7 @@ ALTER TABLE `storyteller_portfolioitem`
 -- AUTO_INCREMENT for table `storyteller_project`
 --
 ALTER TABLE `storyteller_project`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `storyteller_sibling`
@@ -1589,13 +1632,13 @@ ALTER TABLE `storyteller_sibling`
 -- AUTO_INCREMENT for table `storyteller_siblingimage`
 --
 ALTER TABLE `storyteller_siblingimage`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `storyteller_skill`
 --
 ALTER TABLE `storyteller_skill`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `storyteller_support`
