@@ -1,152 +1,122 @@
 {% load static %}
 {% load widget_tweaks %}
-<header>
-  <link href="{% static 'images/logo.png' %}" rel="icon" />
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FelloMarley Foundation</title>
+  <link rel="icon" href="{% static 'images/logo.png' %}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900">
 
-  <title>FelloMarleyFoundation</title>
-</header>
-<div class="flex" style="background-color: marootn">
-    <div class="w-1/2 h-screen bg-cover bg-no-repeat  rounded-full" style="background-image: url({% static 'images/Fel14.jpg' %});"></div>
-    
-    <div class="w-1/2 flex  justify-center  px-6 py-8">
-        
-       
-            
-        
-<section class="bg-green-300 dark:bg-gray-900 w-full" >
-  <div class="flex justify-center items-center w-full">
-    <div class=" text-green-500 p-4 mb-6  w-1/2 text-center">
-      {% if messages %}
-        {% for message in messages %}
-            <p id="messages" class="font-semibold text-lg">{{ message }}</p>
-        {% endfor %}
-        {% endif %}
-    </div>
-</div>
+<div class="flex min-h-screen">
+  <!-- Left Image Panel -->
+  <div class="hidden md:block w-1/2 bg-cover bg-center" style="background-image: url({% static 'images/Fel14.jpg' %});">
+  </div>
 
-    <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-            <img class="w-8 h-8 mr-2" src="{% static 'images/Fel14.jpg' %}" alt="logo">
-            FelloMarley Foundation   
+  <!-- Right Registration Panel -->
+  <div class="w-full md:w-1/2 flex items-center justify-center px-6 py-8">
+    <section class="w-full max-w-md bg-white dark:bg-gray-800 shadow-lg rounded-lg p-8 space-y-6">
+      
+      <!-- Logo + Title -->
+      <div class="text-center">
+        <a href="#" class="flex justify-center items-center mb-4 text-2xl font-bold text-gray-900 dark:text-white">
+          <img src="{% static 'images/Fel14.jpg' %}" alt="logo" class="w-10 h-10 mr-2 rounded-full">
+          FelloMarley Foundation
         </a>
-        <div class="w-full bg-green rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-            <div class="p-6 space-y-4 md:space-y-6 sm:p-8 ">
-                <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                    Register Your Account
-                </h1>
-                <div class="text-red-500">
-                  <ul>
-                      {% for field in form %}
-                          {% for error in field.errors %}
-                              <li>{{ error }}</li>
-                          {% endfor %}
-                      {% endfor %}
-                  </ul>
-              </div>
-                <form class="space-y-8 md:space-y-10" action="" method="POST" enctype="multipart/form-data">
-                  {% csrf_token %}
-                    <div>
-                      <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your name</label>
-                      {% render_field form.name class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Enter name" required=""%}
-                  </div>
-                  <div>
-                      <label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your username</label>
-                      {% render_field form.username class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Enter Username" required=""%}
-                  </div>
-                  <div>
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Register Your Account</h2>
+      </div>
 
-                    <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your Email</label>
-                    {% render_field form.email class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Enter Email" required=""%}
-                </div>
-                <div>
-                      <label for="is_enduser" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">enduser</label>
-                      {% render_field form.is_enduser class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Enter is_enduser" required=""%}
-                  </div>
-               <div>
-                      <label for="gender" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your gender</label>
-                      {% render_field form.gender class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Enter gender"  required="" %}
-                  </div>
-<div>
-                      <label for="gender" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your profilepicture</label>
-                      {% render_field form.profilepic class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Enter gender"  required="" %}
-                  </div>
-                  <div>
-                      <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                      {%render_field form.password1 placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required=""%}
-                  </div>
-                  <div>
-                    <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm Password</label>
-                    {%render_field form.password2 placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required=""%}
-                </div>
-                  
-                  <button type="submit" class="w-full text-white bg-green-800 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Register</button>
-                  <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-                      Already have an account yet? <a href="{% url 'login' %}" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Login</a>
-                  </p>
-                 
-              </form>
-              
-                <div id="loading" class="mt-8 hidden text-center">
-                    <p class="text-gray-700 font-semibold">Uploading...</p>
-                    <div class="loader"></div>
-                  </div>
-                  <div id="successModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
-                    <div class="bg-white p-6 rounded-lg shadow-md text-center">
-                        <h2 class="text-xl font-semibold text-green-500">Welcome!</h2>
-                        <p>You have logged in successfully.</p>
-                        <button id="closeModal" class="mt-4 py-2 px-4 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700">OK</button>
-                    </div>
-                  <script>
-                    // Show the loading spinner when the form is submitted
-                    document.querySelector('form').addEventListener('submit', function () {
-                      document.getElementById('loading').classList.remove('hidden');
-                    });
-                  </script>
-                  
-                  <!-- CSS for Loading Spinner -->
-                  <style>
-                    .loader {
-                      border: 4px solid rgba(255, 255, 255, 0.3);
-                      border-top: 4px solid #4CAF50;
-                      border-radius: 50%;
-                      width: 40px;
-                      height: 40px;
-                      animation: spin 1s linear infinite;
-                    }
-                  
-                    @keyframes spin {
-                      0% { transform: rotate(0deg); }
-                      100% { transform: rotate(360deg); }
-                    }
-                  </style>
-            </div>
+      <!-- Error Messages -->
+      {% if form.errors %}
+        <div class="bg-red-100 text-red-700 p-4 rounded text-sm">
+          <ul>
+            {% for field in form %}
+              {% for error in field.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            {% endfor %}
+          </ul>
         </div>
-    </div>
-  </section>
-  <script src="{% static 'js/login.js' %}">        // Show the modal on page load if the login is successful
-    window.onload = function() {
-        {% if user.is_authenticated %}
-            // Show success modal if user is authenticated
-            document.getElementById("successModal").classList.remove("hidden");
+      {% endif %}
 
-            // Redirect after 2 seconds
-            setTimeout(function() {
-                window.location.href = '/dashboard';  // Redirect to the intended URL after login
-            }, 2000);
-        {% endif %}
-    };
+      <!-- Form -->
+      <form method="POST" enctype="multipart/form-data" class="space-y-5">
+        {% csrf_token %}
 
-    // Close the modal when clicking the "OK" button
-    document.getElementById("closeModal").addEventListener("click", function() {
-        document.getElementById("successModal").classList.add("hidden");
-    });
-</script>
-  
+        {% for field in form %}
+          <div>
+            <label for="{{ field.id_for_label }}" class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+              {{ field.label }}
+            </label>
+            {% render_field field class="w-full p-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" %}
+          </div>
+        {% endfor %}
 
-  <div>
-  
+        <button type="submit" class="w-full py-2.5 px-5 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none">
+          Register
+        </button>
+        <p class="text-sm text-center text-gray-500 dark:text-gray-400">
+          Already have an account? <a href="{% url 'login' %}" class="text-green-700 hover:underline">Login</a>
+        </p>
+      </form>
+
+      <!-- Uploading Spinner -->
+      <div id="loading" class="hidden mt-6 text-center">
+        <p class="text-gray-700 font-semibold">Uploading...</p>
+        <div class="loader mx-auto mt-2"></div>
+      </div>
+
+      <!-- Success Modal -->
+      <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+          <h2 class="text-xl font-semibold text-green-600">Welcome!</h2>
+          <p class="mt-2">You have logged in successfully.</p>
+          <button id="closeModal" class="mt-4 px-4 py-2 bg-green-700 text-white rounded hover:bg-green-800">OK</button>
+        </div>
+      </div>
+
+    </section>
   </div>
 </div>
-</div>
+
+<!-- Scripts -->
+<script>
+  document.querySelector('form').addEventListener('submit', function () {
+    document.getElementById('loading').classList.remove('hidden');
+  });
+
+  window.onload = function() {
+    {% if user.is_authenticated %}
+      document.getElementById("successModal").classList.remove("hidden");
+      setTimeout(() => window.location.href = '/dashboard', 2000);
+    {% endif %}
+  };
+
+  document.getElementById("closeModal")?.addEventListener("click", function () {
+    document.getElementById("successModal").classList.add("hidden");
+  });
+</script>
+
+<!-- Loading Spinner Styles -->
+<style>
+  .loader {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #22c55e;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+
+</body>
+</html>

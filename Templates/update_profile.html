@@ -1,86 +1,125 @@
-
 {% extends "header.html" %}
 {% load widget_tweaks %}
 {% block content %}
 {% include "Sidebar.html" %}
 
-<div class="ml-64 w-[calc(100%-16rem)]">
-    <!-- Messages -->
-    {% if messages %}
-    <div class="text-green-600 p-4 text-center font-semibold">
-        {% for message in messages %}
-            <p>{{ message }}</p>
+<!-- Error Messages -->
+{% if form.errors %}
+  <div class="ml-64 w-[calc(100%-16rem)] p-4">
+    <div class="rounded bg-red-100 border border-red-400 text-red-700 p-4">
+      <ul class="list-disc pl-5 space-y-1">
+        {% for field in form %}
+          {% for error in field.errors %}
+            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+          {% endfor %}
         {% endfor %}
+        {% for error in form.non_field_errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
     </div>
-    {% endif %}
+  </div>
+{% endif %}
 
-    <div class="container">
-        <div class="max-w-3xl mx-auto bg-white p-8 shadow-md rounded-md">
-            <h2 class="text-2xl font-bold text-center text-green-700 uppercase mb-6">Update {{ user }}</h2>
+<!-- Content -->
+<div class="ml-64 w-[calc(100%-16rem)]">
+  
+  <!-- Success Messages -->
+  {% if messages %}
+    <div class="text-green-700 p-4 text-center font-semibold">
+      {% for message in messages %}
+        <p>{{ message }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
 
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <!-- Username -->
-                    <div class="sm:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700">Username</label>
-                        {% render_field form.username class="w-full mt-1 p-3 border rounded-lg" %}
-                        {% if form.username.errors %}
-                            <p class="text-sm text-red-600">{{ form.username.errors.0 }}</p>
-                        {% endif %}
-                    </div>
+  <div class="max-w-3xl mx-auto my-10 bg-white shadow-lg rounded-lg p-8">
+    <h2 class="text-2xl font-bold text-center text-green-700 uppercase mb-8">Update {{ user }}</h2>
 
-                    <!-- Email -->
-                    <div class="sm:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700">Email</label>
-                        {% render_field form.email class="w-full mt-1 p-3 border rounded-lg" %}
-                        {% if form.email.errors %}
-                            <p class="text-sm text-red-600">{{ form.email.errors.0 }}</p>
-                        {% endif %}
-                    </div>
+    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+      {% csrf_token %}
 
-                    <!-- Password -->
-                    {% if form.password1 %}
-                    <div class="sm:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700">Password</label>
-                        {% render_field form.password1 class="w-full mt-1 p-3 border rounded-lg" %}
-                        {% if form.password1.errors %}
-                            <p class="text-sm text-red-600">{{ form.password1.errors.0 }}</p>
-                        {% endif %}
-                    </div>
-                    {% endif %}
-
-                    <!-- Confirm Password -->
-                    {% if form.password2 %}
-                    <div class="sm:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700">Confirm Password</label>
-                        {% render_field form.password2 class="w-full mt-1 p-3 border rounded-lg" %}
-                        {% if form.password2.errors %}
-                            <p class="text-sm text-red-600">{{ form.password2.errors.0 }}</p>
-                        {% endif %}
-                    </div>
-                    {% endif %}
-                </div>
-
-                {% if form.non_field_errors %}
-                <div class="text-sm text-red-600 mt-4">
-                    {{ form.non_field_errors }}
-                </div>
-                {% endif %}
-
-                <!-- Buttons -->
-                <div class="mt-6 flex justify-center gap-4">
-                    <button type="submit" class="bg-yellow-600 text-white px-6 py-3 rounded-lg hover:bg-yellow-500 transition">
-                        ✅ Save Changes
-                    </button>
-                    <a href="{% url 'index' %}" class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-500 transition">
-                        ❌ Cancel
-                    </a>
-                </div>
-            </form>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div class="sm:col-span-2">
+          <label class="block text-sm font-semibold text-gray-700">name</label>
+          {% render_field form.name class="w-full mt-1 p-3 border border-gray-300 rounded-md" %}
+          {% if form.name.errors %}
+            <p class="text-red-600 text-sm mt-1">{{ form.name.errors.0 }}</p>
+          {% endif %}
         </div>
-    </div>
+        <!-- Username -->
+        <div class="sm:col-span-2">
+          <label class="block text-sm font-semibold text-gray-700">Username</label>
+          {% render_field form.username class="w-full mt-1 p-3 border border-gray-300 rounded-md" %}
+          {% if form.username.errors %}
+            <p class="text-red-600 text-sm mt-1">{{ form.username.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Email -->
+        <div class="sm:col-span-2">
+          <label class="block text-sm font-semibold text-gray-700">Email</label>
+          {% render_field form.email class="w-full mt-1 p-3 border border-gray-300 rounded-md" %}
+          {% if form.email.errors %}
+            <p class="text-red-600 text-sm mt-1">{{ form.email.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Gender -->
+        <div class="sm:col-span-1">
+          <label class="block text-sm font-semibold text-gray-700">Gender</label>
+          {% render_field form.gender class="w-full mt-1 p-3 border border-gray-300 rounded-md" %}
+        </div>
+
+        <!-- Profile Picture -->
+        <div class="sm:col-span-1">
+          <label class="block text-sm font-semibold text-gray-700">Profile Picture</label>
+          {% render_field form.profilepic class="w-full mt-1 p-3 border border-gray-300 rounded-md" %}
+        </div>
+
+        <!-- Password -->
+        {% if form.password1 %}
+        <div class="sm:col-span-2">
+          <label class="block text-sm font-semibold text-gray-700">Password</label>
+          {% render_field form.password1 class="w-full mt-1 p-3 border border-gray-300 rounded-md" %}
+          {% if form.password1.errors %}
+            <p class="text-red-600 text-sm mt-1">{{ form.password1.errors.0 }}</p>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Confirm Password -->
+        {% if form.password2 %}
+        <div class="sm:col-span-2">
+          <label class="block text-sm font-semibold text-gray-700">Confirm Password</label>
+          {% render_field form.password2 class="w-full mt-1 p-3 border border-gray-300 rounded-md" %}
+          {% if form.password2.errors %}
+            <p class="text-red-600 text-sm mt-1">{{ form.password2.errors.0 }}</p>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Non-field errors -->
+      {% if form.non_field_errors %}
+        <div class="text-red-600 text-sm mt-4">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      <!-- Buttons -->
+      <div class="pt-6 flex justify-center gap-4">
+        <button type="submit" class="bg-yellow-600 text-white px-6 py-3 rounded-md hover:bg-yellow-500 transition">
+          ✅ Save Changes
+        </button>
+        <a href="{% url 'index' %}" class="bg-gray-600 text-white px-6 py-3 rounded-md hover:bg-gray-500 transition">
+          ❌ Cancel
+        </a>
+      </div>
+
+    </form>
+  </div>
 </div>
 
-{% include 'footer.html' %}
+{% include "footer.html" %}
 {% endblock %}
