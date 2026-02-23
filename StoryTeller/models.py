@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth import get_user_model
+from datetime import date
 
 
 class MyUser(AbstractUser):
@@ -111,22 +112,23 @@ class Event(models.Model):
         return self.title
 
 
-    
-
-
 class Sibling(models.Model):
     name = models.CharField(max_length=100)
     birthdate = models.DateField()
-    age=models.IntegerField()
     occupation = models.CharField(max_length=255, blank=True, null=True)
     short_description = models.TextField()
     full_description = models.TextField()
     profile_picture = models.ImageField(upload_to='siblings/', blank=True, null=True)
-    video = models.FileField(upload_to='galery_videos/', blank=True, null=True)  # Optional
+    video = models.FileField(upload_to='galery_videos/', blank=True, null=True)
 
     def __str__(self):
         return self.name
-    
+
+    @property
+    def age(self):
+        today = date.today()
+        return today.year - self.birthdate.year - ((today.month, today.day) < (self.birthdate.month, self.birthdate.day))
+
 class SiblingImage(models.Model):
     sibling = models.ForeignKey(Sibling, related_name="images", on_delete=models.CASCADE)
     image = models.ImageField(upload_to='sibling_images/')

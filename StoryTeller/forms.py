@@ -57,7 +57,7 @@ class SiblingForm(ModelForm):
     
     class Meta:
         model = Sibling
-        fields = ['name', 'birthdate', 'age', 'occupation', 'full_description', 'profile_picture']
+        fields = ['name', 'birthdate',  'occupation', 'full_description', 'profile_picture']
 
 class EducationLevelForm(ModelForm):
     class Meta:

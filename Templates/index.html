@@ -147,24 +147,28 @@
     });
 
     var ctx2 = document.getElementById('trafficPieChart').getContext('2d');
-    new Chart(ctx2, {
-        type: 'pie',
-        data: {
-            labels: [
+new Chart(ctx2, {
+    type: 'pie',
+    data: {
+        labels: [
             {% for sibling in siblings %}
-                '{{sibling.name}}',
+                '{{ sibling.name }}'{% if not forloop.last %},{% endif %}
             {% endfor %}
-                ],
-            datasets: [{
-                data: [40, 25, 20, 15,80,70,34,67],
-                backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0','#f46384', '#36a6eb', '#ff8e56', '#4b80c0']
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
-    });
+        ],
+        datasets: [{
+            data: [
+                {% for x in siblings %}
+                    {{ x.age }}{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ],
+            backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#f46384', '#36a6eb', '#ff8e56', '#4b80c0']
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false
+    }
+});
 
     var ctx4 = document.getElementById('revenueDoughnutChart').getContext('2d');
     new Chart(ctx4, {
