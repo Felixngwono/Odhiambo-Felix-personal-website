@@ -156,7 +156,6 @@
         <section id="skills" class="py-20 bg-gray-100 border-t border-gray-200">
             <h2 class="text-4xl font-bold text-center text-green-700 mb-10">Skills</h2>
             <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-6">
-                {% for x in skill %}
                 <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition">
                     <h3 class="text-lg font-semibold text-gray-800">{{ x.name }}</h3>
                     <p class="text-sm text-gray-500 mt-1">Proficiency: {{ x.proficiency }}%</p>
@@ -164,7 +163,6 @@
                         <div class="bg-green-500 h-2 rounded-full" style="width: {{ x.proficiency }}%;"></div>
                     </div>
                 </div>
-                {% endfor %}
             </div>
         </section>
 
