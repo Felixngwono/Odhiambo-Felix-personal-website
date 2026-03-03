@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 05, 2025 at 12:36 PM
+-- Generation Time: Mar 03, 2026 at 06:13 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -433,7 +433,8 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 (61, 'StoryTeller', '0043_mynewmodel2_delete_myexternalmodel', '2025-04-12 09:11:03.813750'),
 (62, 'StoryTeller', '0044_remove_mynewmodel2_my_new_model_delete_news_and_more', '2025-04-12 09:12:01.031146'),
 (63, 'StoryTeller', '0045_imagegallery_video', '2025-04-15 15:25:52.691524'),
-(64, 'StoryTeller', '0002_alter_myuser_email_alter_myuser_profilepic', '2025-07-29 12:45:33.679931');
+(64, 'StoryTeller', '0002_alter_myuser_email_alter_myuser_profilepic', '2025-07-29 12:45:33.679931'),
+(65, 'StoryTeller', '0003_remove_sibling_age_alter_myuser_profilepic', '2026-02-23 10:18:32.481049');
 
 -- --------------------------------------------------------
 
@@ -469,6 +470,7 @@ INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALU
 ('rg1tm0oazd6g7zz9rcgaria4p8bjiv1n', '.eJxVjEEOwiAQRe_C2hAqMBSX7nsGMsOAVA0kpV0Z765NutDtf-_9lwi4rSVsPS1hZnERgxKn35EwPlLdCd-x3pqMra7LTHJX5EG7nBqn5_Vw_w4K9vKtIVvOPltKygOOYCLSEK0ip_1ZZ5XRAeSolXEqeWYgC2wNMCNYGEm8PxrpOHU:1ugjyC:EQNlsPBDEwdiYP5zCsMMkBAvL4_Xee04xJlktZLB-M0', '2025-08-12 13:02:16.978680'),
 ('tkqpfk6crf7e856cf1qt0p0nck6wlf5m', '.eJxVjEEOwiAQRe_C2hCGFgGX7nsGMjNMpWpoUtqV8e7apAvd_vfef6mE21rS1mRJU1YXBer0uxHyQ-oO8h3rbdY813WZSO-KPmjTw5zleT3cv4OCrXzr7uwFHZA1vePQA7ELhnzMzkbmESgIjS6C80ZCxxzQg0GLlG0UQ6DeH9nwN_E:1tvhK1:wp7WzR95L_5R2_pW0excGKW3kpFaJjoLbD6aXv9li3U', '2025-04-04 18:42:21.273363'),
 ('tx06ccix4cz2kmxrlsqgw9e5xipzyz01', '.eJxVjEEOwiAQRe_C2hCGFgGX7nsGMjNMpWpoUtqV8e7apAvd_vfef6mE21rS1mRJU1YXBer0uxHyQ-oO8h3rbdY813WZSO-KPmjTw5zleT3cv4OCrXzr7uwFHZA1vePQA7ELhnzMzkbmESgIjS6C80ZCxxzQg0GLlG0UQ6DeH9nwN_E:1tqy2T:tghg9Do8rT7_DqEFYuQTPf4nujhbJMoDME5nc7gUwN0', '2025-03-22 17:32:41.137311'),
+('zlc12yifz7kw6bdvp292t8zjd904n2j3', '.eJxVjMsOwiAQAP9lz4bQ5VV69O43EGAXWzWQlPZk_HfTpAe9zkzmDSHu2xz2zmtYCCZAuPyyFPOT6yHoEeu9idzqti5JHIk4bRe3Rvy6nu3fYI59hgl8ilaOmc3ovEZTiD1mYiWL4uTNYIfR6Kw9O1kMkpIRlUc0mhS7bAk-X96fN4Q:1vunTm:SuDqAcbKYSFtovY0xXsaf1HbspOt5tYJsKh0MFN8kwc', '2026-03-10 08:09:14.898910'),
 ('zv349pwy1w0noxxczjro9ychfk0sdc27', '.eJxVjEEOwiAQRe_C2hCGFgGX7nsGMjNMpWpoUtqV8e7apAvd_vfef6mE21rS1mRJU1YXBer0uxHyQ-oO8h3rbdY813WZSO-KPmjTw5zleT3cv4OCrXzr7uwFHZA1vePQA7ELhnzMzkbmESgIjS6C80ZCxxzQg0GLlG0UQ6DeH9nwN_E:1tr0Qr:Zis-mOgaVUIn5ZtiDV52exL8vVq7XrV5yCQCar7_6PY', '2025-03-22 20:06:01.845302');
 
 -- --------------------------------------------------------
@@ -743,7 +745,11 @@ INSERT INTO `storyteller_imagegallery` (`id`, `title`, `image`, `caption`, `crea
 (9, 'Westgate', 'gallery_images/wst.jpg', 'When duty calls', '2025-02-19 09:50:43.540125', NULL),
 (12, 'Football my passion', 'gallery_images/74c1e581e08c4cb6849db13eb598fbc9.jpg', 'Showcasing my talent', '2025-04-16 06:37:32.645371', ''),
 (13, 'Football locating big men', 'gallery_images/IMG-20250330-WA0007.jpg', 'On our way to Nyayo stadium to spaketate our own Gor Mahia on a derby with AFC Leopords', '2025-04-16 06:41:43.007534', ''),
-(15, 'Africa International University', 'gallery_images/IMG_20250704_094113_HDR.jpg', 'At graduation ceremony at Karen- Africa International University', '2025-07-05 11:15:59.219063', '');
+(15, 'Africa International University', 'gallery_images/IMG_20250704_094113_HDR.jpg', 'At graduation ceremony at Karen- Africa International University', '2025-07-05 11:15:59.219063', ''),
+(16, 'FelloMarley at 27', 'gallery_images/WIN_20260223_20_14_28_Pro.jpg', 'waah', '2026-02-24 07:47:51.409490', ''),
+(17, 'Wuod Anyango', 'gallery_images/WIN_20260223_20_14_36_Pro.jpg', 'Wuod Anyango', '2026-02-24 07:49:06.793058', ''),
+(18, 'StoryTeller', 'gallery_images/WIN_20260223_20_14_40_Pro.jpg', 'StoryTeller', '2026-02-24 07:50:24.167344', ''),
+(19, 'Felix Odhiambo', 'gallery_images/WIN_20260223_20_15_12_Pro.jpg', 'Felix Odhiambo', '2026-02-24 07:51:37.741917', '');
 
 -- --------------------------------------------------------
 
@@ -831,7 +837,7 @@ CREATE TABLE `storyteller_myuser` (
   `date_joined` datetime(6) NOT NULL,
   `name` varchar(100) DEFAULT NULL,
   `bio` longtext DEFAULT NULL,
-  `profilepic` varchar(100) NOT NULL,
+  `profilepic` varchar(100) DEFAULT NULL,
   `birthdate` date DEFAULT NULL,
   `gender` varchar(10) DEFAULT NULL,
   `is_enduser` tinyint(1) DEFAULT NULL
@@ -843,12 +849,12 @@ CREATE TABLE `storyteller_myuser` (
 
 INSERT INTO `storyteller_myuser` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`, `name`, `bio`, `profilepic`, `birthdate`, `gender`, `is_enduser`) VALUES
 (1, 'pbkdf2_sha256$600000$Sg15T71IcMFGi2RySmPfq7$52+rQuX20wy4IDs31cF0Bz+C5gSggLmt58sHz8/K2mU=', '2025-08-04 17:24:55.511925', 0, 'Jakamolo', '', '', 'jakamolo@outlook.com', 0, 1, '2025-02-17 15:32:16.154366', NULL, NULL, 'profile_pics/24.jpg', '1990-10-23', 'male', 1),
-(2, 'pbkdf2_sha256$600000$nBuSYDQMjfJTr8wh8prgzI$uoobDx1ug6/6iA45fNzJ9Fi+ZObmYi8bgN6O3cWBReY=', '2025-07-29 12:35:11.244390', 0, 'Salima', '', '', 'salima@gmail.com', 0, 1, '2025-02-19 10:22:55.502790', NULL, NULL, 'default.png', '1990-10-23', 'female', 1),
+(2, 'pbkdf2_sha256$390000$dKiFGwibnLFjfIPeT4oq7S$efkLOQafldBSj3fuuVGAUoI9w7LzsNMBZ4YdiCcrBFc=', '2026-02-24 08:09:14.894514', 0, 'Salima', '', '', 'salima@gmail.com', 0, 1, '2025-02-19 10:22:55.502790', 'Salima Amanda', NULL, 'profiles/WIN_20260223_20_14_40_Pro.jpg', '1990-10-23', 'female', 1),
 (3, 'pbkdf2_sha256$600000$L962lgx7bnmxKCdQDZuVao$TQPXCFywxIs/iVX8/w/xYSoHcV1c83hpZsPJt3nw32M=', '2025-07-29 12:31:47.878149', 0, 'Angie', '', '', 'angie@gmail.com', 0, 1, '2025-07-28 09:23:47.591845', 'Angela Valdes', NULL, 'default.png', NULL, 'female', 1),
 (6, 'pbkdf2_sha256$600000$oqg3oFLGhFB90ZykAy4P3F$0o7HlO58KlGD3IopWHfX1yb/df9C5azEJU3Axlp0/Ow=', '2025-07-29 12:37:49.267646', 0, 'max', '', '', 'max@gmail.com', 0, 1, '2025-07-29 12:37:32.464488', 'carl Max', NULL, 'default.png', NULL, 'male', 0),
 (8, 'pbkdf2_sha256$600000$UT6jaYlG7Jqp65UoyhnIOM$dEg5/HW0y6ExsPPztkp/rGLAIwIePguwQ8jjbiR+Ue0=', '2025-07-29 12:52:42.641396', 0, 'Wanjiku', '', '', 'faith@gmail.com', 0, 1, '2025-07-29 12:52:27.471243', 'Faith Wanjiku', NULL, 'avatar.png', NULL, 'male', 0),
 (9, 'pbkdf2_sha256$600000$W82CLP2KyHBqElGLzX2Wnf$VDXG0EAUGE9M/9FY73sVMSYBoA9SsuFlCTwkjmPsA9o=', '2025-07-29 12:58:06.523841', 0, 'young', '', '', 'young@gmail.com', 0, 1, '2025-07-29 12:57:50.598915', 'Disney Onyango', NULL, 'avatar.png', NULL, 'male', 1),
-(11, 'pbkdf2_sha256$600000$z4Ruy8VvHTbowCm9mp2t9M$BLEuF+5G4rmjfOPWGhjtF0dFQwNHNWEiXEjrANmt0d4=', '2025-08-05 10:12:42.929388', 1, 'FelloMarley', '', '', 'felixodhiambo@gmail.com', 1, 1, '2025-08-02 09:39:48.669872', 'Felix Odhiambo', 'im a software engineering', 'profiles/IMG_20250731_104429_1.jpg', NULL, 'male', 0);
+(11, 'pbkdf2_sha256$390000$GTC7n1dY2j0KSfK4mMqwQa$wMygqLPewy2DGIFIkc/W7MwwADOOW7dj2obG+Wh8Ias=', '2026-02-24 07:30:51.796446', 1, 'FelloMarley', '', '', 'felixodhiambo@gmail.com', 1, 1, '2025-08-02 09:39:48.669872', 'Felix Odhiambo', 'im a software engineering', 'profiles/IMG_20250731_104429_1.jpg', NULL, 'male', 0);
 
 -- --------------------------------------------------------
 
@@ -984,7 +990,6 @@ CREATE TABLE `storyteller_sibling` (
   `short_description` longtext NOT NULL,
   `full_description` longtext NOT NULL,
   `profile_picture` varchar(100) DEFAULT NULL,
-  `age` int(11) NOT NULL,
   `video` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -992,16 +997,16 @@ CREATE TABLE `storyteller_sibling` (
 -- Dumping data for table `storyteller_sibling`
 --
 
-INSERT INTO `storyteller_sibling` (`id`, `name`, `birthdate`, `occupation`, `short_description`, `full_description`, `profile_picture`, `age`, `video`) VALUES
-(1, 'Frankline Omondi', '0019-03-02', 'Pupil', 'Studying at Ratta Primary School.', 'Studying at Ratta Primary School. Wishing to pursue law in th future', 'siblings/avatar.png', 7, ''),
-(2, 'Millicent Achieng', '1980-07-09', 'Business', 'A business woman in Kayaba-Nairobi', 'A business woman in Kayaba-Nairobi', 'siblings/about_0mlgfQV.jpg', 37, ''),
-(3, 'Nancy Odhiambo', '2006-09-08', 'Student', 'im a high schooller at Ratta Secondary School', 'im Nancy Odhiambo, passionate in becoming a news anchor and a footballer', 'siblings/3006_JqayHev.webp', 19, ''),
-(4, 'Kevin Odhiambo', '1990-06-07', 'Farming', 'small scale farming', 'small scale farming and also animal rearing', 'siblings/image_5.jpg', 35, ''),
-(5, 'Winny Odhiambo', '1996-03-12', 'Business', 'working as a business girl in Kisumu', 'working as a business girl in Kisumu- Nyalenda', 'siblings/maxresdefault_LmrNR9s.jpg', 30, ''),
-(6, 'Francis dhiambo', '1998-07-08', 'Student', 'Im a teacher by profession', 'A teacher by profession', 'siblings/bc4f9597d5a345fb919debbd4bbecced_bUCzfpB.jpg', 27, ''),
-(7, 'Tonny Odhiambo', '1994-04-13', 'Engineer', 'Im a full stack software Developer', 'Im a full stack software Developer', 'siblings/person_2_XCk8YMl.jpg', 32, ''),
-(8, 'Nicole Atieno', '2016-03-25', 'Student', 'student at Ratta primary', 'student at Ratta primary', 'siblings/Buore.JPG', 9, ''),
-(9, 'Caroline Awuor', '1985-08-02', 'Farming', 'Large scale Farming', 'large scale farming', 'siblings/category-1.jpg', 40, '');
+INSERT INTO `storyteller_sibling` (`id`, `name`, `birthdate`, `occupation`, `short_description`, `full_description`, `profile_picture`, `video`) VALUES
+(1, 'Frankline Omondi', '0019-03-02', 'Pupil', 'Studying at Ratta Primary School.', 'Studying at Ratta Primary School. Wishing to pursue law in th future', 'siblings/avatar.png', ''),
+(2, 'Millicent Achieng', '1980-07-09', 'Business', 'A business woman in Kayaba-Nairobi', 'A business woman in Kayaba-Nairobi', 'siblings/about_0mlgfQV.jpg', ''),
+(3, 'Nancy Odhiambo', '2006-09-08', 'Student', 'im a high schooller at Ratta Secondary School', 'im Nancy Odhiambo, passionate in becoming a news anchor and a footballer', 'siblings/3006_JqayHev.webp', ''),
+(4, 'Kevin Odhiambo', '1990-06-07', 'Farming', 'small scale farming', 'small scale farming and also animal rearing', 'siblings/image_5.jpg', ''),
+(5, 'Winny Odhiambo', '1996-03-12', 'Business', 'working as a business girl in Kisumu', 'working as a business girl in Kisumu- Nyalenda', 'siblings/maxresdefault_LmrNR9s.jpg', ''),
+(6, 'Francis dhiambo', '1998-07-08', 'Student', 'Im a teacher by profession', 'A teacher by profession', 'siblings/bc4f9597d5a345fb919debbd4bbecced_bUCzfpB.jpg', ''),
+(7, 'Tonny Odhiambo', '1994-04-13', 'Engineer', 'Im a full stack software Developer', 'Im a full stack software Developer', 'siblings/person_2_XCk8YMl.jpg', ''),
+(8, 'Nicole Atieno', '2016-03-25', 'Student', 'student at Ratta primary', 'student at Ratta primary', 'siblings/Buore.JPG', ''),
+(9, 'Caroline Awuor', '1985-08-02', 'Farming', 'Large scale Farming', 'large scale farming', 'siblings/category-1.jpg', '');
 
 -- --------------------------------------------------------
 
@@ -1494,7 +1499,7 @@ ALTER TABLE `django_content_type`
 -- AUTO_INCREMENT for table `django_migrations`
 --
 ALTER TABLE `django_migrations`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 
 --
 -- AUTO_INCREMENT for table `storyteller_activity`
@@ -1560,7 +1565,7 @@ ALTER TABLE `storyteller_faq`
 -- AUTO_INCREMENT for table `storyteller_imagegallery`
 --
 ALTER TABLE `storyteller_imagegallery`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `storyteller_job`

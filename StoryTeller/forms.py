@@ -73,7 +73,7 @@ class EducationLevelForm(ModelForm):  # noqa: F811
 class ImageGalleryForm(ModelForm):
     class Meta:
         model = ImageGallery
-        fields = ['title', 'image', 'caption']
+        fields = ['title', 'image', 'caption','video']
        
 
 
@@ -92,7 +92,7 @@ class TaskForm(ModelForm):
     
     class Meta:
         model = Task
-        fields = '__all__'
+        fields = ['title', 'description',  'due_date', 'completed','completed_at','progress_percentage','priority','created_by']
 
 class ActivityForm(ModelForm):
     class Meta:
