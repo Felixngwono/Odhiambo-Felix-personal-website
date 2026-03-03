@@ -94,7 +94,7 @@ def update_user(request, pk):
 @login_required(login_url='login')
 def delete_profile(request,pk):
     delete_profile=get_object_or_404(MyUser,id=pk)
-    form=MyUserCreationForm()
+    form=MyUserCreationForm(instance=delete_profile)
     if request.method=='POST':
         form=MyUserCreationForm(request.POST,request.FILES,instance=delete_profile)
         delete_profile.delete()
