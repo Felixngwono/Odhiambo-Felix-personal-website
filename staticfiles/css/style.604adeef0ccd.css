@@ -1,0 +1,33 @@
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.project-card {
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    background: #f9f9f9;
+}
+
+.project-card img {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    border-radius: 5px;
+}
+
+.btn {
+    padding: 10px 15px;
+    margin: 5px;
+    text-decoration: none;
+    color: white;
+    border-radius: 5px;
+}
+
+.btn-primary { background: blue; }
+.btn-warning { background: orange; }
+.btn-danger { background: red; }
+.btn-secondary { background: gray; }
