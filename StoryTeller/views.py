@@ -491,7 +491,7 @@ def update_education(request, education_id):
 
 @login_required(login_url='login')
 def dashboard(request):
-    return render(request,'dashboard.html')
+    return render(request,'index.html')
 
 @login_required(login_url='login')
 def add_family(request):
