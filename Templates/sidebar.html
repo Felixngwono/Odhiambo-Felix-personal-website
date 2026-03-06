@@ -2,135 +2,174 @@
 
 <!-- Mobile Toggle Button -->
 <button id="sidebarToggle"
-class="sm:hidden fixed top-4 left-4 z-50 bg-gray-800 text-white p-2 rounded-lg shadow-lg">
-☰
+  class="sm:hidden fixed top-4 left-4 z-50 bg-gray-800 text-white p-3 rounded-lg shadow-lg hover:bg-gray-700 transition">
+  ☰
 </button>
 
 <!-- Mobile Overlay -->
 <div id="sidebarOverlay"
-class="fixed inset-0 bg-black bg-opacity-50 hidden z-30 sm:hidden"></div>
+  class="fixed inset-0 bg-black bg-opacity-50 hidden z-30 sm:hidden"></div>
 
 <!-- Sidebar -->
 <aside id="default-sidebar"
-class="fixed top-0 left-0 z-40 w-64 h-screen bg-gray-800 text-white
-transform -translate-x-full sm:translate-x-0 transition-transform duration-300">
+  class="fixed top-0 left-0 z-40 w-64 h-screen bg-gray-800 text-white
+         transform -translate-x-full sm:translate-x-0 transition-transform duration-300 flex flex-col">
 
-<div class="h-full px-4 py-6 overflow-y-auto">
+  <div class="flex flex-col h-full overflow-y-auto px-4 py-6">
+    <!-- User Profile -->
+    <div class="flex flex-col items-center mb-6">
+      <img src="{{ request.user.profilepic.url }}"
+           alt="{{ user }}"
+           class="w-28 h-28 object-cover rounded-full border-4 border-white mb-3">
+      <span class="text-xl font-bold truncate text-center">{{ user.name }}</span>
+    </div>
 
-<!-- User Profile -->
-<div class="flex flex-col items-center mb-8">
-<img src="{{ request.user.profilepic.url }}"
-alt="{{user}}"
-class="w-28 h-28 object-cover rounded-full border-4 border-white mb-3">
+    <h1 class="text-green-400 font-bold mb-4 text-center">My Dashboard</h1>
 
-<span class="text-xl font-bold">{{ user.name }}</span>
+    <ul class="space-y-2 flex-1">
+      <li>
+        <a href="{% url 'index' %}"
+           class="flex items-center p-3 rounded-lg hover:bg-teal-600 transition w-full text-sm">
+          <span class="mr-3 text-lg">🏠</span> Home
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'tasks' %}"
+           class="flex items-center p-3 rounded-lg hover:bg-yellow-500 transition w-full text-sm">
+          <span class="mr-3 text-lg">📋</span> Tasks
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'support' %}"
+           class="flex items-center p-3 rounded-lg hover:bg-green-600 transition w-full text-sm">
+          <span class="mr-3 text-lg">🆘</span> Support
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'notifications' %}"
+           class="flex items-center p-3 rounded-lg hover:bg-indigo-600 transition w-full text-sm">
+          <span class="mr-3 text-lg">🔔</span> Notifications
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'activity_list' %}"
+           class="flex items-center p-3 rounded-lg hover:bg-teal-600 transition w-full text-sm">
+          <span class="mr-3 text-lg">🗂️</span> Activities
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'projects_list' %}"
+           class="flex items-center p-3 rounded-lg hover:bg-blue-600 transition w-full text-sm">
+          <i class="fa-solid fa-folder mr-3"></i> Projects
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'donate' %}"
+           class="flex items-center p-3 rounded-lg bg-yellow-500 hover:bg-yellow-400 transition w-full text-sm">
+          <i class="fas fa-donate mr-3"></i> Donate
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'skills' %}"
+           class="flex items-center p-3 rounded-lg hover:bg-green-600 transition w-full text-sm">
+          <i class="fa-solid fa-lightbulb mr-3"></i> Skills
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'volunteer_list' %}"
+           class="flex items-center p-3 rounded-lg hover:bg-green-600 transition w-full text-sm">
+          <i class="fas fa-hands-helping mr-3"></i> Volunteer
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'job_list' %}"
+           class="flex items-center p-3 rounded-lg hover:bg-green-600 transition w-full text-sm">
+          <i class="fas fa-briefcase mr-3"></i> Jobs
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'certification_list' %}"
+           class="flex items-center p-3 rounded-lg hover:bg-green-600 transition w-full text-sm">
+          <i class="fa-solid fa-award mr-3"></i> Certifications
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'fellomarley_pdf' %}"
+           class="flex items-center p-3 rounded-lg hover:bg-green-600 transition w-full text-sm">
+          <i class="fa-solid fa-file-pdf mr-3"></i> Reports
+        </a>
+      </li>
+    </ul>
+
+    <!-- Optional: Logout Button at bottom -->
+    <!-- Logout Button -->
+<div class="mt-auto">
+  <button id="logoutBtn"
+          class="flex items-center justify-center p-3 rounded-lg hover:bg-red-600 transition w-full text-sm font-semibold">
+    <i class="fa-solid fa-right-from-bracket mr-2"></i> Logout
+  </button>
 </div>
 
-<h1 class="text-green-400 font-bold mb-4">My Dashboard</h1>
-
-<ul class="space-y-3 font-medium">
-
-<li>
-<a href="{% url 'index' %}"
-class="flex items-center p-3 rounded-lg hover:bg-teal-600 transition">
-<span class="mr-4 text-xl">🏠</span> Home
-</a>
-</li>
-
-<li>
-<a href="{% url 'tasks' %}"
-class="flex items-center p-3 rounded-lg hover:bg-yellow-500 transition">
-<span class="mr-4 text-xl">📋</span> Tasks
-</a>
-</li>
-
-<li>
-<a href="{% url 'support' %}"
-class="flex items-center p-3 rounded-lg hover:bg-green-600 transition">
-<span class="mr-4 text-xl">🆘</span> Support
-</a>
-</li>
-
-<li>
-<a href="{% url 'notifications' %}"
-class="flex items-center p-3 rounded-lg hover:bg-indigo-600 transition">
-<span class="mr-4 text-xl">🔔</span> Notifications
-</a>
-</li>
-
-<li>
-<a href="{% url 'activity_list' %}"
-class="flex items-center p-3 rounded-lg hover:bg-teal-600 transition">
-<span class="mr-4 text-xl">🗂️</span> Activities
-</a>
-</li>
-
-<li>
-<a href="{% url 'projects_list' %}"
-class="flex items-center p-3 rounded-lg hover:bg-blue-600 transition">
-<i class="fa-solid fa-folder mr-3"></i> Projects
-</a>
-</li>
-
-<li>
-<a href="{% url 'donate' %}"
-class="flex items-center p-3 rounded-lg bg-yellow-500 hover:bg-yellow-400 transition">
-<i class="fas fa-donate mr-3"></i> Donate
-</a>
-</li>
-
-<li>
-<a href="{% url 'skills' %}"
-class="flex items-center p-3 rounded-lg hover:bg-green-600 transition">
-<i class="fa-solid fa-lightbulb mr-3"></i> Skills
-</a>
-</li>
-
-<li>
-<a href="{% url 'volunteer_list' %}"
-class="flex items-center p-3 rounded-lg hover:bg-green-600 transition">
-<i class="fas fa-hands-helping mr-3"></i> Volunteer
-</a>
-</li>
-
-<li>
-<a href="{% url 'job_list' %}"
-class="flex items-center p-3 rounded-lg hover:bg-green-600 transition">
-<i class="fas fa-briefcase mr-3"></i> Jobs
-</a>
-</li>
-
-<li>
-<a href="{% url 'certification_list' %}"
-class="flex items-center p-3 rounded-lg hover:bg-green-600 transition">
-<i class="fa-solid fa-award mr-3"></i> Certifications
-</a>
-</li>
-
-<li>
-<a href="{% url 'fellomarley_pdf' %}"
-class="flex items-center p-3 rounded-lg hover:bg-green-600 transition">
-<i class="fa-solid fa-file-pdf mr-3"></i> Reports
-</a>
-</li>
-
-</ul>
+<!-- Logout Confirmation Modal -->
+<div id="logoutModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-sm w-full p-6 text-center">
+    <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Confirm Logout</h2>
+    <p class="text-gray-600 dark:text-gray-300 mb-6">Are you sure you want to logout?</p>
+    <div class="flex justify-center space-x-4">
+      <button id="cancelLogout"
+              class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition">
+        Cancel
+      </button>
+      <a href="{% url 'logoutuser' %}"
+         class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+        Logout
+      </a>
+    </div>
+  </div>
 </div>
+
+<!-- Modal Script -->
+<script>
+  const logoutBtn = document.getElementById("logoutBtn");
+  const logoutModal = document.getElementById("logoutModal");
+  const cancelBtn = document.getElementById("cancelLogout");
+
+  // Show modal on button click
+  logoutBtn.addEventListener("click", () => {
+    logoutModal.classList.remove("hidden");
+    logoutModal.classList.add("flex");
+  });
+
+  // Hide modal on cancel
+  cancelBtn.addEventListener("click", () => {
+    logoutModal.classList.add("hidden");
+    logoutModal.classList.remove("flex");
+  });
+
+  // Hide modal if clicking outside the modal content
+  logoutModal.addEventListener("click", (e) => {
+    if (e.target === logoutModal) {
+      logoutModal.classList.add("hidden");
+      logoutModal.classList.remove("flex");
+    }
+  });
+</script>
+  </div>
 </aside>
 
 <!-- Sidebar Script -->
 <script>
-const toggleBtn = document.getElementById("sidebarToggle");
-const sidebar = document.getElementById("default-sidebar");
-const overlay = document.getElementById("sidebarOverlay");
+  const toggleBtn = document.getElementById("sidebarToggle");
+  const sidebar = document.getElementById("default-sidebar");
+  const overlay = document.getElementById("sidebarOverlay");
 
-toggleBtn.addEventListener("click", () => {
-sidebar.classList.toggle("-translate-x-full");
-overlay.classList.toggle("hidden");
-});
+  toggleBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("-translate-x-full");
+    overlay.classList.toggle("hidden");
+  });
 
-overlay.addEventListener("click", () => {
-sidebar.classList.add("-translate-x-full");
-overlay.classList.add("hidden");
-});
+  overlay.addEventListener("click", () => {
+    sidebar.classList.add("-translate-x-full");
+    overlay.classList.add("hidden");
+  });
 </script>
