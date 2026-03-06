@@ -170,7 +170,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 AUTH_USER_MODEL= 'StoryTeller.Myuser'
 
-MEDIA_ROOT = "/var/data/media"
 
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': 'df9gb5jd3',
