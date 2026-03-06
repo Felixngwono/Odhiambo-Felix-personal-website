@@ -157,9 +157,6 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -174,7 +171,7 @@ AUTH_USER_MODEL= 'StoryTeller.Myuser'
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': 'df9gb5jd3',
     'API_KEY': '946363838558771',
-    'API_SECRET': '**********',
+    'API_SECRET': 'CLOUDINARY_URL=cloudinary://946363838558771:GLzVkp8bXexK1pk4LILjXhSHEyo@df9gb5jd3',
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
