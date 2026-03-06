@@ -67,7 +67,7 @@
                 <h1 class="text-2xl font-bold text-green-700">FelloMarley Foundation</h1>
             </div>
 
-            <nav class="space-x-4  md:flex items-center">
+            <nav class="space-x-4 hidden md:flex items-center">
                 <a href="{% url 'signup' %}" class="hover:text-green-600 font-semibold"><i class="fa-solid fa-user-plus mr-1"></i> Sign Up</a>
                 <a href="{% url 'login' %}" class="hover:text-blue-600 font-semibold"><i class="fas fa-sign-in-alt mr-1"></i> Sign In</a>
             </nav>
@@ -85,7 +85,7 @@
                         <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center text-center px-6">
                             <h1 class="text-4xl md:text-6xl font-bold mb-4">Hi, I'm Felix</h1>
                             <p class="text-xl md:text-2xl">Developer, Mentor & Open-Source Contributor</p>
-                            <a href="#about" class="mt-6 inline-block bg-white text-green-700 font-semibold px-6 py-3 rounded-full shadow hover:bg-gray-100 transition">
+                            <a href="{% url "login" %}" class="mt-6 inline-block bg-white text-green-700 font-semibold px-6 py-3 rounded-full shadow hover:bg-gray-100 transition">
                                 Explore More
                             </a>
                         </div>
