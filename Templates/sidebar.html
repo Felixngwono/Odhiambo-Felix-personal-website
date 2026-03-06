@@ -1,118 +1,136 @@
-<!-- sidebar.html -->
 {% load static %}
 
-<!-- Sidebar -->
-<aside id="default-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen bg-gray-800 text-white transform -translate-x-full sm:translate-x-0 transition-transform duration-300">
-    <div class="h-full text-white px-4 py-6 overflow-y-auto">
-        <!-- Sidebar Header (User Avatar and Name) -->
-        <div class="grid items-center justify-center mb-8">
-            <img src="{{ request.user.profilepic.url }}"  alt="{{user}}" style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 4px solid white; margin-bottom: 1rem;">
-            <span class="text-xl font-bold">{{ user.name }}</span>
-        </div>
-
-        <!-- Sidebar Navigation Links -->
-        <ul class="space-y-6 font-medium">
-            <!-- Home -->
-            <h1 class='text-green-500 hoover-blue-500'> <strong>My Dashboard</strong></h1>
-            <li>
-                <a href="{% url 'index' %}" class="flex items-center p-3 rounded-lg hover:bg-teal-600 transition duration-200 group">
-                    <span class="mr-4 text-2xl">🏠</span>
-                    <span class="text-lg">Home</span>
-                </a>
-            </li>
-
-            <!-- Tasks -->
-            <li>
-                <a href="{% url 'tasks' %}" class="flex items-center p-3 rounded-lg hover:bg-yellow-500 transition duration-200 group">
-                    <span class="mr-4 text-2xl">📋</span>
-                    <span class="text-lg">Tasks</span>
-                </a>
-            </li>
-
-            <!-- Support -->
-            <li>
-                <a href="{% url 'support' %}" class="flex items-center p-3 rounded-lg hover:bg-green-600 transition duration-200 group">
-                    <span class="mr-4 text-2xl">🆘</span>
-                    <span class="text-lg">Support</span>
-                </a>
-            </li>
-
-
-            <!-- Notifications -->
-            <li>
-                <a href="{% url 'notifications' %}" class="flex items-center p-3 rounded-lg hover:bg-indigo-600 transition duration-200 group">
-                    <span class="mr-4 text-2xl">🔔</span>
-                    <span class="text-lg">Notifications</span>
-                </a>
-            </li>
-
-            <!-- Activities -->
-            <li>
-                <a href="{% url 'activity_list' %}" class="flex items-center p-3 rounded-lg hover:bg-teal-600 transition duration-200 group">
-                    <span class="mr-4 text-2xl">🗂️</span>
-                    <span class="text-lg">Activities</span>
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'projects_list' %}" class="flex items-center p-3 rounded-lg hover:bg-blue-600 transition-all duration-300 ease-in-out">
-                    <i class="fa-solid fa-folder mr-3 text-lg"></i>
-                    <span class="text-lg">Projects</span>
-                </a>
-            </li>
-            <li>
-            <a href="{% url 'donate' %}" 
-            class=" text-white px-6 py-3 rounded-lg font-medium hover:bg-yellow-400 transition-all shadow-md inline-flex items-center">
-           <i class="fas fa-donate mr-2"></i> Donate Now
-         </a>
-        </li>
-            <li>
-                <a href="{% url 'skills' %}" class="flex items-center p-3 rounded-lg hover:bg-green-600 transition-all duration-300 ease-in-out">
-                    <i class="fa-solid fa-lightbulb mr-3 text-lg"></i>
-                    <span class="text-lg">Skils</span>
-                </a>
-            </li>
-            <li>
-                
-                <a href="{% url 'volunteer_list' %}" class="text-white font-semibold hover:text-yellow-400">
-                    <i class="fas fa-hands-helping"></i> Volunteer
-                </a>
-                
-            </li>
-            <li>
-                <a href="{% url 'job_list' %}" class="flex items-center p-3 rounded-lg hover:bg-green-600 transition-all duration-300 ease-in-out">
-                    <i class="fas fa-briefcase"></i> 
-                    <span class="text-lg">Jobs</span>
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'certification_list' %}" class="flex items-center p-3 rounded-lg hover:bg-green-600 transition-all duration-300 ease-in-out">
-                    <i class="fa-solid fa-award mr-3 text-lg"></i>
-                    <span class="text-lg">Certifications</span>
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'fellomarley_pdf' %}" 
-                   class="flex items-center p-3 rounded-lg hover:bg-green-600 hover:text-white transition-all duration-300 ease-in-out gap-3">
-                    <i class="fa-solid fa-file-pdf text-lg"></i>
-                    <span class="text-lg">Reports</span>
-                </a>
-            </li>
-            
-            
-        </ul>
-    </div>
-</aside>
-<!-- Sidebar Toggle Button (Only for Mobile) -->
-<button id="sidebarToggle" class="p-2 bg-gray-800 text-white rounded-md fixed top-4 left-4 sm:hidden">
-    ☰
+<!-- Mobile Toggle Button -->
+<button id="sidebarToggle"
+class="sm:hidden fixed top-4 left-4 z-50 bg-gray-800 text-white p-2 rounded-lg shadow-lg">
+☰
 </button>
-{% block content %}
-<main>
-</main>
-{% endblock content %}
-<!-- JavaScript for Sidebar -->
+
+<!-- Mobile Overlay -->
+<div id="sidebarOverlay"
+class="fixed inset-0 bg-black bg-opacity-50 hidden z-30 sm:hidden"></div>
+
+<!-- Sidebar -->
+<aside id="default-sidebar"
+class="fixed top-0 left-0 z-40 w-64 h-screen bg-gray-800 text-white
+transform -translate-x-full sm:translate-x-0 transition-transform duration-300">
+
+<div class="h-full px-4 py-6 overflow-y-auto">
+
+<!-- User Profile -->
+<div class="flex flex-col items-center mb-8">
+<img src="{{ request.user.profilepic.url }}"
+alt="{{user}}"
+class="w-28 h-28 object-cover rounded-full border-4 border-white mb-3">
+
+<span class="text-xl font-bold">{{ user.name }}</span>
+</div>
+
+<h1 class="text-green-400 font-bold mb-4">My Dashboard</h1>
+
+<ul class="space-y-3 font-medium">
+
+<li>
+<a href="{% url 'index' %}"
+class="flex items-center p-3 rounded-lg hover:bg-teal-600 transition">
+<span class="mr-4 text-xl">🏠</span> Home
+</a>
+</li>
+
+<li>
+<a href="{% url 'tasks' %}"
+class="flex items-center p-3 rounded-lg hover:bg-yellow-500 transition">
+<span class="mr-4 text-xl">📋</span> Tasks
+</a>
+</li>
+
+<li>
+<a href="{% url 'support' %}"
+class="flex items-center p-3 rounded-lg hover:bg-green-600 transition">
+<span class="mr-4 text-xl">🆘</span> Support
+</a>
+</li>
+
+<li>
+<a href="{% url 'notifications' %}"
+class="flex items-center p-3 rounded-lg hover:bg-indigo-600 transition">
+<span class="mr-4 text-xl">🔔</span> Notifications
+</a>
+</li>
+
+<li>
+<a href="{% url 'activity_list' %}"
+class="flex items-center p-3 rounded-lg hover:bg-teal-600 transition">
+<span class="mr-4 text-xl">🗂️</span> Activities
+</a>
+</li>
+
+<li>
+<a href="{% url 'projects_list' %}"
+class="flex items-center p-3 rounded-lg hover:bg-blue-600 transition">
+<i class="fa-solid fa-folder mr-3"></i> Projects
+</a>
+</li>
+
+<li>
+<a href="{% url 'donate' %}"
+class="flex items-center p-3 rounded-lg bg-yellow-500 hover:bg-yellow-400 transition">
+<i class="fas fa-donate mr-3"></i> Donate
+</a>
+</li>
+
+<li>
+<a href="{% url 'skills' %}"
+class="flex items-center p-3 rounded-lg hover:bg-green-600 transition">
+<i class="fa-solid fa-lightbulb mr-3"></i> Skills
+</a>
+</li>
+
+<li>
+<a href="{% url 'volunteer_list' %}"
+class="flex items-center p-3 rounded-lg hover:bg-green-600 transition">
+<i class="fas fa-hands-helping mr-3"></i> Volunteer
+</a>
+</li>
+
+<li>
+<a href="{% url 'job_list' %}"
+class="flex items-center p-3 rounded-lg hover:bg-green-600 transition">
+<i class="fas fa-briefcase mr-3"></i> Jobs
+</a>
+</li>
+
+<li>
+<a href="{% url 'certification_list' %}"
+class="flex items-center p-3 rounded-lg hover:bg-green-600 transition">
+<i class="fa-solid fa-award mr-3"></i> Certifications
+</a>
+</li>
+
+<li>
+<a href="{% url 'fellomarley_pdf' %}"
+class="flex items-center p-3 rounded-lg hover:bg-green-600 transition">
+<i class="fa-solid fa-file-pdf mr-3"></i> Reports
+</a>
+</li>
+
+</ul>
+</div>
+</aside>
+
+<!-- Sidebar Script -->
 <script>
-    document.getElementById("sidebarToggle").addEventListener("click", function () {
-        document.getElementById("sidebar").classList.toggle("-translate-x-full");
-    });
+const toggleBtn = document.getElementById("sidebarToggle");
+const sidebar = document.getElementById("default-sidebar");
+const overlay = document.getElementById("sidebarOverlay");
+
+toggleBtn.addEventListener("click", () => {
+sidebar.classList.toggle("-translate-x-full");
+overlay.classList.toggle("hidden");
+});
+
+overlay.addEventListener("click", () => {
+sidebar.classList.add("-translate-x-full");
+overlay.classList.add("hidden");
+});
 </script>
