@@ -2160,4 +2160,25 @@
     "description": "We visited Cherigat care foundation to se how the kids were doing",
     "category": "other",
     "author": 1,
-    "technology": 
+    "technology"
+      : "django",
+    "video": "portfolio_videos/cherigat_care_foundation.mp4",
+    "image": "portfolio_images/cherigat_care_foundation.jpg",
+    "date_created": "2025-02-18T18:37:01.901Z"
+  }
+},
+{
+  "model": "StoryTeller.portfolioitem",
+  "pk": 6,
+  "fields": {
+    "title": "zxcdfgvb",
+    "description": "xzxdfgbv",
+    "category": "other",
+    "author": 1,
+    "technology": "django",
+    "video": "",
+    "image": "portfolio_images/carrots_tjrk5F4.jpg",
+    "date_created": "2025-02-20T13:40:44.901Z"
+  }
+}
+] 
