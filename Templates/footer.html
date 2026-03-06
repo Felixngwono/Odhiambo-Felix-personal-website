@@ -24,7 +24,7 @@
           {% if request.user.is_superuser %}
           <li><a href="{% url 'admins' %}" class="text-yellow-400 hover:text-yellow-300 transition duration-300">Admin</a></li>
           {% else %}
-          <li><a href="{% url 'user_dashboard' %}" class="text-green-400 hover:text-green-300 transition duration-300">Dashboard</a></li>
+          <li><a href="#" class="text-green-400 hover:text-green-300 transition duration-300">Dashboard</a></li>
           {% endif %}
         </ul>
       </div>
