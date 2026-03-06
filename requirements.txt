@@ -29,3 +29,4 @@ tzdata==2025.3
 urllib3==2.6.3
 whitenoise==6.12.0
 yarl==1.22.0
+cloudinary>=1.44.1
