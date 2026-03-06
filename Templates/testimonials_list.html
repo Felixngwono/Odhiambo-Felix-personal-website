@@ -35,17 +35,19 @@
                 <p class="text-gray-600 text-base leading-relaxed mt-2 italic">
                     “{{ testimonial.message }}”
                 </p>
+                {% if request.user.is_superuser %}
+
                 <div class="flex justify-center space-x-4 mt-auto pt-4">
-                    {% if request.user.is_superuser %}
                     <a href="{% url 'update_testimonial' testimonial.pk %}" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg shadow text-sm transition-all">
                       ✏️ Update
                     </a>
                     <a href="{% url 'delete_testimonial' testimonial.pk %}" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg shadow text-sm transition-all">
                       🗑️ Delete
                     </a>
-                      {% endif %}
                    
                   </div>
+                 {% endif %}
+
             </div>
         {% empty %}
             <p class="text-center col-span-full text-gray-500">No testimonials available at the moment.</p>
