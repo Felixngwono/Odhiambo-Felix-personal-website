@@ -4,8 +4,12 @@
         {% include "sidebar.html" %}
 {% load widget_tweaks %}
 {% load static %}
-<div class="ml-64 w-[calc(100%-16rem)]">
-    {% for message in messages %}
+
+<div class="flex flex-col sm:ml-64 h-screen">
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto p-6">
+            {% for message in messages %}
         <p id="messages" class="font-semibold text-lg text-green-500">{{ message }}</p>
     {% endfor %}
     <div class="p-6">
@@ -210,6 +214,7 @@
     {% endif %}
 
 </div>
+</main>
 </div>
 
 {% include "footer.html" %}

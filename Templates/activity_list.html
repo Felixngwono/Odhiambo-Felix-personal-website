@@ -6,8 +6,11 @@
         <!-- Sidebar -->
         {% include "sidebar.html" %}
         
-        <!-- Main Content Area -->
-        <div class="ml-64 w-[calc(100%-16rem)]">
+        
+<div class="flex flex-col sm:ml-64 h-screen">
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto p-6">
             <!-- Recent Activities Section -->
             <div class="max-w-6xl mx-auto p-8">
                 <h2 class="text-4xl font-bold text-center mb-6 text-gray-900">Recent Activities</h2>
@@ -65,6 +68,7 @@
             </section>
         </div>
     </div>
+</main>
 
     {% include "footer.html" %}
 {% endblock %}

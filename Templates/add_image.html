@@ -4,6 +4,10 @@
 {% load static %}
         {% include "sidebar.html" %}
 
+<div class="flex flex-col sm:ml-64 h-screen">
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto p-6">
 <div >
   {% for message in messages %}
       <p id="messages" class="font-semibold text-lg">{{ message }}</p>
@@ -131,6 +135,8 @@
     100% { transform: rotate(360deg); }
   }
 </style>
+</div>
+</main>
 </div>
 {% include "footer.html" %}
 {% endblock content %}

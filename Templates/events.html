@@ -3,8 +3,11 @@
 {% load static %}
         {% include "sidebar.html" %}
 
-<div class=" sm:ml-64 pt-20 p-6">
 
+<div class="flex flex-col sm:ml-64 h-screen">
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto p-6">
     <!-- Flash Messages -->
     <div class="text-green-600 p-4 mb-6 w-1/2 text-center mx-auto">
         {% for message in messages %}
@@ -71,7 +74,7 @@
         </div>
         {% endif %}
     </section>
-
+</main>
 </div>
 
 {% include "footer.html" %}

@@ -2,8 +2,11 @@
 {% block content %}
         {% include "sidebar.html" %}
 
-<div class="ml-64 w-[calc(100%-16rem)]">
-    <div class="container mx-auto p-6 bg-white shadow-md rounded-lg">
+
+<div class="flex flex-col sm:ml-64 h-screen">
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto p-6">    <div class="container mx-auto p-6 bg-white shadow-md rounded-lg">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-bold text-gray-800">🎓 Certifications</h1>
             {% if request.user.is_superuser %}
@@ -47,6 +50,7 @@
             {% endfor %}
         </div>
     </div>
+</main>
 </div>
 
 {% include "footer.html" %}

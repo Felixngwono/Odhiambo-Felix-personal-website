@@ -12,8 +12,10 @@
         {% include "sidebar.html" %}
 
 
-<body class="bg-gray-100">
-    <div class="ml-64 w-[calc(100%-16rem)]">
+<div class="flex flex-col sm:ml-64 h-screen">
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto p-6">
       <div class="max-w-6xl mx-auto p-8">
             {% for message in messages %}
                 <p id="messages" class="font-semibold bg-green-800 text-white">{{ message }}</p>
@@ -71,9 +73,8 @@
         </a>
       </div>  
 <br>
-</body>
-</html>
-</div>
+
+    </main>
 </div>
 
 {% include "sidebar.html" %}

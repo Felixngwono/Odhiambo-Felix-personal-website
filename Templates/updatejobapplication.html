@@ -4,8 +4,12 @@
         {% include "sidebar.html" %}
 {% load widget_tweaks %}
 {% load static %}
-<div class="ml-64 w-[calc(100%-16rem)] min-h-screen bg-gray-100 p-8">
-<form action='' method='POST'>
+
+<div class="flex flex-col sm:ml-64 h-screen">
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto p-6">
+        <form action='' method='POST'>
    {% csrf_token %}
   <form action='' method='POST' enctype="multipart/form-data" class="bg-white shadow-md rounded-lg p-8 space-y-6">
     <h2 class="text-3xl font-semibold mb-6">Update Job Application</h2>
@@ -56,7 +60,9 @@
        class="text-white bg-gray-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-500 transition duration-300 shadow-md">
        ❌ Cancel
     </a>
-</div></div>
+</div>
+</main>
+</div>
  
 {% include "footer.html" %}
 {% endblock content %}

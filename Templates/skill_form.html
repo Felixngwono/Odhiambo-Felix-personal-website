@@ -3,8 +3,11 @@
 
 {% include "sidebar.html" %}
 
-<div class="ml-64 w-[calc(100%-16rem)] p-8 bg-gray-100 min-h-screen">
-    
+
+<div class="flex flex-col sm:ml-64 h-screen">
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto p-6">    
     <div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-lg">
         <h2 class="text-3xl font-bold text-gray-900 mb-4">
             {% if skill %} ✏️ Edit Skill {% else %} ➕ Add New Skill {% endif %}
@@ -30,7 +33,7 @@
             </a>
         </div>
     </div>
-
+</main>
 </div>
 
 {% include "footer.html" %}

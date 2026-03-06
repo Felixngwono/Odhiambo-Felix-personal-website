@@ -4,11 +4,16 @@
         {% include "sidebar.html" %}
 {% load widget_tweaks %}
 {% load static %}
-<div class="ml-64 w-[calc(100%-16rem)] min-h-screen bg-gray-100 p-8">
-<form action='' method='POST'>
+
+<div class="flex flex-col sm:ml-64 h-screen">
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto p-6">
+        <form action='' method='POST'>
    {% csrf_token %}
    {{form.as_p}}
 <button type='submit'>submit application form</button>
+        </main>
 </div>
  
 {% include "footer.html" %}

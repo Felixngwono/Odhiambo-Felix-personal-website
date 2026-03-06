@@ -14,8 +14,11 @@
         {% include "sidebar.html" %}
 
     <!-- Main content section -->
-    <div class="ml-64 w-[calc(100%-16rem)] bg-white p-6 shadow-lg rounded-lg">
-        <script src="https://cdn.tailwindcss.com"></script>
+
+<div class="flex flex-col sm:ml-64 h-screen">
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto p-6">        <script src="https://cdn.tailwindcss.com"></script>
         
         <!-- Blog Post Content -->
         <div class="mb-8">
@@ -49,6 +52,7 @@
             </a>
         </div>
     </div>
+</main>
 </div>
 
 {% include "footer.html" %}

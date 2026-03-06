@@ -2,8 +2,11 @@
 {% block content %}
         {% include "sidebar.html" %}
 
-<div class="ml-64 w-[calc(100%-16rem)] p-6 bg-gray-100 min-h-screen">
-    <div class="bg-white shadow-md rounded-lg p-6 max-w-4xl mx-auto">
+
+<div class="flex flex-col sm:ml-64 h-screen">
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto p-6">    <div class="bg-white shadow-md rounded-lg p-6 max-w-4xl mx-auto">
         {% if project.image %}
             <div class="w-full h-72 overflow-hidden rounded-lg shadow-md group">
               <a href='{{ project.image.url }}'>  <img src="{{ project.image.url }}" 
@@ -44,6 +47,7 @@
             </a>
         </div>
     </div>
+</main>
 </div>
 
 {% include 'footer.html' %}

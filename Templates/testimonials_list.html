@@ -4,8 +4,12 @@
 {% include "sidebar.html" %}
 {% load widget_tweaks %}
 
-<div class="sm:ml-64 pt-6 p-6">
-    <!-- Messages -->
+
+<div class="flex flex-col sm:ml-64 h-screen">
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto p-6">
+            <!-- Messages -->
     <div class="text-green-500 p-4 mb-6 w-full sm:w-1/2 mx-auto text-center">
         {% for message in messages %}
             <p id="messages" class="font-semibold text-lg">{{ message }}</p>
@@ -87,7 +91,7 @@
         </a>
 
     </div>
-
+</main>
 </div>
 
 {% include "footer.html" %}

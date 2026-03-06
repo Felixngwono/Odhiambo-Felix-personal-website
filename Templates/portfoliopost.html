@@ -3,8 +3,11 @@
 {% block content %}
         {% include "sidebar.html" %}
 
-<div class="sm:ml-64 pt-20 p-6">
 
+<div class="flex flex-col sm:ml-64 h-screen">
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto p-6">
   <!-- Background Image -->
   <div class="absolute inset-0 z-0">
     <img src="{% static 'images/laptop.jpg' %}" alt="Background" class="w-full h-full object-cover opacity-20">
@@ -70,6 +73,7 @@
     </div>
     {% endif %}
   </div>
+  /main>
 </div>
 
 {% include "footer.html" %}

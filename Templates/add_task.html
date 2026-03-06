@@ -7,8 +7,11 @@
     {% for message in messages %}
         <p id="messages" class="font-semibold text-lg">{{ message }}</p>
     {% endfor %}
-    <div class="ml-64 w-[calc(100%-16rem)]"
-        style="background-image: url({% static 'images/wst.jpg' %}); background-repeat: no-repeat; background-size:cover; background-attatchment:fixed;">
+
+<div class="flex flex-col sm:ml-64 h-screen">
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto p-6"  style="background-image: url({% static 'images/wst.jpg' %}); background-repeat: no-repeat; background-size:cover; background-attatchment:fixed;">      
     <div class="container mx-auto px-6 lg:px-8">
         <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-md">
             <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">Add Tasks</h2>
@@ -65,6 +68,7 @@
         </div>
     </div>
 </div>
+</main>
 </div>
 {% include "footer.html" %}
 {% endblock %}

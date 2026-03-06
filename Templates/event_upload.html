@@ -14,9 +14,12 @@
 </div>
         {% include "sidebar.html" %}
 
-<div class="sm:ml-64 pt-20 p-6">
-    <body class="bg-gray-100  items-center justify-center min-h-screen">
-    <div class="bg-white p-8 rounded-lg shadow-lg max-w-2xl w-full">
+
+<div class="flex flex-col sm:ml-64 h-screen">
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto p-6">
+        <div class="bg-white p-8 rounded-lg shadow-lg max-w-2xl w-full">
         <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Add New Event</h1>
         
 
@@ -94,8 +97,7 @@
         </div>
     </div>
 
-</body>
-</html>
+</main>
 </div>
 {% include "footer.html" %}
 {% endblock content %}

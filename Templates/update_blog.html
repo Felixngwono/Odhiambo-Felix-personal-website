@@ -3,21 +3,20 @@
 {% block content %}
         {% include "sidebar.html" %}
 {% load widget_tweaks %}
-<div class="ml-64 w-[calc(100%-16rem)]">
-  <!DOCTYPE html>
-<html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<div class="flex flex-col sm:ml-64 h-screen">
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto p-6">  
   <title>Update Blog - {{ blog.title }}</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
   {% for message in messages %}
       <p id="messages" class="font-semibold text-lg">{{ message }}</p>
   {% endfor %}
-<body class="bg-gray-50 text-gray-800">
 
+<div class="flex flex-col sm:ml-64 h-screen">
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto p-6">
   <section id="update-blog" class="py-16">
     <div class="container mx-auto px-6 text-center">
       <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-8">Update Blog Post: {{ blog.title }}</h2>
@@ -90,10 +89,9 @@
     </ul>
 </div>
 
-</body>
 
-</html>
 </div>
+</main>
 </div>
 
 {% include "footer.html" %}

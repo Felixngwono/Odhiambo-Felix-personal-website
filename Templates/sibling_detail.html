@@ -7,8 +7,11 @@
         <p id="messages" class="font-semibold text-lg">{{ message }}</p>
     {% endfor %}
 </div>
-<div class="ml-64 w-[calc(100%-16rem)] min-h-screen bg-gray-100 p-8">
 
+<div class="flex flex-col sm:ml-64 h-screen">
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto p-6">
     <div class="w-full h-full max-w-full bg-green-100 p-8 ">
         <div class="text-center">
             {% if sibling.profile_picture %}
@@ -64,6 +67,7 @@
         </div>
     </div>
 </div>
+</main>
 </div>
 {% include "footer.html" %}
 {% endblock %}

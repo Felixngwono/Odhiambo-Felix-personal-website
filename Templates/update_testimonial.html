@@ -4,8 +4,11 @@
 {% load static %}
 <script src="https://cdn.tailwindcss.com"></script>
         {% include "sidebar.html" %}
-<div class="ml-64 w-[calc(100%-16rem)]">
 
+<div class="flex flex-col sm:ml-64 h-screen">
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto p-6">
 <div class="bg-white p-8 rounded-lg shadow-lg">
     <!-- Sidebar Navigation -->
 
@@ -69,6 +72,7 @@
             </div>
         </div>
     </div>
+</main>
 </div>
     {% include "footer.html" %}
     {% endblock content %} 

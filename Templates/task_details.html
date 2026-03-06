@@ -2,8 +2,11 @@
 
 {% block content %}
         {% include "sidebar.html" %}
-<div class="ml-64 w-[calc(100%-16rem)]">
 
+<div class="flex flex-col sm:ml-64 h-screen">
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto p-6">
 {% for message in messages %}
 <p id="messages" class="font-semibold text-lg">{{ message }}</p>
 {% endfor %}
@@ -55,6 +58,7 @@
     </div>
 </div>
 </div>
+</main>
 </div>
 
 {% include "footer.html" %}
