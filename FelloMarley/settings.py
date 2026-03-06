@@ -13,6 +13,7 @@ import dj_database_url
 import os
 from pathlib import Path
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -42,6 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'StoryTeller',
     'widget_tweaks',
+    'cloudinary',
+    'cloudinary_storage',
+    'django.contrib.staticfiles',
 ]
 
 MIDDLEWARE = [
@@ -166,3 +170,13 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 AUTH_USER_MODEL= 'StoryTeller.Myuser'
+
+MEDIA_ROOT = "/var/data/media"
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'df9gb5jd3',
+    'API_KEY': '946363838558771',
+    'API_SECRET': '**********',
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
