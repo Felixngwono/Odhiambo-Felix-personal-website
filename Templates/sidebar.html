@@ -13,20 +13,22 @@ class="fixed inset-0 bg-black bg-opacity-50 hidden z-30 sm:hidden"></div>
 <!-- Sidebar -->
 <aside id="default-sidebar"
 class="fixed top-0 left-0 z-40 w-64 h-screen bg-gray-800 text-white
-       transform -translate-x-full sm:translate-x-0
-       transition-transform duration-300 flex flex-col">
+transform -translate-x-full sm:translate-x-0
+transition-transform duration-300 flex flex-col">
 
-<div class="flex flex-col h-full overflow-y-auto px-4 py-6">
+<div class="flex flex-col h-full px-4 py-6 overflow-y-auto">
 
 <!-- Profile -->
 <div class="flex flex-col items-center mb-6">
+
 <img src="{{ request.user.profilepic.url }}"
 alt="{{ user }}"
-class="w-28 h-28 object-cover rounded-full border-4 border-white mb-3">
+class="w-24 h-24 object-cover rounded-full border-4 border-white mb-3">
 
-<span class="text-xl font-bold truncate text-center">
+<span class="text-lg font-bold text-center truncate">
 {{ user.name }}
 </span>
+
 </div>
 
 <h1 class="text-green-400 font-bold mb-4 text-center">
@@ -34,7 +36,7 @@ My Dashboard
 </h1>
 
 <!-- Menu -->
-<ul class="space-y-2 flex-1">
+<ul class="space-y-2">
 
 <li>
 <a href="{% url 'index' %}"
@@ -123,33 +125,46 @@ class="flex items-center p-3 rounded-lg hover:bg-green-600 transition text-sm">
 </ul>
 
 <!-- Logout -->
-<div class="mt-auto">
-<button id="logoutBtn"
-class="flex items-center justify-center p-3 rounded-lg hover:bg-red-600 transition w-full text-sm font-semibold">
-<i class="fa-solid fa-right-from-bracket mr-2"></i> Logout
-</button>
+<div class="mt-6">
+  <button onclick="openLogoutModal()"
+    class="flex items-center justify-center p-3 rounded-lg hover:bg-red-600 transition w-full text-sm font-semibold">
+    <i class="fa-solid fa-right-from-bracket mr-2"></i> Logout
+  </button>
 </div>
 
 </div>
 </aside>
+
 <script>
+
+document.addEventListener("DOMContentLoaded", function () {
 
 const toggleBtn = document.getElementById("sidebarToggle");
 const sidebar = document.getElementById("default-sidebar");
 const overlay = document.getElementById("sidebarOverlay");
 
-toggleBtn.addEventListener("click", () => {
+toggleBtn.addEventListener("click", function () {
 
 sidebar.classList.toggle("-translate-x-full");
 overlay.classList.toggle("hidden");
 
 });
 
-overlay.addEventListener("click", () => {
+overlay.addEventListener("click", function () {
 
 sidebar.classList.add("-translate-x-full");
 overlay.classList.add("hidden");
 
 });
 
+});
+
 </script>
+
+<!-- Logout -->
+<div class="mt-6">
+  <button onclick="openLogoutModal()"
+    class="flex items-center justify-center p-3 rounded-lg hover:bg-red-600 transition w-full text-sm font-semibold">
+    <i class="fa-solid fa-right-from-bracket mr-2"></i> Logout
+  </button>
+</div>
