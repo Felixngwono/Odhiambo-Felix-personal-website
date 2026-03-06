@@ -51,11 +51,11 @@
 
         {% if request.user.is_superuser %}
           <a href="{% url 'admins' %}" class="hover:text-yellow-400">
-            <i class="fa-solid fa-user-shield mr-1"></i> Admin
+            <i class="fa-solid fa-user-shield mr-1"></i> Admin's Dashboard
           </a>
         {% else %}
           <a href="#" class="hover:text-green-400">
-            <i class="fa-solid fa-user mr-1"></i> Dashboard
+            <i class="fa-solid fa-user mr-1"></i> User's Dashboard
           </a>
         {% endif %}
          <div id="profileMenu"

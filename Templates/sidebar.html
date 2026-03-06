@@ -162,9 +162,175 @@ overlay.classList.add("hidden");
 </script>
 
 <!-- Logout -->
+
 <div class="mt-6">
   <button onclick="openLogoutModal()"
     class="flex items-center justify-center p-3 rounded-lg hover:bg-red-600 transition w-full text-sm font-semibold">
     <i class="fa-solid fa-right-from-bracket mr-2"></i> Logout
   </button>
 </div>
+
+{% load static %}
+
+<!-- Mobile Toggle Button -->
+<button id="sidebarToggle"
+class="sm:hidden fixed top-4 left-4 z-50 bg-gray-800 text-white p-3 rounded-lg shadow-lg hover:bg-gray-700 transition">
+☰
+</button>
+
+<!-- Overlay -->
+<div id="sidebarOverlay"
+class="fixed inset-0 bg-black bg-opacity-50 hidden z-30 sm:hidden"></div>
+
+<!-- Sidebar -->
+<aside id="default-sidebar"
+class="fixed top-0 left-0 z-40 w-64 sm:w-64 w-full h-screen bg-gray-800 text-white
+transform -translate-x-full sm:translate-x-0
+transition-transform duration-300 flex flex-col">
+
+<!-- Sidebar Content -->
+<div class="flex flex-col h-full px-4 py-6 overflow-y-auto">
+
+<!-- Profile -->
+<div class="flex flex-col items-center mb-6">
+
+<img src="{{ request.user.profilepic.url }}"
+alt="{{ user }}"
+class="w-24 h-24 object-cover rounded-full border-4 border-white mb-3">
+
+<span class="text-lg font-bold text-center truncate">
+{{ user.name }}
+</span>
+
+</div>
+
+<h1 class="text-green-400 font-bold mb-4 text-center">
+My Dashboard
+</h1>
+
+<!-- Menu -->
+<ul class="space-y-2 flex-1">
+
+<li>
+<a href="{% url 'index' %}"
+class="flex items-center p-3 rounded-lg hover:bg-teal-600 transition text-sm">
+<span class="mr-3 text-lg">🏠</span> Home
+</a>
+</li>
+
+<li>
+<a href="{% url 'tasks' %}"
+class="flex items-center p-3 rounded-lg hover:bg-yellow-500 transition text-sm">
+<span class="mr-3 text-lg">📋</span> Tasks
+</a>
+</li>
+
+<li>
+<a href="{% url 'support' %}"
+class="flex items-center p-3 rounded-lg hover:bg-green-600 transition text-sm">
+<span class="mr-3 text-lg">🆘</span> Support
+</a>
+</li>
+
+<li>
+<a href="{% url 'notifications' %}"
+class="flex items-center p-3 rounded-lg hover:bg-indigo-600 transition text-sm">
+<span class="mr-3 text-lg">🔔</span> Notifications
+</a>
+</li>
+
+<li>
+<a href="{% url 'activity_list' %}"
+class="flex items-center p-3 rounded-lg hover:bg-teal-600 transition text-sm">
+<span class="mr-3 text-lg">🗂️</span> Activities
+</a>
+</li>
+
+<li>
+<a href="{% url 'projects_list' %}"
+class="flex items-center p-3 rounded-lg hover:bg-blue-600 transition text-sm">
+<i class="fa-solid fa-folder mr-3"></i> Projects
+</a>
+</li>
+
+<li>
+<a href="{% url 'donate' %}"
+class="flex items-center p-3 rounded-lg bg-yellow-500 hover:bg-yellow-400 transition text-sm">
+<i class="fas fa-donate mr-3"></i> Donate
+</a>
+</li>
+
+<li>
+<a href="{% url 'skills' %}"
+class="flex items-center p-3 rounded-lg hover:bg-green-600 transition text-sm">
+<i class="fa-solid fa-lightbulb mr-3"></i> Skills
+</a>
+</li>
+
+<li>
+<a href="{% url 'volunteer_list' %}"
+class="flex items-center p-3 rounded-lg hover:bg-green-600 transition text-sm">
+<i class="fas fa-hands-helping mr-3"></i> Volunteer
+</a>
+</li>
+
+<li>
+<a href="{% url 'job_list' %}"
+class="flex items-center p-3 rounded-lg hover:bg-green-600 transition text-sm">
+<i class="fas fa-briefcase mr-3"></i> Jobs
+</a>
+</li>
+
+<li>
+<a href="{% url 'certification_list' %}"
+class="flex items-center p-3 rounded-lg hover:bg-green-600 transition text-sm">
+<i class="fa-solid fa-award mr-3"></i> Certifications
+</a>
+</li>
+
+<li>
+<a href="{% url 'fellomarley_pdf' %}"
+class="flex items-center p-3 rounded-lg hover:bg-green-600 transition text-sm">
+<i class="fa-solid fa-file-pdf mr-3"></i> Reports
+</a>
+</li>
+
+</ul>
+
+<!-- Logout -->
+<div class="mt-auto pt-4">
+<button onclick="openLogoutModal()"
+class="flex items-center justify-center p-3 rounded-lg hover:bg-red-600 transition w-full text-sm font-semibold">
+<i class="fa-solid fa-right-from-bracket mr-2"></i> Logout
+</button>
+</div>
+
+</div>
+</aside>
+
+<!-- Sidebar Script -->
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+const toggleBtn = document.getElementById("sidebarToggle");
+const sidebar = document.getElementById("default-sidebar");
+const overlay = document.getElementById("sidebarOverlay");
+
+toggleBtn.addEventListener("click", function () {
+
+sidebar.classList.toggle("-translate-x-full");
+overlay.classList.toggle("hidden");
+
+});
+
+overlay.addEventListener("click", function () {
+
+sidebar.classList.add("-translate-x-full");
+overlay.classList.add("hidden");
+
+});
+
+});
+
+</script>
