@@ -359,40 +359,57 @@ def delete_event(request,pk):
 def about(request):
     return render(request,'about.html')
 
-@login_required(login_url='login')
+@login_required(login_url="login")
 def gallery_view(request):
-    # Fetch all images from the database
+
     images = ImageGallery.objects.all()
-    return render(request, 'gallery.html', {'images': images})
 
-@login_required(login_url='login')
+    context = {
+        "images": images,
+        "total_media": images.count(),
+        "total_images": images.filter(image__isnull=False).count(),
+        "total_videos": images.filter(video__isnull=False).count(),
+    }
+
+    return render(request, "gallery.html", context)
+
+
+@login_required(login_url="login")
 def add_image(request):
-    if request.method == 'POST':
-        form = ImageGalleryForm(request.POST, request.FILES)
+
+    form = ImageGalleryForm(request.POST or None, request.FILES or None)
+
+    if request.method == "POST":
+
         if form.is_valid():
+
             form.save()
-            return redirect('gallery')  
-    else:
-        form = ImageGalleryForm()
-    
-    return render(request, 'add_image.html', {'form': form})
+
+            messages.success(request, "Media uploaded successfully.")
+
+            return redirect("gallery")
+
+    return render(request, "add_image.html", {"form": form})
 
 
+@login_required(login_url="login")
+def delete_image(request, pk):
 
+    media = get_object_or_404(ImageGallery, pk=pk)
 
-@login_required(login_url='login')  
-def delete_image(request,pk):
-    image=ImageGallery.objects.get(id=pk)
-    form=ImageGalleryForm()
-    if request.method=='POST':
-        form=ImageGalleryForm(request.POST,instance=image)
-        image.delete()
-        messages.success(request,'Image deleted Successfully')
-        return redirect('gallery')
-    context={'form':form,
-             'image':image}
-    return render(request, 'delete_image.html', context)
+    if request.method == "POST":
 
+        media.delete()
+
+        messages.success(request, "Media deleted successfully.")
+
+        return redirect("gallery")
+
+    return render(
+        request,
+        "delete_image.html",
+        {"media": media},
+    )
 @login_required(login_url='login')
 def AdminsDashboard(request):
     jobapplicants=JobApplication.objects.all()

@@ -257,15 +257,22 @@ class Support(models.Model):
 
 class ImageGallery(models.Model):
     title = models.CharField(max_length=255)
-    image = models.ImageField(upload_to='gallery_images/')
+    image = models.ImageField(upload_to='gallery_images/', blank=True, null=True)
+    video = models.FileField(upload_to='gallery_videos/', blank=True, null=True)
     caption = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    video=models.FileField(upload_to='gallery_videos/', blank=True, null=True)  # Optional
+
     class Meta:
-        ordering= ['-created_at']
+        ordering = ['-created_at']
 
     def __str__(self):
         return self.title
+
+    @property
+    def media_type(self):
+        if self.video:
+            return "video"
+        return "image"
 
 class message(models.Model):
     name=models.CharField(max_length=100)

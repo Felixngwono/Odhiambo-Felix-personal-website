@@ -11,151 +11,370 @@
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
 </head>
-<body class="bg-gray-100">
+<body class="bg-slate-50 text-slate-800 antialiased">
 
-<div x-data="{ sidebarOpen: false }" class="flex h-screen overflow-hidden">
-    <!-- Sidebar -->
-    <aside class="fixed inset-y-0 left-0 z-20 w-64 bg-gray-900 text-white transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out overflow-auto"
-           :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
-        <div class="flex flex-col items-center py-10 px-6">
-            <img class="w-36 h-36 rounded-full border-4 border-green-500 mb-4 shadow-lg object-cover" src="{% static 'images/Fel14.jpg' %}" alt="Profile Picture" />
-            <h1 class="text-2xl font-extrabold mt-2 text-center">Felix Odhiambo</h1>
-            <p class="text-green-400 mt-1 text-sm text-center">Software Developer | Tech Enthusiast</p>
-            <p class="text-sm text-gray-400 mt-4 text-center leading-relaxed">
-                Passionate about building impactful software solutions.
-            </p>
+<div x-data="{ mobileMenu:false }">
 
-            <!-- Social Links -->
-            <div class="flex mt-6 space-x-4">
-                <a href="https://x.com/felixngwono" class="p-2 bg-gray-800 rounded-full hover:bg-green-600"><i class="fab fa-twitter"></i></a>
-                <a href="https://facebook.com" class="p-2 bg-gray-800 rounded-full hover:bg-blue-600"><i class="fab fa-facebook-f"></i></a>
-                <a href="https://linkedin.com" class="p-2 bg-gray-800 rounded-full hover:bg-blue-700"><i class="fab fa-linkedin-in"></i></a>
-                <a href="https://instagram.com" class="p-2 bg-gray-800 rounded-full hover:bg-pink-600"><i class="fab fa-instagram"></i></a>
-            </div>
+<!-- ================= NAVIGATION ================= -->
 
-            <!-- Download CV -->
-            <a href="{% static 'files/Felix_Odhiambo_CV.pdf' %}" download class="mt-6 inline-block bg-green-600 text-white py-2 px-5 rounded-full shadow hover:bg-green-500">
-                <i class="fas fa-download mr-2"></i>Download CV
-            </a>
+<header class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl border-b border-slate-200 shadow-sm">
 
-            <!-- Tech Stack -->
-            <div class="mt-8 text-center w-full">
-                <h4 class="text-white font-semibold mb-3 text-lg">Tech Stack</h4>
-                <div class="grid grid-cols-3 gap-4 justify-items-center text-2xl text-gray-300">
-                    <i class="fab fa-python" title="Python"></i>
-                    <i class="fab fa-js-square" title="JavaScript"></i>
-                    <i class="fab fa-html5" title="HTML5"></i>
-                    <i class="fab fa-css3-alt" title="CSS3"></i>
-                    <i class="fas fa-database" title="SQL / Databases"></i>
-                    <i class="fab fa-react" title="React"></i>
-                </div>
-            </div>
-        </div>
-    </aside>
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
 
-    <!-- Overlay for mobile -->
-    <div x-show="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"></div>
+        <div class="flex items-center justify-between h-20">
 
-    <!-- Main content -->
-    <main class="flex-1 flex flex-col overflow-auto md:ml-64">
-        <!-- Navbar -->
-        <header class="flex justify-between items-center bg-white border-b border-gray-200 px-4 py-3 shadow sticky top-0 z-30">
-            <div class="flex items-center space-x-3">
-                <!-- Mobile menu button -->
-                <button @click="sidebarOpen = !sidebarOpen" class="text-gray-700 md:hidden focus:outline-none">
-                    <i class="fas fa-bars text-2xl"></i>
-                </button>
-                <h1 class="text-2xl font-bold text-green-700">FelloMarley Foundation</h1>
-            </div>
+            <!-- Logo -->
 
-            <nav class="space-x-4 hidden md:flex items-center">
-                <a href="{% url 'signup' %}" class="hover:text-green-600 font-semibold"><i class="fa-solid fa-user-plus mr-1"></i> Sign Up</a>
-                <a href="{% url 'login' %}" class="hover:text-blue-600 font-semibold"><i class="fas fa-sign-in-alt mr-1"></i> Sign In</a>
-            </nav>
-        </header>
-{% load static %}
+            <a href="#" class="flex items-center space-x-3">
 
-<!-- Hero Section -->
-<section class="relative w-full h-[70vh] md:h-[80vh] bg-gray-900 text-white overflow-hidden">
+                <img src="{% static 'images/logo.png' %}"
+                     class="w-12 h-12 rounded-full shadow-md">
 
-    <div
-        x-data="{
-            activeSlide: 0,
-            slides: [
-                '{% static "images/p.jpg" %}',
-                '{% static "images/z.jpg" %}',
-                '{% static "images/Fel16.jpg" %}',
-                '{% static "images/o.jpg" %}',
-                '{% static "images/m.jpg" %}',
-                '{% static "images/FelloMarley.jpg" %}',
-                '{% static "images/l.jpg" %}',
-                '{% static "images/s.jpg" %}',
-                '{% static "images/a.jpg" %}',
-                '{% static "images/u.jpg" %}',
-                '{% static "images/g.jpg" %}',
-                '{% static "images/d.jpg" %}',
-                '{% static "images/Fel14.jpg" %}'
-            ]
-        }"
-        x-init="setInterval(() => { activeSlide = (activeSlide + 1) % slides.length }, 5000)"
-        class="w-full h-full relative"
-    >
+                <div>
 
-        <!-- Slides -->
-        <template x-for="(slide, index) in slides" :key="index">
+                    <h1 class="font-black text-xl text-slate-900">
 
-            <div
-                x-show="activeSlide === index"
-                x-transition:enter="transition ease-out duration-700"
-                x-transition:enter-start="opacity-0 scale-105"
-                x-transition:enter-end="opacity-100 scale-100"
-                x-transition:leave="transition ease-in duration-500"
-                x-transition:leave-start="opacity-100"
-                x-transition:leave-end="opacity-0"
-                class="absolute inset-0"
-            >
+                        Felix Odhiambo
 
-                <!-- Image -->
-                <img
-                    :src="slide"
-                    alt="Hero Slide"
-                    class="w-full h-full object-cover object-center"
-                >
-
-                <!-- Dark Overlay -->
-                <div class="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center px-6">
-
-                    <h1 class="text-4xl md:text-6xl font-bold mb-4">
-                        Welcome, I'm Felix
                     </h1>
 
-                    <p class="text-lg md:text-2xl text-gray-200">
-                        Developer • Mentor • Open-Source Contributor
+                    <p class="text-xs text-slate-500">
+
+                        Software Developer
+
                     </p>
 
-                    <a href="{% url 'login' %}"
-                       class="mt-6 bg-green-600 hover:bg-green-500 text-white font-semibold px-8 py-3 rounded-full shadow-lg transition duration-300">
-                        Explore More
+                </div>
+
+            </a>
+
+            <!-- Desktop Menu -->
+
+            <nav class="hidden lg:flex items-center space-x-8">
+
+                <a href="#about" class="hover:text-blue-600 transition">About</a>
+
+                <a href="#projects" class="hover:text-blue-600 transition">Projects</a>
+
+                <a href="#skills" class="hover:text-blue-600 transition">Skills</a>
+
+                <a href="#gallery" class="hover:text-blue-600 transition">Gallery</a>
+
+                <a href="#contact" class="hover:text-blue-600 transition">Contact</a>
+
+            </nav>
+
+            <!-- Buttons -->
+
+            <div class="hidden lg:flex items-center gap-3">
+
+                <a href="{% url 'login' %}"
+                   class="px-5 py-2 rounded-xl border border-slate-300 hover:bg-slate-100">
+
+                    Login
+
+                </a>
+
+                <a href="{% static 'files/Felix_Odhiambo_CV.pdf' %}"
+                   download
+                   class="px-6 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700">
+
+                    Download CV
+
+                </a>
+
+            </div>
+
+            <!-- Mobile Button -->
+
+            <button
+            @click="mobileMenu=!mobileMenu"
+            class="lg:hidden text-3xl">
+
+                ☰
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- Mobile Menu -->
+
+    <div
+    x-show="mobileMenu"
+    x-transition
+    class="lg:hidden bg-white border-t">
+
+        <a href="#about" class="block px-6 py-4 hover:bg-slate-100">About</a>
+
+        <a href="#projects" class="block px-6 py-4 hover:bg-slate-100">Projects</a>
+
+        <a href="#skills" class="block px-6 py-4 hover:bg-slate-100">Skills</a>
+
+        <a href="#gallery" class="block px-6 py-4 hover:bg-slate-100">Gallery</a>
+
+        <a href="#contact" class="block px-6 py-4 hover:bg-slate-100">Contact</a>
+
+    </div>
+
+</header>
+
+<!-- ================= HERO ================= -->
+
+<section class="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center">
+
+    <!-- Background Blur -->
+
+    <div class="absolute inset-0">
+
+        <div class="absolute -top-24 -left-24 w-96 h-96 bg-blue-500 rounded-full blur-3xl opacity-20"></div>
+
+        <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-cyan-400 rounded-full blur-3xl opacity-20"></div>
+
+    </div>
+
+    <div class="relative max-w-7xl mx-auto px-6 lg:px-8 w-full">
+
+        <div class="grid lg:grid-cols-2 gap-20 items-center">
+
+            <!-- Left -->
+
+            <div>
+
+                <span class="inline-flex items-center px-4 py-2 rounded-full bg-blue-500/20 text-blue-200 border border-blue-400/30">
+
+                    👋 Welcome to my portfolio
+
+                </span>
+
+                <h1 class="mt-8 text-5xl md:text-7xl font-black leading-tight text-white">
+
+                    
+
+                    I'm
+
+                    <span class="text-cyan-300">
+
+                        Felix Odhiambo
+
+                    </span>
+
+                </h1>
+
+                <h2 class="mt-5 text-3xl md:text-4xl font-bold text-slate-200">
+
+                    Software Developer
+
+                </h2>
+
+                <p class="mt-8 text-lg text-slate-300 leading-8 max-w-2xl">
+
+                    I design and develop modern web applications using Django,
+                    Python, JavaScript, SQL and modern UI frameworks.
+                    I enjoy solving real-world problems through clean,
+                    scalable and impactful software.
+
+                </p>
+
+                <div class="mt-10 flex flex-wrap gap-5">
+
+                    <a href="#projects"
+                       class="px-8 py-4 rounded-2xl bg-cyan-400 text-slate-900 font-bold hover:bg-cyan-300 transition">
+
+                        View Projects
+
+                    </a>
+
+                    <a href="#contact"
+                       class="px-8 py-4 rounded-2xl border border-white/30 text-white hover:bg-white/10 transition">
+
+                        Contact Me
+
                     </a>
 
                 </div>
 
             </div>
 
-        </template>
-<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-        <!-- Indicators -->
-        <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3">
+            <!-- Right -->
 
-            <template x-for="(slide, index) in slides" :key="index">
+            <div class="hidden lg:flex justify-center">
 
-                <button
-                    @click="activeSlide = index"
-                    class="w-3 h-3 rounded-full transition"
-                    :class="activeSlide === index ? 'bg-white' : 'bg-gray-400'"
-                ></button>
+                <div class="relative">
 
-            </template>
+                    <img
+                    src="{% static 'images/Fel14.jpg' %}"
+                    class="w-[430px] h-[550px] object-cover rounded-[40px] shadow-2xl border-8 border-white/10">
+
+                    <!-- Floating Card -->
+
+                    <div class="absolute -left-12 top-10 bg-white rounded-3xl p-5 shadow-2xl">
+
+                        <h3 class="font-bold text-3xl text-blue-600">
+
+                            {{ images.count }}+
+
+                        </h3>
+
+                        <p class="text-gray-500">
+
+                            Gallery Items
+
+                        </p>
+
+                    </div>
+
+                    <div class="absolute -right-10 bottom-10 bg-white rounded-3xl p-5 shadow-2xl">
+
+                        <h3 class="font-bold text-3xl text-green-600">
+
+                            100%
+
+                        </h3>
+
+                        <p class="text-gray-500">
+
+                            Passion Driven
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- ================= ABOUT ME ================= -->
+
+<section id="about" class="py-24 bg-white">
+
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+
+        <div class="grid lg:grid-cols-2 gap-16 items-center">
+
+            <!-- Left Image -->
+
+            <div class="relative">
+
+                <img
+                src="{% static 'images/Fel16.jpg' %}"
+                class="w-full max-w-md mx-auto rounded-3xl shadow-2xl object-cover">
+
+                <div class="absolute -bottom-6 -right-6 bg-blue-600 text-white rounded-2xl px-6 py-5 shadow-xl">
+
+                    <h2 class="text-3xl font-bold">2026</h2>
+
+                    <p class="text-sm">Building Software</p>
+
+                </div>
+
+            </div>
+
+            <!-- Right Content -->
+
+            <div>
+
+                <span class="text-blue-600 font-bold uppercase tracking-widest">
+
+                    About Me
+
+                </span>
+
+                <h2 class="mt-4 text-5xl font-black text-slate-900">
+
+                    Passionate Software Developer
+
+                </h2>
+
+                <p class="mt-8 text-lg leading-8 text-slate-600">
+
+                    I'm Felix Odhiambo, a software developer passionate about
+                    building modern web applications, database systems and
+                    digital solutions that solve real-world problems.
+
+                    I enjoy working with Django, Python, JavaScript,
+                    Tailwind CSS, SQL and cloud technologies while
+                    continuously learning new skills.
+
+                </p>
+
+                <!-- Statistics -->
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
+
+                    <div class="text-center">
+
+                        <h3 class="text-4xl font-black text-blue-600">
+
+                            20+
+
+                        </h3>
+
+                        <p class="text-gray-500 mt-2">
+
+                            Projects
+
+                        </p>
+
+                    </div>
+
+                    <div class="text-center">
+
+                        <h3 class="text-4xl font-black text-green-600">
+
+                            5+
+
+                        </h3>
+
+                        <p class="text-gray-500 mt-2">
+
+                            Technologies
+
+                        </p>
+
+                    </div>
+
+                    <div class="text-center">
+
+                        <h3 class="text-4xl font-black text-purple-600">
+
+                            100%
+
+                        </h3>
+
+                        <p class="text-gray-500 mt-2">
+
+                            Commitment
+
+                        </p>
+
+                    </div>
+
+                    <div class="text-center">
+
+                        <h3 class="text-4xl font-black text-red-500">
+
+                            ∞
+
+                        </h3>
+
+                        <p class="text-gray-500 mt-2">
+
+                            Learning
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
 
@@ -163,25 +382,1112 @@
 
 </section>
 
-        <!-- Footer CTA -->
-        <section class="bg-green-700 py-16 text-center text-white border-t border-green-800">
-            <h2 class="text-3xl md:text-4xl font-bold">Let's Connect & Create</h2>
-            <p class="mt-2 text-lg max-w-xl mx-auto">Interested in working together or need technical insight? Let’s chat.</p>
-            <a href="mailto:felixngwono@gmail.com" class="mt-6 inline-block bg-white text-green-700 px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition">
-                <i class="fas fa-envelope mr-2"></i> Reach Out
-            </a>
-        </section>
 
-        <!-- Footer -->
-        <footer class="bg-gray-800 text-white py-6 text-center">
-            <p>&copy; {{ current_year }} Felix Odhiambo. All rights reserved.</p>
-            <div class="flex justify-center space-x-4 mt-2">
-                <a href="https://github.com/yourusername" target="_blank"><i class="fab fa-github"></i></a>
-                <a href="https://linkedin.com/in/yourusername" target="_blank"><i class="fab fa-linkedin"></i></a>
-                <a href="https://twitter.com/yourusername" target="_blank"><i class="fab fa-twitter"></i></a>
+<!-- ================= SKILLS ================= -->
+
+<section id="skills" class="py-24 bg-slate-100">
+
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+
+        <div class="text-center">
+
+            <span class="text-blue-600 font-bold uppercase tracking-widest">
+
+                My Skills
+
+            </span>
+
+            <h2 class="mt-4 text-5xl font-black text-slate-900">
+
+                Technologies I Work With
+
+            </h2>
+
+            <p class="mt-5 text-slate-600 max-w-3xl mx-auto">
+
+                These are some of the technologies and tools I use to
+                build scalable, secure and responsive applications.
+
+            </p>
+
+        </div>
+
+        <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-16">
+
+            <!-- Skill Card -->
+
+            <div class="bg-white rounded-3xl shadow-lg p-8 hover:-translate-y-3 hover:shadow-2xl transition">
+
+                <div class="text-5xl mb-5">🐍</div>
+
+                <h3 class="text-2xl font-bold">Python</h3>
+
+                <p class="text-gray-500 mt-3">
+
+                    Backend development, automation and scripting.
+
+                </p>
+
             </div>
-        </footer>
-    </main>
+
+            <div class="bg-white rounded-3xl shadow-lg p-8 hover:-translate-y-3 hover:shadow-2xl transition">
+
+                <div class="text-5xl mb-5">🌐</div>
+
+                <h3 class="text-2xl font-bold">Django</h3>
+
+                <p class="text-gray-500 mt-3">
+
+                    Building secure and scalable web applications.
+
+                </p>
+
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-lg p-8 hover:-translate-y-3 hover:shadow-2xl transition">
+
+                <div class="text-5xl mb-5">💻</div>
+
+                <h3 class="text-2xl font-bold">JavaScript</h3>
+
+                <p class="text-gray-500 mt-3">
+
+                    Interactive interfaces and frontend development.
+
+                </p>
+
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-lg p-8 hover:-translate-y-3 hover:shadow-2xl transition">
+
+                <div class="text-5xl mb-5">🎨</div>
+
+                <h3 class="text-2xl font-bold">Tailwind CSS</h3>
+
+                <p class="text-gray-500 mt-3">
+
+                    Responsive and modern UI design.
+
+                </p>
+
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-lg p-8 hover:-translate-y-3 hover:shadow-2xl transition">
+
+                <div class="text-5xl mb-5">🗄️</div>
+
+                <h3 class="text-2xl font-bold">MySQL</h3>
+
+                <p class="text-gray-500 mt-3">
+
+                    Database design and optimization.
+
+                </p>
+
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-lg p-8 hover:-translate-y-3 hover:shadow-2xl transition">
+
+                <div class="text-5xl mb-5">⚙️</div>
+
+                <h3 class="text-2xl font-bold">Oracle SQL</h3>
+
+                <p class="text-gray-500 mt-3">
+
+                    PL/SQL programming and enterprise databases.
+
+                </p>
+
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-lg p-8 hover:-translate-y-3 hover:shadow-2xl transition">
+
+                <div class="text-5xl mb-5">☁️</div>
+
+                <h3 class="text-2xl font-bold">Cloud</h3>
+
+                <p class="text-gray-500 mt-3">
+
+                    Deployment with Render, GitHub and cloud platforms.
+
+                </p>
+
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-lg p-8 hover:-translate-y-3 hover:shadow-2xl transition">
+
+                <div class="text-5xl mb-5">🚀</div>
+
+                <h3 class="text-2xl font-bold">Problem Solving</h3>
+
+                <p class="text-gray-500 mt-3">
+
+                    Turning ideas into practical software solutions.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- ================= FEATURED PROJECTS ================= -->
+
+<section id="projects" class="py-24 bg-white">
+
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+
+        <!-- Heading -->
+
+        <div class="text-center mb-16">
+
+            <span class="text-blue-600 font-bold uppercase tracking-widest">
+
+                Portfolio
+
+            </span>
+
+            <h2 class="mt-4 text-5xl font-black text-slate-900">
+
+                Featured Projects
+
+            </h2>
+
+            <p class="mt-5 max-w-3xl mx-auto text-slate-600 text-lg">
+
+                Below are some of my favorite software projects that demonstrate
+                my experience in web development, database systems,
+                software engineering and modern UI design.
+
+            </p>
+
+        </div>
+
+        <!-- Project Cards -->
+
+        <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-10">
+
+            <!-- ================= Project 1 ================= -->
+
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden hover:-translate-y-3 hover:shadow-2xl transition duration-300">
+
+                <img src="{% static 'images/project1.jpg' %}"
+                class="w-full h-56 object-cover">
+
+                <div class="p-8">
+
+                    <h3 class="text-2xl font-bold">
+
+                        GovTracker
+
+                    </h3>
+
+                    <p class="mt-4 text-gray-600">
+
+                        A government project monitoring system that promotes
+                        transparency by tracking development projects,
+                        budgets, contractors, milestones and public participation.
+
+                    </p>
+
+                    <!-- Technologies -->
+
+                    <div class="flex flex-wrap gap-2 mt-6">
+
+                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
+
+                            Django
+
+                        </span>
+
+                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
+
+                            Python
+
+                        </span>
+
+                        <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm">
+
+                            MySQL
+
+                        </span>
+
+                        <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm">
+
+                            Tailwind
+
+                        </span>
+
+                    </div>
+
+                    <div class="flex gap-4 mt-8">
+
+                        <a href="#"
+                        class="flex-1 text-center bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700">
+
+                            Live Demo
+
+                        </a>
+
+                        <a href="#"
+                        class="flex-1 text-center border border-slate-300 py-3 rounded-xl hover:bg-slate-100">
+
+                            GitHub
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- ================= Project 2 ================= -->
+
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden hover:-translate-y-3 hover:shadow-2xl transition duration-300">
+
+                <img src="{% static 'images/project2.jpg' %}"
+                class="w-full h-56 object-cover">
+
+                <div class="p-8">
+
+                    <h3 class="text-2xl font-bold">
+
+                        Loan Management System
+
+                    </h3>
+
+                    <p class="mt-4 text-gray-600">
+
+                        A complete loan application and approval platform with
+                        borrower management, repayments, reports,
+                        authentication and secure dashboards.
+
+                    </p>
+
+                    <div class="flex flex-wrap gap-2 mt-6">
+
+                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
+
+                            Django
+
+                        </span>
+
+                        <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm">
+
+                            Bootstrap
+
+                        </span>
+
+                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
+
+                            SQLite
+
+                        </span>
+
+                    </div>
+
+                    <div class="flex gap-4 mt-8">
+
+                        <a href="#"
+                        class="flex-1 text-center bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700">
+
+                            Live Demo
+
+                        </a>
+
+                        <a href="#"
+                        class="flex-1 text-center border border-slate-300 py-3 rounded-xl hover:bg-slate-100">
+
+                            GitHub
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- ================= Project 3 ================= -->
+
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden hover:-translate-y-3 hover:shadow-2xl transition duration-300">
+
+                <img src="{% static 'images/project3.jpg' %}"
+                class="w-full h-56 object-cover">
+
+                <div class="p-8">
+
+                    <h3 class="text-2xl font-bold">
+
+                        Personal Portfolio
+
+                    </h3>
+
+                    <p class="mt-4 text-gray-600">
+
+                        A responsive personal portfolio showcasing my
+                        software projects, gallery, skills,
+                        certifications and professional journey.
+
+                    </p>
+
+                    <div class="flex flex-wrap gap-2 mt-6">
+
+                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
+
+                            Django
+
+                        </span>
+
+                        <span class="bg-cyan-100 text-cyan-700 px-3 py-1 rounded-full text-sm">
+
+                            Tailwind
+
+                        </span>
+
+                        <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm">
+
+                            Alpine.js
+
+                        </span>
+
+                    </div>
+
+                    <div class="flex gap-4 mt-8">
+
+                        <a href="#"
+                        class="flex-1 text-center bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700">
+
+                            Live Demo
+
+                        </a>
+
+                        <a href="#"
+                        class="flex-1 text-center border border-slate-300 py-3 rounded-xl hover:bg-slate-100">
+
+                            GitHub
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- View All Projects -->
+
+        <div class="text-center mt-16">
+
+            <a href="#"
+            class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-slate-900 text-white hover:bg-blue-700 transition">
+
+                View All Projects
+
+                <span>→</span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- ================= EXPERIENCE & EDUCATION ================= -->
+
+<section id="experience" class="py-24 bg-slate-100">
+
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+
+        <!-- Heading -->
+
+        <div class="text-center mb-16">
+
+            <span class="text-blue-600 font-bold uppercase tracking-widest">
+                Experience
+            </span>
+
+            <h2 class="mt-4 text-5xl font-black text-slate-900">
+                Professional Journey
+            </h2>
+
+            <p class="mt-5 max-w-3xl mx-auto text-slate-600 text-lg">
+                My education, work experience and the services I provide.
+            </p>
+
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-12">
+
+            <!-- ================= Timeline ================= -->
+
+            <div>
+
+                <h3 class="text-3xl font-bold mb-8">
+                    Experience
+                </h3>
+
+                <div class="space-y-8 border-l-4 border-blue-600 pl-8">
+
+                    <div class="relative">
+
+                        <div class="absolute -left-11 top-1 w-6 h-6 rounded-full bg-blue-600 border-4 border-white"></div>
+
+                        <h4 class="text-2xl font-bold">
+                            ICT Consultant
+                        </h4>
+
+                        <p class="text-blue-600 font-semibold">
+                            IEBC Kenya
+                        </p>
+
+                        <p class="text-gray-500 text-sm">
+                            2025 - Present
+                        </p>
+
+                        <p class="mt-3 text-gray-600">
+                            Supporting ICT systems, troubleshooting technical
+                            issues and contributing to digital solutions for
+                            election operations.
+                        </p>
+
+                    </div>
+
+                    <div class="relative">
+
+                        <div class="absolute -left-11 top-1 w-6 h-6 rounded-full bg-green-600 border-4 border-white"></div>
+
+                        <h4 class="text-2xl font-bold">
+                            Freelance Software Developer
+                        </h4>
+
+                        <p class="text-green-600 font-semibold">
+                            Self Employed
+                        </p>
+
+                        <p class="text-gray-500 text-sm">
+                            2023 - Present
+                        </p>
+
+                        <p class="mt-3 text-gray-600">
+                            Developing web applications, databases and custom
+                            software solutions using Django, Python and SQL.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- ================= Education ================= -->
+
+            <div>
+
+                <h3 class="text-3xl font-bold mb-8">
+                    Education
+                </h3>
+
+                <div class="space-y-6">
+
+                    <div class="bg-white rounded-3xl shadow-lg p-8">
+
+                        <h4 class="text-2xl font-bold">
+                            Bachelor of Information Technology
+                        </h4>
+
+                        <p class="text-blue-600 font-semibold mt-2">
+                            University
+                        </p>
+
+                        <p class="mt-4 text-gray-600">
+                            Specialized in software engineering,
+                            database systems, networking,
+                            web development and system analysis.
+                        </p>
+
+                    </div>
+
+                    <div class="bg-white rounded-3xl shadow-lg p-8">
+
+                        <h4 class="text-2xl font-bold">
+                            Continuous Learning
+                        </h4>
+
+                        <p class="text-blue-600 font-semibold mt-2">
+                            Self Development
+                        </p>
+
+                        <p class="mt-4 text-gray-600">
+                            Regularly improving my skills through
+                            personal projects, online courses,
+                            documentation and open-source development.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= SERVICES ================= -->
+
+<section class="py-24 bg-white">
+
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+
+        <div class="text-center mb-16">
+
+            <span class="text-blue-600 font-bold uppercase tracking-widest">
+                Services
+            </span>
+
+            <h2 class="mt-4 text-5xl font-black text-slate-900">
+                What I Can Do
+            </h2>
+
+        </div>
+
+        <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-8">
+
+            <div class="bg-slate-50 rounded-3xl p-8 shadow-lg hover:-translate-y-3 hover:shadow-2xl transition">
+
+                <div class="text-5xl mb-5">💻</div>
+
+                <h3 class="text-2xl font-bold">
+                    Web Development
+                </h3>
+
+                <p class="mt-4 text-gray-600">
+                    Responsive web applications using Django, Python and Tailwind CSS.
+                </p>
+
+            </div>
+
+            <div class="bg-slate-50 rounded-3xl p-8 shadow-lg hover:-translate-y-3 hover:shadow-2xl transition">
+
+                <div class="text-5xl mb-5">🗄️</div>
+
+                <h3 class="text-2xl font-bold">
+                    Database Design
+                </h3>
+
+                <p class="mt-4 text-gray-600">
+                    MySQL, PostgreSQL, Oracle SQL and database optimization.
+                </p>
+
+            </div>
+
+            <div class="bg-slate-50 rounded-3xl p-8 shadow-lg hover:-translate-y-3 hover:shadow-2xl transition">
+
+                <div class="text-5xl mb-5">📱</div>
+
+                <h3 class="text-2xl font-bold">
+                    UI / UX Design
+                </h3>
+
+                <p class="mt-4 text-gray-600">
+                    Modern responsive interfaces using Tailwind CSS and JavaScript.
+                </p>
+
+            </div>
+
+            <div class="bg-slate-50 rounded-3xl p-8 shadow-lg hover:-translate-y-3 hover:shadow-2xl transition">
+
+                <div class="text-5xl mb-5">⚙️</div>
+
+                <h3 class="text-2xl font-bold">
+                    System Development
+                </h3>
+
+                <p class="mt-4 text-gray-600">
+                    Complete business systems from planning to deployment.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- ================= GALLERY PREVIEW ================= -->
+
+<section id="gallery" class="py-24 bg-slate-100">
+
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+
+        <!-- Heading -->
+
+        <div class="flex flex-col lg:flex-row justify-between items-center mb-14">
+
+            <div>
+
+                <span class="text-blue-600 font-bold uppercase tracking-widest">
+
+                    Gallery
+
+                </span>
+
+                <h2 class="mt-3 text-5xl font-black text-slate-900">
+
+                    Recent Memories
+
+                </h2>
+
+                <p class="mt-4 text-slate-600 max-w-2xl">
+
+                    A glimpse into my journey through projects, events,
+                    achievements, travel and memorable moments.
+
+                </p>
+
+            </div>
+
+            <a href="{% url 'gallery' %}"
+
+            class="mt-8 lg:mt-0 px-8 py-4 rounded-2xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">
+
+                View Full Gallery →
+
+            </a>
+
+        </div>
+
+        <!-- Gallery Grid -->
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+
+            {% for image in images|slice:":8" %}
+
+            <div class="group relative overflow-hidden rounded-3xl shadow-xl bg-white">
+
+                {% if image.image %}
+
+                <img src="{{ image.image.url }}"
+                     class="w-full h-72 object-cover transition duration-700 group-hover:scale-110">
+
+                {% endif %}
+
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-500">
+
+                    <div class="absolute bottom-5 left-5 right-5">
+
+                        <h3 class="text-white font-bold text-lg">
+
+                            {{ image.title }}
+
+                        </h3>
+
+                        {% if image.caption %}
+
+                        <p class="text-gray-200 text-sm mt-2 line-clamp-2">
+
+                            {{ image.caption }}
+
+                        </p>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="col-span-4 text-center py-16">
+
+                <div class="text-7xl">
+
+                    📷
+
+                </div>
+
+                <h3 class="mt-6 text-3xl font-bold text-slate-700">
+
+                    Gallery Coming Soon
+
+                </h3>
+
+                <p class="mt-3 text-slate-500">
+
+                    Images and videos will appear here once uploaded.
+
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        <!-- Bottom Statistics -->
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
+
+            <div class="bg-white rounded-3xl p-8 text-center shadow-lg">
+
+                <h3 class="text-4xl font-black text-blue-600">
+
+                    {{ images.count }}
+
+                </h3>
+
+                <p class="mt-2 text-gray-500">
+
+                    Total Media
+
+                </p>
+
+            </div>
+
+            <div class="bg-white rounded-3xl p-8 text-center shadow-lg">
+
+                <h3 class="text-4xl font-black text-green-600">
+
+                    📸
+
+                </h3>
+
+                <p class="mt-2 text-gray-500">
+
+                    Photography
+
+                </p>
+
+            </div>
+
+            <div class="bg-white rounded-3xl p-8 text-center shadow-lg">
+
+                <h3 class="text-4xl font-black text-purple-600">
+
+                    🎥
+
+                </h3>
+
+                <p class="mt-2 text-gray-500">
+
+                    Videos
+
+                </p>
+
+            </div>
+
+            <div class="bg-white rounded-3xl p-8 text-center shadow-lg">
+
+                <h3 class="text-4xl font-black text-red-600">
+
+                    ⭐
+
+                </h3>
+
+                <p class="mt-2 text-gray-500">
+
+                    Memories
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- ================= CONTACT ================= -->
+
+<section id="contact" class="py-24 bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 text-white">
+
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+
+        <div class="grid lg:grid-cols-2 gap-16">
+
+            <!-- Left -->
+
+            <div>
+
+                <span class="uppercase tracking-widest text-cyan-300 font-bold">
+
+                    Contact
+
+                </span>
+
+                <h2 class="text-5xl font-black mt-4">
+
+                    Let's Build Something Amazing
+
+                </h2>
+
+                <p class="mt-6 text-lg text-slate-300 leading-8">
+
+                    I'm always open to internships, freelance work,
+                    collaborations and software development opportunities.
+
+                    Feel free to reach out.
+
+                </p>
+
+                <div class="space-y-6 mt-10">
+
+                    <div class="flex items-center gap-5">
+
+                        <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-2xl">
+
+                            📧
+
+                        </div>
+
+                        <div>
+
+                            <p class="text-slate-400">
+
+                                Email
+
+                            </p>
+
+                            <h3 class="font-bold">
+
+                                felixngwono@gmail.com
+
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <div class="flex items-center gap-5">
+
+                        <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-2xl">
+
+                            📱
+
+                        </div>
+
+                        <div>
+
+                            <p class="text-slate-400">
+
+                                Phone
+
+                            </p>
+
+                            <h3 class="font-bold">
+
+                                +254 XXX XXX XXX
+
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <div class="flex items-center gap-5">
+
+                        <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-2xl">
+
+                            📍
+
+                        </div>
+
+                        <div>
+
+                            <p class="text-slate-400">
+
+                                Location
+
+                            </p>
+
+                            <h3 class="font-bold">
+
+                                Nairobi, Kenya
+
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Right -->
+
+            <div class="bg-white rounded-3xl p-10 shadow-2xl text-slate-800">
+
+                <h3 class="text-3xl font-bold mb-8">
+
+                    Send a Message
+
+                </h3>
+
+                <form>
+
+                    <div class="space-y-5">
+
+                        <input
+                        type="text"
+                        placeholder="Full Name"
+                        class="w-full rounded-xl border border-slate-300 px-5 py-4 focus:ring-2 focus:ring-blue-600 outline-none">
+
+                        <input
+                        type="email"
+                        placeholder="Email Address"
+                        class="w-full rounded-xl border border-slate-300 px-5 py-4 focus:ring-2 focus:ring-blue-600 outline-none">
+
+                        <input
+                        type="text"
+                        placeholder="Subject"
+                        class="w-full rounded-xl border border-slate-300 px-5 py-4 focus:ring-2 focus:ring-blue-600 outline-none">
+
+                        <textarea
+                        rows="6"
+                        placeholder="Your Message..."
+                        class="w-full rounded-xl border border-slate-300 px-5 py-4 focus:ring-2 focus:ring-blue-600 outline-none"></textarea>
+
+                        <button
+                        class="w-full py-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold transition">
+
+                            Send Message
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer class="bg-slate-950 text-slate-400">
+
+    <div class="max-w-7xl mx-auto px-6 lg:px-8 py-16">
+
+        <div class="grid md:grid-cols-3 gap-10">
+
+            <!-- About -->
+
+            <div>
+
+                <h3 class="text-white text-2xl font-bold">
+
+                    Felix Odhiambo
+
+                </h3>
+
+                <p class="mt-5 leading-8">
+
+                    Full Stack Software Developer specializing in
+                    Django, Python, SQL, JavaScript and modern web applications.
+
+                </p>
+
+            </div>
+
+            <!-- Quick Links -->
+
+            <div>
+
+                <h3 class="text-white text-xl font-bold mb-5">
+
+                    Quick Links
+
+                </h3>
+
+                <div class="space-y-3">
+
+                    <a href="#about" class="block hover:text-white">About</a>
+
+                    <a href="#projects" class="block hover:text-white">Projects</a>
+
+                    <a href="#gallery" class="block hover:text-white">Gallery</a>
+
+                    <a href="#contact" class="block hover:text-white">Contact</a>
+
+                </div>
+
+            </div>
+
+            <!-- Social -->
+
+            <div>
+
+                <h3 class="text-white text-xl font-bold mb-5">
+
+                    Connect
+
+                </h3>
+
+                <div class="flex gap-5 text-3xl">
+
+                    <a href="https://github.com/" class="hover:text-white">
+                        <i class="fab fa-github"></i>
+                    </a>
+
+                    <a href="https://linkedin.com/" class="hover:text-blue-400">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+
+                    <a href="https://x.com/" class="hover:text-sky-400">
+                        <i class="fab fa-x-twitter"></i>
+                    </a>
+
+                    <a href="https://instagram.com/" class="hover:text-pink-500">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <hr class="border-slate-800 my-10">
+
+        <div class="flex flex-col md:flex-row justify-between items-center">
+
+            <p>
+
+                © {{ current_year }} Felix Odhiambo. All Rights Reserved.
+
+            </p>
+
+            <p class="mt-4 md:mt-0">
+
+                Designed & Developed with ❤️ using Django & Tailwind CSS
+
+            </p>
+
+        </div>
+
+    </div>
+
+</footer>
+
+</main>
+
 </div>
 
 </body>
