@@ -1,67 +1,559 @@
 {% extends "header.html" %}
+
+{% block title %}Projects | FelloMarley Foundation{% endblock %}
+
 {% block content %}
-        {% include "sidebar.html" %}
 
+{% include "sidebar.html" %}
 
-<div class="flex flex-col sm:ml-64 h-screen">
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
 
-    <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6">
-            <h2 class="text-3xl font-bold text-gray-900 text-center mb-8">📂 Projects</h2>
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
 
-    <!-- Project Grid Container -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {% for project in projects %}
-        <div class="bg-white shadow-lg rounded-lg p-6 transition-transform duration-300 hover:scale-105">
-            <a href="{% url 'project_detail' project.id %}">
+        <!-- ================= FLASH ================= -->
 
-                {% if project.image %}
-                <div class="mb-4">
-                    <img src="{{ project.image.url }}" alt="{{ project.title }}" class="w-full h-40 object-cover rounded-lg">
+        {% if messages %}
+
+        <div class="mb-6 space-y-3">
+
+            {% for message in messages %}
+
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+        <!-- ================= HERO ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-900 to-blue-900 text-white shadow-2xl p-6 sm:p-10">
+
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:60px 60px;"></div>
+
+            <div class="absolute -top-24 -right-16 w-96 h-96 bg-indigo-400 rounded-full blur-3xl opacity-20"></div>
+
+            <div class="relative grid lg:grid-cols-3 gap-8 items-center">
+
+                <div class="lg:col-span-2">
+
+                    <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                        <i class="fa-solid fa-folder-open"></i> Project catalogue
+                    </p>
+
+                    <h1 class="mt-4 text-3xl sm:text-5xl font-black leading-tight">
+                        What we have<br class="hidden sm:block"> built so far.
+                    </h1>
+
+                    <p class="mt-4 text-slate-300 max-w-2xl leading-relaxed">
+                        Applications, platforms and experiments from the foundation —
+                        {{ project_stats.total }} projects across {{ project_stats.categories }} categories,
+                        using {{ project_stats.technologies }} different technologies.
+                    </p>
+
+                    <!-- Search -->
+
+                    <form method="GET" action="{% url 'projects_list' %}" class="mt-7 flex flex-col sm:flex-row gap-3 max-w-2xl">
+
+                        <div class="relative flex-1">
+
+                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+
+                            <input type="search" name="q" value="{{ project_query }}"
+                                   placeholder="Search projects, technologies or roles..."
+                                   class="w-full pl-11 pr-4 py-3.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400">
+
+                        </div>
+
+                        {% if project_category %}<input type="hidden" name="category" value="{{ project_category }}">{% endif %}
+                        {% if project_status %}<input type="hidden" name="status" value="{{ project_status }}">{% endif %}
+                        {% if project_tech %}<input type="hidden" name="tech" value="{{ project_tech }}">{% endif %}
+                        <input type="hidden" name="sort" value="{{ project_sort }}">
+
+                        <button type="submit"
+                                class="px-6 py-3.5 rounded-xl bg-white font-bold text-slate-900 hover:bg-slate-100 transition whitespace-nowrap">
+                            Search
+                        </button>
+
+                    </form>
+
+                    <!-- Hero stats -->
+
+                    <div class="mt-7 grid grid-cols-2 sm:grid-cols-4 gap-3">
+
+                        <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                            <p class="text-2xl font-black">{{ project_stats.total }}</p>
+                            <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">Projects</p>
+                        </div>
+
+                        <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                            <p class="text-2xl font-black">{{ project_stats.live }}</p>
+                            <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">Live</p>
+                        </div>
+
+                        <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                            <p class="text-2xl font-black">{{ project_stats.technologies }}</p>
+                            <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">Technologies</p>
+                        </div>
+
+                        <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                            <p class="text-2xl font-black">{{ project_stats.with_links }}</p>
+                            <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">With links</p>
+                        </div>
+
+                    </div>
+
                 </div>
+
+                <!-- Side card -->
+
+                <div class="rounded-3xl bg-white/10 border border-white/15 backdrop-blur p-6">
+
+                    <p class="text-xs font-bold uppercase tracking-widest text-indigo-300">Pipeline</p>
+
+                    <div class="mt-4 space-y-3">
+
+                        {% for row in project_statuses %}
+                        <div>
+                            <div class="flex items-center justify-between gap-3 text-sm">
+                                <span class="text-slate-300">{{ row.label }}</span>
+                                <span class="font-black">{{ row.count }}</span>
+                            </div>
+                            <div class="mt-1.5 h-1.5 rounded-full bg-white/10 overflow-hidden">
+                                <div class="h-full rounded-full bg-emerald-400"
+                                     style="width: {% widthratio row.count project_stats.total 100 %}%"></div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-sm text-slate-300">No projects in the catalogue yet.</p>
+                        {% endfor %}
+
+                    </div>
+
+                    {% if request.user.is_superuser %}
+
+                    <a href="{% url 'add_project' %}"
+                       class="mt-6 w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-400 font-bold transition">
+                        <i class="fa-solid fa-plus"></i> Add a project
+                    </a>
+
+                    {% else %}
+
+                    <a href="{% url 'portfolio' %}"
+                       class="mt-6 w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                        <i class="fa-solid fa-briefcase"></i> See the portfolio
+                    </a>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= FILTER BAR ================= -->
+
+        <section class="mt-6 bg-white rounded-3xl shadow-md p-5 sm:p-6">
+
+            <div class="flex flex-col lg:flex-row lg:items-center gap-4 justify-between">
+
+                <!-- Category chips -->
+
+                <div class="flex items-center gap-2 flex-wrap">
+
+                    <a href="{% url 'projects_list' %}{% if project_query %}?q={{ project_query|urlencode }}{% endif %}{% if project_status %}&status={{ project_status }}{% endif %}"
+                       class="px-4 py-2 rounded-xl text-xs font-bold transition
+                              {% if not project_category %}bg-slate-900 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                        All projects
+                        <span class="opacity-60">({{ project_stats.total }})</span>
+                    </a>
+
+                    {% for row in project_categories %}
+
+                    <a href="?category={{ row.slug }}{% if project_query %}&q={{ project_query|urlencode }}{% endif %}{% if project_status %}&status={{ project_status }}{% endif %}"
+                       class="px-4 py-2 rounded-xl text-xs font-bold transition
+                              {% if project_category == row.slug %}bg-indigo-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                        {{ row.label }}
+                        <span class="opacity-60">({{ row.count }})</span>
+                    </a>
+
+                    {% endfor %}
+
+                </div>
+
+                <!-- Status + sort -->
+
+                <div class="flex items-center gap-3 flex-wrap">
+
+                    <div class="flex items-center gap-1 bg-slate-100 rounded-xl p-1">
+
+                        <a href="{% url 'projects_list' %}{% if project_query %}&q={{ project_query|urlencode }}{% endif %}{% if project_category %}&category={{ project_category }}{% endif %}"
+                           class="px-3 py-1.5 rounded-lg text-xs font-bold transition
+                                  {% if not project_status %}bg-white text-slate-900 shadow{% else %}text-slate-500{% endif %}">
+                            All
+                        </a>
+
+                        {% for row in project_statuses %}
+                        <a href="?status={{ row.slug }}{% if project_query %}&q={{ project_query|urlencode }}{% endif %}{% if project_category %}&category={{ project_category }}{% endif %}"
+                           class="px-3 py-1.5 rounded-lg text-xs font-bold transition
+                                  {% if project_status == row.slug %}bg-white text-slate-900 shadow{% else %}text-slate-500{% endif %}">
+                            {{ row.label }}
+                        </a>
+                        {% endfor %}
+
+                    </div>
+
+                    <form method="GET" action="{% url 'projects_list' %}" class="flex items-center gap-2">
+
+                        {% if project_query %}<input type="hidden" name="q" value="{{ project_query }}">{% endif %}
+                        {% if project_category %}<input type="hidden" name="category" value="{{ project_category }}">{% endif %}
+                        {% if project_status %}<input type="hidden" name="status" value="{{ project_status }}">{% endif %}
+                        {% if project_tech %}<input type="hidden" name="tech" value="{{ project_tech }}">{% endif %}
+
+                        <label for="projectSort" class="text-xs font-bold uppercase tracking-wider text-slate-400">Sort</label>
+
+                        <select id="projectSort" name="sort" onchange="this.form.submit()"
+                                class="px-3 py-2 rounded-xl bg-slate-100 text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            {% for value, label in project_sort_options %}
+                            <option value="{{ value }}" {% if project_sort == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <noscript><button type="submit" class="px-3 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold">Apply</button></noscript>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            <!-- Result summary -->
+
+            <div class="mt-5 pt-5 border-t border-slate-100 flex items-center justify-between gap-4 flex-wrap">
+
+                <p class="text-sm text-slate-500">
+                    {% if project_query %}
+                        <span class="font-bold text-slate-800">{{ projects|length }}</span>
+                        match{{ projects|length|pluralize }} for
+                        <span class="font-bold text-slate-800">“{{ project_query }}”</span>
+                    {% else %}
+                        Showing <span class="font-bold text-slate-800">{{ projects|length }}</span>
+                        project{{ projects|length|pluralize }}
+                    {% endif %}
+                </p>
+
+                {% if project_filters_active %}
+                <a href="{% url 'projects_list' %}"
+                   class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-rose-50 text-rose-600 text-xs font-bold hover:bg-rose-100 transition">
+                    <i class="fa-solid fa-xmark"></i> Clear filters
+                </a>
                 {% endif %}
 
-                <!-- Project Title -->
-                <h3 class="text-xl font-semibold text-gray-900 mb-2">
-                    <a href="{% url 'project_detail' project.id %}" class="hover:text-blue-600 transition-colors">
-                        {{ project.title }}
-                    </a>
-                </h3>
-                
-                <!-- Project Description -->
-                <p class="text-gray-700 mt-2">{{ project.description|truncatewords:20 }}</p>
-            </a>
-
-            <!-- Admin Controls (Visible to Superuser) -->
-            {% if request.user.is_superuser %}
-            <div class="mt-6 flex flex-wrap gap-4 justify-start">
-                <a href="{% url 'edit_project' project.id %}" 
-                   class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-500 transition-all shadow-md">
-                    ✏️ Edit
-                </a>
-                <a href="{% url 'delete_project' project.id %}" 
-                   class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-500 transition-all shadow-md">
-                    ❌ Delete
-                </a>
             </div>
-            {% endif %}
-        </div>
-        {% empty %}
-        <p class="text-gray-600 text-center col-span-3">No projects available.</p>
-        {% endfor %}
-    </div>
 
-    <!-- Add Project Button (Visible to Superuser) -->
-    {% if request.user.is_superuser %}
-    <div class="mt-10 text-center">
-        <a href="{% url 'add_project' %}" 
-           class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-500 transition-all shadow-md">
-            ➕ Add Project
-        </a>
-    </div>
-    {% endif %}
-</main>
+        </section>
+
+        <!-- ================= CONTENT + RAIL ================= -->
+
+        <div class="mt-6 grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+            <div class="xl:col-span-2">
+
+                {% if projects %}
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+                    {% for project in projects %}
+
+                    <article class="bg-white rounded-3xl shadow-md overflow-hidden flex flex-col hover:shadow-xl transition-shadow duration-300">
+
+                        <a href="{% url 'project_detail' project.id %}" class="relative block group">
+
+                            {% if project.image %}
+                            <img src="{{ project.image.url }}" alt="{{ project.title }}"
+                                 class="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500">
+                            {% else %}
+                            <div class="w-full h-52 bg-gradient-to-br from-indigo-600 to-blue-800 flex items-center justify-center text-white">
+                                <i class="fa-solid fa-diagram-project text-4xl opacity-40"></i>
+                            </div>
+                            {% endif %}
+
+                            <span class="absolute top-4 left-4 px-3 py-1.5 rounded-xl bg-white/90 text-slate-800 text-[10px] font-black uppercase tracking-widest backdrop-blur">
+                                {{ project.category_label }}
+                            </span>
+
+                            <span class="absolute top-4 right-4 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest
+                                {% if project.status_slug == 'live' %}bg-emerald-500 text-white
+                                {% elif project.status_slug == 'building' %}bg-amber-400 text-amber-950
+                                {% elif project.status_slug == 'archived' %}bg-slate-700 text-white
+                                else %}bg-sky-500 text-white{% endif %}">
+                                {{ project.status_label }}
+                            </span>
+
+                        </a>
+
+                        <div class="p-5 flex-1 flex flex-col">
+
+                            <h3 class="text-lg font-bold text-slate-900 leading-snug">
+                                <a href="{% url 'project_detail' project.id %}" class="hover:text-indigo-600 transition">
+                                    {{ project.title }}
+                                </a>
+                            </h3>
+
+                            {% if project.role %}
+                            <p class="mt-1 text-xs font-semibold text-indigo-600">{{ project.role }}</p>
+                            {% endif %}
+
+                            <p class="mt-2 text-sm text-slate-600 leading-relaxed flex-1">{{ project.excerpt }}</p>
+
+                            <!-- Tech -->
+
+                            {% if project.tech_list %}
+
+                            <div class="mt-4 flex items-center gap-2 flex-wrap">
+
+                                {% for tech in project.tech_list|slice:":4" %}
+                                <a href="?tech={{ tech|urlencode }}"
+                                   class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-[10px] font-bold hover:bg-indigo-600 hover:text-white transition">
+                                    {{ tech }}
+                                </a>
+                                {% endfor %}
+
+                            </div>
+
+                            {% endif %}
+
+                            <!-- Meta -->
+
+                            <div class="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
+
+                                <div class="flex items-center gap-3 text-xs text-slate-400">
+                                    {% if project.year %}
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <i class="fa-regular fa-calendar"></i> {{ project.year }}
+                                    </span>
+                                    {% endif %}
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <i class="fa-solid fa-code"></i> {{ project.word_count }} words
+                                    </span>
+                                </div>
+
+                                <div class="flex items-center gap-2">
+                                    {% if project.github_link %}
+                                    <a href="{{ project.github_link }}" target="_blank" rel="noopener" title="Source code"
+                                       class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-900 hover:text-white transition">
+                                        <i class="fa-brands fa-github text-xs"></i>
+                                    </a>
+                                    {% endif %}
+                                    {% if project.live_demo %}
+                                    <a href="{{ project.live_demo }}" target="_blank" rel="noopener" title="Live demo"
+                                       class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition">
+                                        <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Card footer -->
+
+                        <div class="px-5 pb-5 flex items-center justify-between gap-3">
+
+                            <a href="{% url 'project_detail' project.id %}"
+                               class="inline-flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition">
+                                Case study <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </a>
+
+                            {% if request.user.is_superuser %}
+                            <div class="flex items-center gap-2">
+                                <a href="{% url 'edit_project' project.id %}" title="Edit project"
+                                   class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-blue-100 hover:text-blue-600 transition">
+                                    <i class="fa-solid fa-pen text-xs"></i>
+                                </a>
+                                <a href="{% url 'delete_project' project.id %}" title="Delete project"
+                                   class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-rose-100 hover:text-rose-600 transition">
+                                    <i class="fa-solid fa-trash text-xs"></i>
+                                </a>
+                            </div>
+                            {% endif %}
+
+                        </div>
+
+                    </article>
+
+                    {% endfor %}
+
+                </div>
+
+                {% else %}
+
+                <!-- Empty state -->
+
+                <div class="bg-white rounded-3xl shadow-md px-6 py-20 text-center">
+
+                    <span class="w-16 h-16 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+                        <i class="fa-solid fa-folder-open text-2xl"></i>
+                    </span>
+
+                    <h3 class="mt-5 text-lg font-bold text-slate-900">No projects here</h3>
+
+                    <p class="mt-2 text-sm text-slate-500 max-w-md mx-auto">
+                        {% if project_filters_active %}
+                            Nothing matches those filters. Try clearing them or widening your search.
+                        {% else %}
+                            The catalogue is empty. Add the first project to get started.
+                        {% endif %}
+                    </p>
+
+                    <div class="mt-6 flex items-center justify-center gap-3 flex-wrap">
+
+                        {% if project_filters_active %}
+                        <a href="{% url 'projects_list' %}"
+                           class="px-5 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 transition">
+                            Clear filters
+                        </a>
+                        {% endif %}
+
+                        {% if request.user.is_superuser %}
+                        <a href="{% url 'add_project' %}"
+                           class="px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-500 transition">
+                            <i class="fa-solid fa-plus mr-1.5"></i> Add a project
+                        </a>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            <!-- ================= RIGHT RAIL ================= -->
+
+            <aside class="space-y-5">
+
+                <!-- CTA -->
+
+                <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 to-blue-700 text-white shadow-lg p-6">
+
+                    <div class="absolute -bottom-10 -right-8 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+
+                    <div class="relative">
+                        <h2 class="text-lg font-black">Add to the catalogue</h2>
+
+                        <p class="mt-2 text-sm text-indigo-100 leading-relaxed">
+                            Capture a new build with its category, status, stack and the role you
+                            played on it.
+                        </p>
+
+                        {% if request.user.is_superuser %}
+                        <a href="{% url 'add_project' %}"
+                           class="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-indigo-700 text-sm font-bold hover:bg-indigo-50 transition">
+                            <i class="fa-solid fa-plus"></i> New project
+                        </a>
+                        {% else %}
+                        <a href="{% url 'portfolio' %}"
+                           class="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-indigo-700 text-sm font-bold hover:bg-indigo-50 transition">
+                            <i class="fa-solid fa-briefcase"></i> Portfolio
+                        </a>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+                <!-- Technologies -->
+
+                {% if project_techs %}
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Stack</h2>
+
+                    <div class="mt-4 flex items-center gap-2 flex-wrap">
+
+                        {% for tech in project_techs %}
+                        <a href="?tech={{ tech.name|urlencode }}"
+                           class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold hover:bg-indigo-600 hover:text-white transition">
+                            {{ tech.name }}
+                            <span class="opacity-60">{{ tech.count }}</span>
+                        </a>
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+                <!-- By category -->
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">By category</h2>
+
+                    <div class="mt-4 space-y-3">
+
+                        {% for row in project_categories %}
+
+                        <a href="?category={{ row.slug }}" class="block group">
+                            <div class="flex items-center justify-between gap-3 text-sm">
+                                <span class="font-semibold text-slate-700 group-hover:text-indigo-600 transition">{{ row.label }}</span>
+                                <span class="text-xs font-black text-slate-400">{{ row.count }}</span>
+                            </div>
+                            <div class="mt-1.5 h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                                <div class="h-full rounded-full bg-indigo-500" style="width: {{ row.percent }}%"></div>
+                            </div>
+                        </a>
+
+                        {% empty %}
+
+                        <p class="text-sm text-slate-400">No projects yet.</p>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+                <!-- Years -->
+
+                {% if project_years %}
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">By year</h2>
+
+                    <ul class="mt-4 space-y-2.5">
+
+                        {% for row in project_years %}
+                        <li class="flex items-center justify-between gap-3 text-sm">
+                            <span class="text-slate-600">{{ row.year }}</span>
+                            <span class="px-2.5 py-0.5 rounded-lg bg-slate-100 text-slate-500 text-[10px] font-black">{{ row.count }}</span>
+                        </li>
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+
+                {% endif %}
+
+            </aside>
+
+        </div>
+
+    </main>
+
+    {% include "footer.html" %}
+
 </div>
 
-{% include "footer.html" %}
 {% endblock %}

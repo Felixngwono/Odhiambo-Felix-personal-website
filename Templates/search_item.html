@@ -1,221 +1,396 @@
-{% extends 'header.html' %}
-
-{% block content %}
-        {% include "sidebar.html" %}
-{% load widget_tweaks %}
+{% extends "header.html" %}
 {% load static %}
 
-<div class="flex flex-col sm:ml-64 h-screen">
+{% block title %}Search | FelloMarley Foundation{% endblock %}
 
-    <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6">
-            {% for message in messages %}
-        <p id="messages" class="font-semibold text-lg text-green-500">{{ message }}</p>
-    {% endfor %}
-    <div class="p-6">
-        <h2 class="text-2xl font-semibold mb-4 text-green-600">Search Results for "{{ query }}"</h2>
-      
-        {% if not results.projects and not results.blogs and not results.events and not results.testimonials and not results.skills and not results.education_levels and not results.notifications and not results.activities and not results.siblings and not results.sibling_images and not results.portfolios and not results.certifications and not results.jobs and not results.job_applications and not results.donations and not results.volunteers and not results.faqs and not results.gallery_images and not results.contacts and not results.tasks %}
-            <p class="text-gray-500">No results found.</p>
-        {% endif %}
-      
-        {% if results.projects %}
-        <h3 class="text-xl mt-6 font-semibold">Projects</h3>
-        <ul class="list-disc list-inside">
-            {% for project in results.projects %}
-            {% if project.name %}
-                <li><a href="{% url 'project_detail' project.pk %}" class="text-blue-600 hover:underline">{{ project.name }}</a></li>
-            
+{% block content %}
+
+{% include "sidebar.html" %}
+
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
+
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
+
+        <!-- ================= HERO ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white shadow-2xl p-6 sm:p-10">
+
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1cpx);background-size:60px 60px;"></div>
+
+            <div class="absolute -top-24 -right-16 w-96 h-96 bg-blue-400 rounded-full blur-3xl opacity-20"></div>
+
+            <div class="relative">
+
+                <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                    <i class="fa-solid fa-magnifying-glass"></i> Search
+                </p>
+
+                <h1 class="mt-4 text-3xl sm:text-4xl font-black leading-tight">
+                    {% if query %}Results for &ldquo;{{ query }}&rdquo;{% else %}Search the site{% endif %}
+                </h1>
+
+                <form method="GET" action="{% url 'search' %}" class="mt-6 flex flex-col sm:flex-row gap-3 max-w-2xl">
+                    <input type="search" name="searched" value="{{ query }}"
+                           placeholder="Projects, posts, roles, skills..."
+                           class="flex-1 px-5 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:bg-white/15 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                    <button type="submit"
+                            class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-blue-500 text-white font-bold hover:bg-blue-400 transition">
+                        <i class="fa-solid fa-magnifying-glass text-xs"></i> Search
+                    </button>
+                </form>
+
+            </div>
+
+        </section>
+
+        <!-- ================= RESULTS ================= -->
+
+        <section class="mt-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+            <div class="lg:col-span-3 space-y-5">
+
+                {% if not query %}
+
+                <div class="bg-white rounded-3xl shadow-md p-10 text-center">
+                    <span class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+                        <i class="fa-solid fa-magnifying-glass text-xl"></i>
+                    </span>
+                    <p class="mt-4 font-bold text-slate-700">What are you looking for?</p>
+                    <p class="text-sm text-slate-400 mt-1">
+                        Try a project name, a skill, a certificate or a role.
+                    </p>
+                </div>
+
+                {% else %}
+
+                <!-- Projects -->
+                {% if results.projects %}
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Projects</h2>
+                    <ul class="mt-4 space-y-3">
+                        {% for project in results.projects %}
+                        <li>
+                            <a href="{% url 'project_detail' project.pk %}"
+                               class="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/60 p-4 hover:border-blue-200 hover:bg-white transition">
+                                <span class="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xs shrink-0">
+                                    <i class="fa-solid fa-diagram-project text-[10px]"></i>
+                                </span>
+                                <span class="min-w-0">
+                                    <span class="block text-sm font-bold text-slate-800 truncate">{{ project.title }}</span>
+                                    <span class="block text-xs text-slate-400">{{ project.category_label }} &middot; {{ project.status_label }}</span>
+                                </span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
                 {% endif %}
-                {% endfor %}
-        </ul>
-    {% endif %}
 
-    {% if results.blogs %}
-        <h3 class="text-xl mt-6 font-semibold">Blog Posts</h3>
-        <ul class="list-disc list-inside">
-            {% for blog in results.blogs %}
-                <li><a href="{% url 'blog_details' blog.pk %}" class="text-blue-600 hover:underline">{{ blog.title }}</a></li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+                <!-- Blog -->
+                {% if results.blogs %}
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Blog posts</h2>
+                    <ul class="mt-4 space-y-3">
+                        {% for post in results.blogs %}
+                        <li>
+                            <a href="{% url 'blog_details' post.pk %}"
+                               class="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/60 p-4 hover:border-blue-200 hover:bg-white transition">
+                                <span class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs shrink-0">
+                                    <i class="fa-solid fa-newspaper text-[10px]"></i>
+                                </span>
+                                <span class="min-w-0">
+                                    <span class="block text-sm font-bold text-slate-800 truncate">{{ post.title }}</span>
+                                    <span class="block text-xs text-slate-400 truncate">{{ post.excerpt|truncatechars:90 }}</span>
+                                </span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
 
-    {% if results.events %}
-        <h3 class="text-xl mt-6 font-semibold">Events</h3>
-        <ul class="list-disc list-inside">
-            {% for event in results.events %}
-                <li><a href="{% url 'event_detail' event.pk %}" class="text-blue-600 hover:underline">{{ event.title }}</a></li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+                <!-- Jobs -->
+                {% if results.jobs %}
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Roles</h2>
+                    <ul class="mt-4 space-y-3">
+                        {% for job in results.jobs %}
+                        <li>
+                            <a href="{% url 'job_posting' job.pk %}"
+                               class="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/60 p-4 hover:border-blue-200 hover:bg-white transition">
+                                <span class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs shrink-0">
+                                    <i class="fa-solid fa-briefcase text-[10px]"></i>
+                                </span>
+                                <span class="min-w-0">
+                                    <span class="block text-sm font-bold text-slate-800 truncate">{{ job.title }}</span>
+                                    <span class="block text-xs text-slate-400">{{ job.company }} &middot; {{ job.status_label }}</span>
+                                </span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
 
-    {% if results.testimonials %}
-        <h3 class="text-xl mt-6 font-semibold">Testimonials</h3>
-        <ul class="list-disc list-inside">
-            {% for testimonial in results.testimonials %}
-                <li><strong>{{ testimonial.name }}</strong>: {{ testimonial.message|truncatechars:100 }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+                <!-- Portfolio -->
+                {% if results.portfolios %}
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Portfolio</h2>
+                    <ul class="mt-4 space-y-3">
+                        {% for item in results.portfolios %}
+                        <li>
+                            <a href="{% url 'portfolio_details' item.pk %}"
+                               class="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/60 p-4 hover:border-blue-200 hover:bg-white transition">
+                                <span class="w-9 h-9 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center text-xs shrink-0">
+                                    <i class="fa-solid fa-briefcase text-[10px]"></i>
+                                </span>
+                                <span class="min-w-0">
+                                    <span class="block text-sm font-bold text-slate-800 truncate">{{ item.title }}</span>
+                                    <span class="block text-xs text-slate-400 truncate">{{ item.description|truncatechars:90 }}</span>
+                                </span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
 
-    {% if results.skills %}
-        <h3 class="text-xl mt-6 font-semibold">Skills</h3>
-        <ul class="list-disc list-inside">
-            {% for skill in results.skills %}
-                <li>{{ skill.name }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+                <!-- Certifications -->
+                {% if results.certifications %}
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Certifications</h2>
+                    <ul class="mt-4 space-y-3">
+                        {% for certification in results.certifications %}
+                        <li>
+                            <a href="{% url 'certification_detail' certification.pk %}"
+                               class="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/60 p-4 hover:border-blue-200 hover:bg-white transition">
+                                <span class="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xs shrink-0">
+                                    <i class="fa-solid fa-award text-[10px]"></i>
+                                </span>
+                                <span class="min-w-0">
+                                    <span class="block text-sm font-bold text-slate-800 truncate">{{ certification.title }}</span>
+                                    <span class="block text-xs text-slate-400">{{ certification.issuing_organization }}</span>
+                                </span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
 
-    {% if results.education_levels %}
-        <h3 class="text-xl mt-6 font-semibold">Education Levels</h3>
-        <ul class="list-disc list-inside">
-            {% for edu in results.education_levels %}
-                <li>{{ edu.level }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+                <!-- Skills -->
+                {% if results.skills %}
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Skills</h2>
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        {% for skill in results.skills %}
+                        <a href="{% url 'skill_detail' skill.pk %}"
+                           class="text-[11px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg hover:bg-blue-100 hover:text-blue-700">
+                            {{ skill.name }} &middot; {{ skill.proficiency }}%
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
 
-    {% if results.notifications %}
-        <h3 class="text-xl mt-6 font-semibold">Notifications</h3>
-        <ul class="list-disc list-inside">
-            {% for note in results.notifications %}
-                <li>{{ note.title }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+                <!-- Events -->
+                {% if results.events %}
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Events</h2>
+                    <ul class="mt-4 space-y-3">
+                        {% for event in results.events %}
+                        <li>
+                            <a href="{% url 'event_detail' event.pk %}"
+                               class="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/60 p-4 hover:border-blue-200 hover:bg-white transition">
+                                <span class="w-9 h-9 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-xs shrink-0">
+                                    <i class="fa-solid fa-calendar-day text-[10px]"></i>
+                                </span>
+                                <span class="min-w-0">
+                                    <span class="block text-sm font-bold text-slate-800 truncate">{{ event.title }}</span>
+                                    <span class="block text-xs text-slate-400 truncate">{{ event.description|truncatechars:90 }}</span>
+                                </span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
 
-    {% if results.activities %}
-        <h3 class="text-xl mt-6 font-semibold">Activities</h3>
-        <ul class="list-disc list-inside">
-            {% for activity in results.activities %}
-                <li>{{ activity.title }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+                <!-- Testimonials -->
+                {% if results.testimonials %}
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Testimonials</h2>
+                    <ul class="mt-4 space-y-3">
+                        {% for testimonial in results.testimonials %}
+                        <li class="rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
+                            <p class="text-sm text-slate-600">{{ testimonial.message|truncatechars:160 }}</p>
+                            <p class="mt-2 text-xs font-bold text-slate-700">{{ testimonial.name }}</p>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
 
-    {% if results.siblings %}
-        <h3 class="text-xl mt-6 font-semibold">Siblings</h3>
-        <ul class="list-disc list-inside">
-            {% for sibling in results.siblings %}
-                <li>{{ sibling.name }} - {{ sibling.short_description|truncatechars:100 }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+                <!-- Gallery -->
+                {% if results.gallery_images %}
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Gallery</h2>
+                    <ul class="mt-4 space-y-3">
+                        {% for media in results.gallery_images %}
+                        <li>
+                            <a href="{% url 'gallery' %}"
+                               class="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/60 p-4 hover:border-blue-200 hover:bg-white transition">
+                                <span class="w-9 h-9 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center text-xs shrink-0">
+                                    <i class="fa-solid fa-image text-[10px]"></i>
+                                </span>
+                                <span class="min-w-0">
+                                    <span class="block text-sm font-bold text-slate-800 truncate">{{ media.title }}</span>
+                                    <span class="block text-xs text-slate-400 truncate">{{ media.caption|truncatechars:90 }}</span>
+                                </span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
 
-    {% if results.sibling_images %}
-        <h3 class="text-xl mt-6 font-semibold">Sibling Images</h3>
-        <ul class="list-disc list-inside">
-            {% for img in results.sibling_images %}
-                <li>{{ img.description }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+                <!-- FAQ -->
+                {% if results.faqs %}
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Questions</h2>
+                    <ul class="mt-4 space-y-3">
+                        {% for faq in results.faqs %}
+                        <li class="rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
+                            <p class="text-sm font-bold text-slate-800">{{ faq.question }}</p>
+                            <p class="mt-1 text-sm text-slate-600">{{ faq.answer|truncatechars:180 }}</p>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
 
-    {% if results.portfolios %}
-        <h3 class="text-xl mt-6 font-semibold">Portfolios</h3>
-        <ul class="list-disc list-inside">
-            {% for portfolio in results.portfolios %}
-                <li>{{ portfolio.title }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+                <!-- Education -->
+                {% if results.education_levels %}
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Education</h2>
+                    <ul class="mt-4 space-y-3">
+                        {% for level in results.education_levels %}
+                        <li class="rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
+                            <p class="text-sm font-bold text-slate-800">{{ level.level }} &middot; {{ level.school }}</p>
+                            <p class="mt-1 text-xs text-slate-500">{{ level.description|truncatechars:140 }}</p>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
 
-    {% if results.certifications %}
-        <h3 class="text-xl mt-6 font-semibold">Certifications</h3>
-        <ul class="list-disc list-inside">
-            {% for cert in results.certifications %}
-                <li>{{ cert.title }} - {{ cert.issuing_organization }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+                <!-- Owner only sections -->
+                {% if search_is_owner %}
 
-   
+                {% if results.volunteers %}
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Volunteers</h2>
+                    <ul class="mt-4 space-y-3 text-sm">
+                        {% for volunteer in results.volunteers %}
+                        <li class="rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
+                            <p class="font-bold text-slate-800">{{ volunteer.full_name }}</p>
+                            <p class="text-xs text-slate-500">{{ volunteer.area_label }} &middot; {{ volunteer.status_label }}</p>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
 
-    {% if results.job_applications %}
-        <h3 class="text-xl mt-6 font-semibold">Job Applications</h3>
-        <ul class="list-disc list-inside">
-            {% for app in results.job_applications %}
-                <li>{{ app.applicant_name }} - {{ app.status }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+                {% if results.contacts %}
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Messages</h2>
+                    <ul class="mt-4 space-y-3 text-sm">
+                        {% for message in results.contacts %}
+                        <li class="rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
+                            <p class="font-bold text-slate-800">{{ message.name }} &lt;{{ message.email }}&gt;</p>
+                            <p class="text-xs text-slate-600 mt-1">{{ message.message|truncatechars:180 }}</p>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
 
-    {% if results.donations %}
-        <h3 class="text-xl mt-6 font-semibold">Donations</h3>
-        <ul class="list-disc list-inside">
-            {% for donate in results.donations %}
-                <li>{{ donate.name }}: {{ donate.message|truncatechars:100 }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+                {% if results.job_applications %}
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Applications</h2>
+                    <ul class="mt-4 space-y-3 text-sm">
+                        {% for application in results.job_applications %}
+                        <li class="rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
+                            <p class="font-bold text-slate-800">{{ application.applicant_display }}</p>
+                            <p class="text-xs text-slate-500">{{ application.job.title }} &middot; {{ application.status_label }}</p>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
 
-    {% if results.volunteers %}
-        <h3 class="text-xl mt-6 font-semibold">Volunteers</h3>
-        <ul class="list-disc list-inside">
-            {% for vol in results.volunteers %}
-                <li>{{ vol.full_name }} - {{ vol.skills|truncatechars:50 }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+                {% if results.tasks %}
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Tasks</h2>
+                    <ul class="mt-4 space-y-3 text-sm">
+                        {% for task in results.tasks %}
+                        <li class="rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
+                            <p class="font-bold text-slate-800">{{ task.title }}</p>
+                            <p class="text-xs text-slate-500">{{ task.description|truncatechars:140 }}</p>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
 
-    {% if results.faqs %}
-        <h3 class="text-xl mt-6 font-semibold">FAQs</h3>
-        <ul class="list-disc list-inside">
-            {% for faq in results.faqs %}
-                <li><strong>Q:</strong> {{ faq.question }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+                {% endif %}
 
-    {% if results.gallery_images %}
-        <h3 class="text-xl mt-6 font-semibold">Gallery</h3>
-        <ul class="list-disc list-inside">
-            {% for img in results.gallery_images %}
-                <li>{{ img.title }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+                {% endif %}
 
-    {% if results.subscribers %}
-        <h3 class="text-xl mt-6 font-semibold">Subscribers</h3>
-        <ul class="list-disc list-inside">
-            {% for sub in results.subscribers %}
-                <li>{{ sub.email }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+            </div>
 
-    {% if results.messages %}
-        <h3 class="text-xl mt-6 font-semibold">Messages</h3>
-        <ul class="list-disc list-inside">
-            {% for msg in results.messages %}
-                <li>{{ msg.name }} - {{ msg.messaging|truncatechars:100 }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+            <!-- ================= SIDE PANEL ================= -->
 
-    {% if results.contacts %}
-        <h3 class="text-xl mt-6 font-semibold">Contacts</h3>
-        <ul class="list-disc list-inside">
-            {% for contact in results.contacts %}
-                <li>{{ contact.name }} ({{ contact.email }}) - {{ contact.message|truncatechars:100 }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+            <aside class="space-y-5">
 
-    {% if results.tasks %}
-        <h3 class="text-xl mt-6 font-semibold">Tasks</h3>
-        <ul class="list-disc list-inside">
-            {% for task in results.tasks %}
-                <li>{{ task.title }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Search the site</h2>
+
+                    <form method="GET" action="{% url 'search' %}" class="mt-4 space-y-3">
+                        <input type="search" name="searched" value="{{ query }}"
+                               placeholder="Type to search"
+                               class="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 text-sm">
+                        <button type="submit"
+                                class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-500 transition">
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i> Search
+                        </button>
+                    </form>
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Popular pages</h2>
+
+                    <ul class="mt-4 space-y-2 text-sm">
+                        <li><a href="{% url 'me' %}" class="text-slate-600 hover:text-blue-700">Home</a></li>
+                        <li><a href="{% url 'about' %}" class="text-slate-600 hover:text-blue-700">About</a></li>
+                        <li><a href="{% url 'projects_list' %}" class="text-slate-600 hover:text-blue-700">Projects</a></li>
+                        <li><a href="{% url 'portfolio' %}" class="text-slate-600 hover:text-blue-700">Portfolio</a></li>
+                        <li><a href="{% url 'certification_list' %}" class="text-slate-600 hover:text-blue-700">Certifications</a></li>
+                        <li><a href="{% url 'gallery' %}" class="text-slate-600 hover:text-blue-700">Gallery</a></li>
+                        <li><a href="{% url 'job_list' %}" class="text-slate-600 hover:text-blue-700">Roles</a></li>
+                        <li><a href="{% url 'faq_list' %}" class="text-slate-600 hover:text-blue-700">Questions</a></li>
+                    </ul>
+                </div>
+
+            </aside>
+
+        </section>
+
+    </main>
+
+    {% include "footer.html" %}
 
 </div>
-</main>
-</div>
 
-{% include "footer.html" %}
 {% endblock %}

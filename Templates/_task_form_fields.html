@@ -1,0 +1,111 @@
+{% load widget_tweaks %}
+
+<!-- ================= FORM FIELDS (shared by add + update) ================= -->
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+    <!-- Title -->
+    <div class="sm:col-span-2">
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.title.id_for_label }}">Title</label>
+        {% render_field form.title class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-900" %}
+        {% if form.title.errors %}
+        <p class="mt-1.5 text-xs font-semibold text-rose-600">{{ form.title.errors|join:", " }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Description -->
+    <div class="sm:col-span-2">
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.description.id_for_label }}">Description</label>
+        {% render_field form.description class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-900 leading-relaxed" rows="6" %}
+        {% if form.description.errors %}
+        <p class="mt-1.5 text-xs font-semibold text-rose-600">{{ form.description.errors|join:", " }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Status -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.status.id_for_label }}">Status</label>
+        {% render_field form.status class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-900" %}
+    </div>
+
+    <!-- Priority -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.priority.id_for_label }}">Priority</label>
+        {% render_field form.priority class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-900" %}
+    </div>
+
+    <!-- Category -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.category.id_for_label }}">Category</label>
+        {% render_field form.category class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-900" %}
+    </div>
+
+    <!-- Due date -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.due_date.id_for_label }}">Due date</label>
+        {% render_field form.due_date class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-900" %}
+        {% if form.due_date.errors %}
+        <p class="mt-1.5 text-xs font-semibold text-rose-600">{{ form.due_date.errors|join:", " }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Assignee -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.assigned_to.id_for_label }}">Assignee</label>
+        {% render_field form.assigned_to class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-900" %}
+        <p class="mt-1.5 text-xs text-slate-400">Leave empty to keep it on the unassigned pile.</p>
+    </div>
+
+    <!-- Created by -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.created_by.id_for_label }}">Created by</label>
+        {% render_field form.created_by class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-900" %}
+        <p class="mt-1.5 text-xs text-slate-400">Defaults to you when left empty.</p>
+    </div>
+
+    <!-- Progress -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.progress_percentage.id_for_label }}">Progress (%)</label>
+        {% render_field form.progress_percentage class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-900" %}
+    </div>
+
+    <!-- Estimate -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.estimated_hours.id_for_label }}">Estimated hours</label>
+        {% render_field form.estimated_hours class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-900" %}
+    </div>
+
+    <!-- Tags -->
+    <div class="sm:col-span-2">
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.tags.id_for_label }}">Tags</label>
+        {% render_field form.tags class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-900" %}
+        <p class="mt-1.5 text-xs text-slate-400">Comma separated, e.g. Community, Mentorship.</p>
+    </div>
+
+    <!-- Notes -->
+    <div class="sm:col-span-2">
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.notes.id_for_label }}">Notes</label>
+        {% render_field form.notes class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-900 leading-relaxed" rows="4" %}
+        <p class="mt-1.5 text-xs text-slate-400">Blockers, links and context for whoever picks this up.</p>
+    </div>
+
+    <!-- Completed -->
+    <div class="sm:col-span-2">
+        <label class="flex items-start gap-3 cursor-pointer">
+            {% render_field form.completed class="mt-1 h-5 w-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" %}
+            <span>
+                <span class="block text-sm font-bold text-slate-700">Already completed</span>
+                <span class="block text-xs text-slate-400">Ticking this closes the task and stamps the completion date.</span>
+            </span>
+        </label>
+    </div>
+
+</div>
+
+<!-- Errors -->
+
+{% if form.non_field_errors %}
+<div class="mt-5 rounded-2xl bg-rose-50 border border-rose-200 px-4 py-3 text-sm font-semibold text-rose-700">
+    {{ form.non_field_errors|join:", " }}
+</div>
+{% endif %}

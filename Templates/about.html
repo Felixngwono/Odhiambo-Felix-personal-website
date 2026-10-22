@@ -1,128 +1,1132 @@
 {% extends "header.html" %}
 {% load static %}
+
+{% block title %}About {{ owner_name }} | {{ site_name }}{% endblock %}
+
 {% block content %}
+
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+<style>
+    [x-cloak] { display: none !important; }
+</style>
+
 {% include "sidebar.html" %}
 
-<div class="flex flex-col sm:ml-64 h-screen">
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-50">
 
-<main class="flex-1 overflow-y-auto p-6">
-<div class="" style="background-image: url('{% static 'images/cv.anif' %}'); background-repeat: no-repeat; background-size: cover; background-position: center;">
-    <div class="p-8 rounded-lg shadow-lg" 
-    style="background-image: url('{% static 'images/cm.avif' %}'); 
-           background-repeat: no-repeat; 
-           background-size: cover; 
-           background-position: center;">
-        <div class="text-center">
-            <h2 class="text-4xl font-bold text-gray-800">About Me</h2>
-            <p class="mt-4 text-2xl  max-w-2xl mx-auto">
-                Let me share a bit about who I am and what drives me.
-            </p>
-        </div>
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
 
-        <!-- Profile Image & Introduction -->
-        <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-            <div class="flex justify-center">
-                <img src="{% static 'images/Fel16.jpg' %}" 
-                     alt="Profile Picture" 
-                     class="w-80 h-80 object-cover rounded-full shadow-md border-4 border-blue-500">
+        <!-- ================= HERO ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white shadow-2xl">
+
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:60px 60px;"></div>
+
+            <div class="absolute -top-24 -right-16 w-96 h-96 bg-cyan-400 rounded-full blur-3xl opacity-20"></div>
+
+            <div class="relative grid lg:grid-cols-5 gap-12 p-8 sm:p-12 items-center">
+
+                <!-- Photo -->
+
+                <div class="lg:col-span-2 flex justify-center">
+
+                    <div class="relative">
+
+                        <img src="{% if owner_avatar %}{{ owner_avatar.url }}{% else %}{% static 'images/Fel14.jpg' %}{% endif %}"
+                             alt="{{ owner_name }}"
+                             class="w-64 h-80 sm:w-72 sm:h-96 object-cover rounded-3xl shadow-2xl border-4 border-white/15">
+
+                        <div class="absolute -bottom-5 -left-4 bg-white text-slate-800 rounded-2xl px-5 py-4 shadow-xl">
+
+                            <p class="text-xs uppercase tracking-widest text-slate-500">
+
+                                Based in
+
+                            </p>
+
+                            <p class="font-bold text-lg">{{ owner_location }}</p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Intro -->
+
+                <div class="lg:col-span-3">
+
+                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/20 text-sm font-semibold text-cyan-200">
+
+                        👋 Get to know me
+
+                    </span>
+
+                    <h1 class="mt-6 text-4xl sm:text-5xl font-black leading-tight">
+
+                        {{ owner_name }}
+
+                    </h1>
+
+                    <h2 class="mt-2 text-2xl sm:text-3xl font-bold text-cyan-300">
+
+                        {{ owner_headline }}
+
+                    </h2>
+
+                    <p class="mt-6 text-lg text-slate-200 leading-8">
+
+                        {% if owner_bio %}{{ owner_bio }}{% else %}I’m a Bachelor of Computer Science graduate passionate about
+                        technology, problem solving and lifelong learning. Coming from a
+                        large and loving family of eight, my background has shaped my
+                        ambition and purpose — building solutions that genuinely help people.{% endif %}
+
+                    </p>
+
+                    <!-- Quick facts -->
+
+                    <div class="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-sm text-slate-300">
+
+                        <span class="inline-flex items-center gap-2">
+                            <i class="fa-solid fa-location-dot text-cyan-300"></i> {{ owner_location }}
+                        </span>
+
+                        <span class="inline-flex items-center gap-2">
+                            <i class="fa-solid fa-briefcase text-cyan-300"></i> Open to opportunities
+                        </span>
+
+                        <span class="inline-flex items-center gap-2">
+                            <i class="fa-solid fa-code text-cyan-300"></i> {{ projects|length }} projects built
+                        </span>
+
+                        <span class="inline-flex items-center gap-2">
+                            <i class="fa-solid fa-users text-cyan-300"></i> {{ sibling_count }} siblings
+                        </span>
+
+                    </div>
+
+                    <!-- Actions -->
+
+                    <div class="mt-8 flex flex-wrap gap-4">
+
+                        <a href="{% url 'me' %}#projects"
+                           class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-cyan-400 text-slate-900 font-bold hover:bg-cyan-300 transition">
+                            <i class="fa-solid fa-layer-group"></i> View my work
+                        </a>
+
+                        <a href="{{ cv_url }}"
+                           download
+                           class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/25 font-semibold transition">
+                            <i class="fa-solid fa-download"></i> Download CV
+                        </a>
+
+                        <a href="{% url 'me' %}#contact"
+                           class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/25 font-semibold transition">
+                            <i class="fa-solid fa-paper-plane"></i> Get in touch
+                        </a>
+
+                    </div>
+
+                </div>
+
             </div>
 
-            <div class="space-y-5">
-                <h3 class="text-3xl font-bold text-gray-800">Hi, I'm Felix Odhiambo 👋</h3>
-                <p class=" text-3x1 leading-relaxed">
-                    I’m a <span class="font-medium text-2">Bachelor of Computer Science</span> graduate passionate about technology, problem-solving, and lifelong learning.
-                    Coming from a large and loving family of eight, my background has shaped my ambition and purpose.
+        </section>
+
+        <!-- ================= STATS ================= -->
+
+        <section class="mt-6 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
+
+            <div class="bg-white rounded-2xl shadow-md p-6 text-center">
+                <p class="text-4xl font-black text-blue-600">{{ projects|length }}</p>
+                <p class="mt-2 text-sm text-slate-500">Projects</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6 text-center">
+                <p class="text-4xl font-black text-teal-600">{{ skills|length }}</p>
+                <p class="mt-2 text-sm text-slate-500">Skills</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6 text-center">
+                <p class="text-4xl font-black text-violet-600">{{ certifications|length }}</p>
+                <p class="mt-2 text-sm text-slate-500">Certifications</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6 text-center">
+                <p class="text-4xl font-black text-amber-600">{{ education_levels.count }}</p>
+                <p class="mt-2 text-sm text-slate-500">Education levels</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6 text-center">
+                <p class="text-4xl font-black text-rose-600">{{ events|length }}</p>
+                <p class="mt-2 text-sm text-slate-500">Events</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6 text-center">
+                <p class="text-4xl font-black text-cyan-600">{{ blog_count }}</p>
+                <p class="mt-2 text-sm text-slate-500">Articles</p>
+            </div>
+
+        </section>
+
+        <!-- ================= STORY ================= -->
+
+        <section class="mt-6 grid lg:grid-cols-3 gap-6">
+
+            <div class="lg:col-span-2 bg-white rounded-3xl shadow-md p-8 sm:p-10">
+
+                <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">
+
+                    My Story
+
+                </span>
+
+                <h2 class="mt-3 text-3xl sm:text-4xl font-black text-slate-900">
+
+                    From Ratta to Kabarak — building my way forward
+                </h2>
+
+                <p class="mt-6 text-lg text-slate-600 leading-8">
+                    I was born to my wonderful parents, <strong class="text-slate-800">John Olao &amp; Grace Anyango</strong>,
+                    and raised as a proud grandson of <strong class="text-slate-800">Olao &amp; Omollo Masella</strong>,
+                    whose stories and values still guide me today.
                 </p>
-                <a href="{% url 'gallery' %}" 
-                   class="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white text-lg rounded-xl font-medium shadow-md hover:bg-green-500 transition-all">
-                    📸 View Gallery
+
+                <p class="mt-4 text-lg text-slate-600 leading-8">
+                    My journey started at <strong class="text-slate-800">Ratta Primary &amp; Secondary School</strong>,
+                    where I developed a curiosity for how things work. That curiosity pulled me
+                    towards computer science at <strong class="text-slate-800">Kabarak University</strong>,
+                    where I earned my Bachelor of Computer Science and wrote my first real programs.
+                </p>
+
+                <p class="mt-4 text-lg text-slate-600 leading-8">
+                    Today I build web applications and database systems with Django, Python,
+                    JavaScript and SQL. What drives me is simple: turn a real problem into a
+                    clean solution that someone can actually use. Outside of code you will find me
+                    behind a camera, on the football pitch, or mentoring young developers who are
+                    just starting out.
+                </p>
+
+                <div class="mt-8 grid sm:grid-cols-3 gap-4">
+
+                    <div class="bg-slate-50 rounded-2xl p-5">
+                        <i class="fa-solid fa-lightbulb text-2xl text-amber-500"></i>
+                        <p class="mt-3 font-bold">Curious by default</p>
+                        <p class="mt-1 text-sm text-slate-500">I ask why before I ask how.</p>
+                    </div>
+
+                    <div class="bg-slate-50 rounded-2xl p-5">
+                        <i class="fa-solid fa-handshake text-2xl text-teal-600"></i>
+                        <p class="mt-3 font-bold">Built around people</p>
+                        <p class="mt-1 text-sm text-slate-500">Family and community first.</p>
+                    </div>
+
+                    <div class="bg-slate-50 rounded-2xl p-5">
+                        <i class="fa-solid fa-rocket text-2xl text-blue-600"></i>
+                        <p class="mt-3 font-bold">Always shipping</p>
+                        <p class="mt-1 text-sm text-slate-500">Learning by building, not watching.</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- At a glance -->
+
+            <aside class="bg-white rounded-3xl shadow-md p-8">
+
+                <h2 class="text-2xl font-bold text-slate-900">At a glance</h2>
+
+                <dl class="mt-6 space-y-5">
+
+                    <div class="flex justify-between gap-4 border-b border-slate-100 pb-4">
+                        <dt class="text-slate-500">Role</dt>
+                        <dd class="font-semibold text-slate-800 text-right">Software Developer</dd>
+                    </div>
+
+                    <div class="flex justify-between gap-4 border-b border-slate-100 pb-4">
+                        <dt class="text-slate-500">Education</dt>
+                        <dd class="font-semibold text-slate-800 text-right">BSc Computer Science</dd>
+                    </div>
+
+                    <div class="flex justify-between gap-4 border-b border-slate-100 pb-4">
+                        <dt class="text-slate-500">Core stack</dt>
+                        <dd class="font-semibold text-slate-800 text-right">Python · Django · JS</dd>
+                    </div>
+
+                    <div class="flex justify-between gap-4 border-b border-slate-100 pb-4">
+                        <dt class="text-slate-500">Database</dt>
+                        <dd class="font-semibold text-slate-800 text-right">MySQL · Oracle SQL</dd>
+                    </div>
+
+                    <div class="flex justify-between gap-4 border-b border-slate-100 pb-4">
+                        <dt class="text-slate-500">Currently learning</dt>
+                        <dd class="font-semibold text-slate-800 text-right">AI &amp; Machine Learning</dd>
+                    </div>
+
+                    <div class="flex justify-between gap-4 border-b border-slate-100 pb-4">
+                        <dt class="text-slate-500">Languages</dt>
+                        <dd class="font-semibold text-slate-800 text-right">English · Kiswahili</dd>
+                    </div>
+
+                    <div class="flex justify-between gap-4">
+                        <dt class="text-slate-500">Community</dt>
+                        <dd class="font-semibold text-slate-800 text-right">
+                            {{ volunteer_count }} volunteers · {{ member_count }} members
+                        </dd>
+                    </div>
+
+                </dl>
+
+                <a href="{% url 'me' %}#contact"
+                   class="mt-8 block text-center px-6 py-3 rounded-xl bg-slate-900 text-white font-semibold hover:bg-blue-700 transition">
+                    Work with me
                 </a>
-            </div>
-        </div>
 
-        <!-- Info Cards Section -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Family -->
-            <div class="bg-blue-50 p-6 rounded-xl shadow-sm hover:shadow-md transition">
-                <h4 class="text-xl font-semibold text-blue-700 mb-2">My Roots</h4>
-                <p class="text-gray-700">
-                    Born to my wonderful parents, <strong>John Olao & Grace Anyango</strong>, I cherish my family deeply.
-                    I'm a proud grandson of <strong>Olao & Omollo Masella</strong>, whose stories continue to guide me.
-                </p>
-                <a href="{% url 'siblings_list' %}" class="text-blue-600 font-medium inline-block mt-3 hover:underline">
-                    Learn more about my family →
-                </a>
-            </div>
+            </aside>
 
-              <!-- Education -->
-              <div class="bg-orange-50 p-6 rounded-xl shadow-sm hover:shadow-md transition">
-                <h4 class="text-xl font-semibold text-orange-700 mb-2">My Education</h4>
-                <p class="text-gray-700">
-                    From <strong>Ratta Primary & Secondary School</strong> to <strong>Kabarak University</strong>, my learning journey has shaped my love for growth and innovation.
-                </p>
-                <a href="{% url 'education_journey' %}" class="text-orange-600 font-medium inline-block mt-3 hover:underline">
-                    View My Education Journey →
-                </a>
-            </div>
+        </section>
 
-            <!-- Passion -->
-            <div class="bg-green-50 p-6 rounded-xl shadow-sm hover:shadow-md transition">
-                <h4 class="text-xl font-semibold text-green-700 mb-2">My Passion</h4>
-                <p class="text-gray-700">
-                    I thrive on <strong>problem-solving, AI innovations, and impactful projects</strong>. 
-                    My mission is to create tech-driven solutions that transform lives.
+        <!-- ================= WHAT I DO ================= -->
+
+        <section class="mt-6 bg-white rounded-3xl shadow-md p-8 sm:p-10">
+
+            <div class="text-center">
+
+                <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">
+
+                    Expertise
+
+                </span>
+
+                <h2 class="mt-3 text-3xl sm:text-4xl font-black text-slate-900">
+
+                    What I Do
+                </h2>
+
+                <p class="mt-4 text-slate-600 max-w-3xl mx-auto">
+                    I turn ideas into working software — from data models to polished interfaces.
                 </p>
+
             </div>
 
-            <!-- Fun Facts -->
-            <div class="bg-purple-50 p-6 rounded-xl shadow-sm hover:shadow-md transition">
-                <h4 class="text-xl font-semibold text-purple-700 mb-2">Fun Facts</h4>
-                <p class="text-gray-700">
-                    I’ve memorized the <strong>periodic table</strong> for fun, dream of <strong>climbing Mt. Kilimanjaro</strong>, and love <strong>photography</strong>. 
-                    Favorite quote: <span class="italic">“The best way to predict the future is to invent it.” - Alan Kay</span>
-                </p>
+            <div class="mt-10 grid sm:grid-cols-2 xl:grid-cols-4 gap-5">
+
+                <div class="bg-slate-50 rounded-2xl p-6 hover:-translate-y-1 hover:shadow-lg transition">
+                    <div class="text-4xl">💻</div>
+                    <h3 class="mt-4 text-xl font-bold text-slate-900">Web Development</h3>
+                    <p class="mt-3 text-slate-600">
+                        Responsive web applications and portals built with Django, Python and Tailwind CSS.
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 rounded-2xl p-6 hover:-translate-y-1 hover:shadow-lg transition">
+                    <div class="text-4xl">🗄️</div>
+                    <h3 class="mt-4 text-xl font-bold text-slate-900">Database Systems</h3>
+                    <p class="mt-3 text-slate-600">
+                        Schema design, queries and optimisation across MySQL and Oracle SQL.
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 rounded-2xl p-6 hover:-translate-y-1 hover:shadow-lg transition">
+                    <div class="text-4xl">🎨</div>
+                    <h3 class="mt-4 text-xl font-bold text-slate-900">UI / UX Design</h3>
+                    <p class="mt-3 text-slate-600">
+                        Clean, accessible interfaces designed mobile first and built with modern CSS.
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 rounded-2xl p-6 hover:-translate-y-1 hover:shadow-lg transition">
+                    <div class="text-4xl">⚙️</div>
+                    <h3 class="mt-4 text-xl font-bold text-slate-900">System Development</h3>
+                    <p class="mt-3 text-slate-600">
+                        Complete business systems, from requirements gathering to deployment.
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 rounded-2xl p-6 hover:-translate-y-1 hover:shadow-lg transition">
+                    <div class="text-4xl">🤖</div>
+                    <h3 class="mt-4 text-xl font-bold text-slate-900">AI &amp; Data</h3>
+                    <p class="mt-3 text-slate-600">
+                        Machine learning experiments and data analysis that turn raw data into insight.
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 rounded-2xl p-6 hover:-translate-y-1 hover:shadow-lg transition">
+                    <div class="text-4xl">🎓</div>
+                    <h3 class="mt-4 text-xl font-bold text-slate-900">Mentoring</h3>
+                    <p class="mt-3 text-slate-600">
+                        Coaching new developers and running coding bootcamps for young talent.
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 rounded-2xl p-6 hover:-translate-y-1 hover:shadow-lg transition">
+                    <div class="text-4xl">📷</div>
+                    <h3 class="mt-4 text-xl font-bold text-slate-900">Photography</h3>
+                    <p class="mt-3 text-slate-600">
+                        Documenting community work, events and everyday life through the lens.
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 rounded-2xl p-6 hover:-translate-y-1 hover:shadow-lg transition">
+                    <div class="text-4xl">🌱</div>
+                    <h3 class="mt-4 text-xl font-bold text-slate-900">Community Work</h3>
+                    <p class="mt-3 text-slate-600">
+                        Tree planting, child care and clean-up drives organised through the foundation.
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= SKILLS ================= -->
+
+        <section class="mt-6 grid lg:grid-cols-2 gap-6">
+
+            <!-- Skill bars -->
+
+            <div class="bg-white rounded-3xl shadow-md p-8 sm:p-10">
+
+                <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">
+
+                    Skills
+                </span>
+
+                <h2 class="mt-3 text-3xl font-black text-slate-900">What I am good at</h2>
+
+                <div class="mt-8 space-y-6">
+
+                    {% for skill in skills %}
+
+                    <div>
+
+                        <div class="flex items-center justify-between">
+
+                            <span class="font-semibold text-slate-800">{{ skill.name }}</span>
+
+                            <span class="text-sm font-bold text-blue-600">{{ skill.proficiency }}%</span>
+
+                        </div>
+
+                        <div class="w-full bg-slate-200 rounded-full h-3 mt-2">
+
+                            <div class="bg-gradient-to-r from-blue-500 to-cyan-400 h-3 rounded-full"
+                                 style="width: {{ skill.proficiency }}%"></div>
+
+                        </div>
+
+                    </div>
+
+                    {% empty %}
+
+                    <p class="text-slate-500">No skills recorded yet.</p>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            <!-- Stack + certifications -->
+
+            <div class="space-y-6">
+
+                <div class="bg-white rounded-3xl shadow-md p-8 sm:p-10">
+
+                    <span class="text-teal-600 font-bold uppercase tracking-widest text-sm">
+
+                        Toolbox
+                    </span>
+
+                    <h2 class="mt-3 text-3xl font-black text-slate-900">Technologies I use</h2>
+
+                    <div class="mt-6 flex flex-wrap gap-3">
+
+                        <span class="px-4 py-2 rounded-full bg-blue-100 text-blue-700 font-semibold">Python</span>
+                        <span class="px-4 py-2 rounded-full bg-blue-100 text-blue-700 font-semibold">Django</span>
+                        <span class="px-4 py-2 rounded-full bg-yellow-100 text-yellow-700 font-semibold">JavaScript</span>
+                        <span class="px-4 py-2 rounded-full bg-sky-100 text-sky-700 font-semibold">Tailwind CSS</span>
+                        <span class="px-4 py-2 rounded-full bg-slate-200 text-slate-700 font-semibold">SQL</span>
+                        <span class="px-4 py-2 rounded-full bg-slate-200 text-slate-700 font-semibold">MySQL</span>
+                        <span class="px-4 py-2 rounded-full bg-slate-200 text-slate-700 font-semibold">Oracle SQL</span>
+                        <span class="px-4 py-2 rounded-full bg-purple-100 text-purple-700 font-semibold">HTML5</span>
+                        <span class="px-4 py-2 rounded-full bg-purple-100 text-purple-700 font-semibold">CSS3</span>
+                        <span class="px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 font-semibold">Git &amp; GitHub</span>
+                        <span class="px-4 py-2 rounded-full bg-rose-100 text-rose-700 font-semibold">Machine Learning</span>
+                        <span class="px-4 py-2 rounded-full bg-indigo-100 text-indigo-700 font-semibold">Data Science</span>
+                        <span class="px-4 py-2 rounded-full bg-orange-100 text-orange-700 font-semibold">Cloud Deploys</span>
+
+                    </div>
+
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-md p-8 sm:p-10">
+
+                    <span class="text-violet-600 font-bold uppercase tracking-widest text-sm">
+
+                        Credentials
+                    </span>
+
+                    <h2 class="mt-3 text-3xl font-black text-slate-900">Certifications</h2>
+
+                    <div class="mt-6 space-y-4">
+
+                        {% for cert in certifications %}
+
+                        <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-50">
+
+                            <span class="w-11 h-11 shrink-0 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-certificate"></i>
+                            </span>
+
+                            <div class="min-w-0">
+
+                                <p class="font-bold text-slate-800">{{ cert.title }}</p>
+
+                                <p class="text-sm text-violet-600 font-semibold">{{ cert.issuing_organization }}</p>
+
+                                <p class="text-xs text-slate-500 mt-1">
+                                    Issued {{ cert.date_issued|date:"M Y" }}
+                                    {% if cert.credential_url %}
+                                    &middot; <a href="{{ cert.credential_url }}" target="_blank" rel="noopener" class="text-blue-600 hover:underline">View credential</a>
+                                    {% endif %}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        {% empty %}
+
+                        <p class="text-slate-500">No certifications recorded yet.</p>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= EDUCATION ================= -->
+
+        <section class="mt-6 bg-white rounded-3xl shadow-md p-8 sm:p-10">
+
+            <div class="text-center">
+
+                <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">
+
+                    Education
+                </span>
+
+                <h2 class="mt-3 text-3xl sm:text-4xl font-black text-slate-900">
+
+                    My Academic Journey
+                </h2>
+
+            </div>
+
+            <div class="mt-12 grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+                {% for edu in education_levels %}
+
+                <div class="relative bg-slate-50 rounded-2xl p-7 hover:-translate-y-1 hover:shadow-lg transition">
+
+                    <div class="flex items-start justify-between gap-4">
+
+                        <span class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </span>
+
+                        {% if edu.Year %}
+
+                        <span class="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                            {{ edu.Year }}
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+                    <h3 class="mt-5 text-xl font-bold text-slate-900">{{ edu.level }}</h3>
+
+                    <p class="mt-1 text-blue-600 font-semibold">{{ edu.school }}</p>
+
+                    <p class="mt-3 text-slate-600 text-sm leading-6">
+                        {{ edu.description|truncatewords:30 }}
+                    </p>
+
+                    {% if edu.Grade %}
+
+                    <p class="mt-4 text-xs font-semibold text-slate-500">
+                        Result: <span class="text-slate-700">{{ edu.Grade }}</span>
+                    </p>
+
+                    {% endif %}
+
+                </div>
+
+                {% empty %}
+
+                <p class="col-span-full text-center text-slate-500 py-8">Education details coming soon.</p>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+        <!-- ================= EXPERIENCE ================= -->
+
+        <section class="mt-6 grid lg:grid-cols-2 gap-6">
+
+            <!-- Timeline -->
+
+            <div class="bg-white rounded-3xl shadow-md p-8 sm:p-10">
+
+                <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">
+
+                    Experience
+                </span>
+
+                <h2 class="mt-3 text-3xl font-black text-slate-900">Where I have worked</h2>
+
+                <div class="mt-8 space-y-8 border-l-4 border-blue-600 pl-8">
+
+                    {% for experience in experiences %}
+
+                    <div class="relative">
+                        <span class="absolute -left-11 top-1 w-6 h-6 rounded-full {% cycle 'bg-blue-600' 'bg-teal-600' 'bg-violet-600' 'bg-rose-600' %} border-4 border-white"></span>
+                        <h3 class="text-xl font-bold text-slate-900">{{ experience.title }}</h3>
+                        <p class="{% cycle 'text-blue-600' 'text-teal-600' 'text-violet-600' 'text-rose-600' %} font-semibold text-sm">{{ experience.organisation }}</p>
+                        <p class="text-xs text-slate-500">{{ experience.period }}</p>
+                        {% if experience.description %}
+                        <p class="mt-2 text-slate-600 text-sm">
+                            {{ experience.description }}
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    {% empty %}
+
+                    <p class="text-sm text-slate-500">The work history is being updated.</p>
+
+                    {% endfor %}
+
+                </div>
+
             </div>
 
             <!-- Projects -->
-            <div class="bg-yellow-50 p-6 rounded-xl shadow-sm hover:shadow-md transition">
-                <h4 class="text-xl font-semibold text-yellow-700 mb-2">What I’m Working On</h4>
-                <p class="text-gray-700">
-                    Currently exploring <strong>AI & Machine Learning</strong> for fintech solutions and mentoring young tech enthusiasts to spark innovation.
+
+            <div class="bg-white rounded-3xl shadow-md p-8 sm:p-10">
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <span class="text-teal-600 font-bold uppercase tracking-widest text-sm">
+                            Portfolio
+                        </span>
+
+                        <h2 class="mt-3 text-3xl font-black text-slate-900">Selected projects</h2>
+
+                    </div>
+
+                    <a href="{% url 'me' %}#projects" class="text-sm text-blue-600 font-semibold hover:underline">All</a>
+
+                </div>
+
+                <div class="mt-8 space-y-5">
+
+                    {% for project in projects %}
+
+                    <div class="flex gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 transition">
+
+                        {% if project.image %}
+
+                        <img src="{{ project.image.url }}"
+                             alt="{{ project.title }}"
+                             class="w-20 h-20 rounded-xl object-cover shrink-0">
+
+                        {% else %}
+
+                        <span class="w-20 h-20 rounded-xl bg-slate-200 flex items-center justify-center text-slate-400 shrink-0">
+                            <i class="fa-solid fa-code text-2xl"></i>
+                        </span>
+
+                        {% endif %}
+
+                        <div class="min-w-0">
+
+                            <h3 class="font-bold text-slate-900">{{ project.title }}</h3>
+
+                            <p class="text-sm text-slate-600 mt-1">{{ project.description|truncatewords:16 }}</p>
+
+                            {% if project.tech_list %}
+
+                            <div class="flex flex-wrap gap-2 mt-3">
+
+                                {% for tech in project.tech_list %}
+
+                                <span class="px-2.5 py-1 rounded-full bg-white text-slate-600 text-xs font-semibold border border-slate-200">
+                                    {{ tech }}
+                                </span>
+
+                                {% endfor %}
+
+                            </div>
+
+                            {% endif %}
+
+                            <div class="flex gap-4 mt-3 text-xs font-semibold">
+
+                                {% if project.live_demo %}
+                                <a href="{{ project.live_demo }}" target="_blank" rel="noopener" class="text-blue-600 hover:underline">Live demo</a>
+                                {% endif %}
+
+                                {% if project.github_link %}
+                                <a href="{{ project.github_link }}" target="_blank" rel="noopener" class="text-slate-600 hover:underline">GitHub</a>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {% empty %}
+
+                    <p class="text-slate-500">Projects coming soon.</p>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= COMMUNITY / EVENTS ================= -->
+
+        <section class="mt-6 grid lg:grid-cols-3 gap-6">
+
+            <!-- Giving back -->
+
+            <div class="bg-gradient-to-br from-teal-600 to-emerald-700 text-white rounded-3xl shadow-md p-8">
+
+                <div class="text-4xl">🌱</div>
+
+                <h2 class="mt-4 text-2xl font-black">Giving Back</h2>
+
+                <p class="mt-3 text-teal-50 leading-7">
+                    I volunteer in coding bootcamps to equip underprivileged youth with digital
+                    skills, and join community drives for tree planting, child care and
+                    clean-up programmes. Sharing knowledge is how I create positive change.
+                </p>
+
+                <div class="mt-6 grid grid-cols-2 gap-4 text-center">
+
+                    <div class="bg-white/10 rounded-xl p-4">
+                        <p class="text-3xl font-black">{{ volunteer_count }}</p>
+                        <p class="text-xs text-teal-100 mt-1">Volunteers</p>
+                    </div>
+
+                    <div class="bg-white/10 rounded-xl p-4">
+                        <p class="text-3xl font-black">{{ sibling_count }}</p>
+                        <p class="text-xs text-teal-100 mt-1">Family</p>
+                    </div>
+
+                </div>
+
+                <a href="{% url 'me' %}#contact"
+                   class="mt-6 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-teal-700 font-bold hover:bg-teal-50 transition">
+                    <i class="fa-solid fa-hands-helping"></i> Volunteer with us
+                </a>
+
+            </div>
+
+            <!-- Events -->
+
+            <div class="lg:col-span-2 bg-white rounded-3xl shadow-md p-8 sm:p-10">
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <span class="text-rose-600 font-bold uppercase tracking-widest text-sm">
+                            Events
+                        </span>
+
+                        <h2 class="mt-3 text-3xl font-black text-slate-900">Talks, workshops &amp; community drives</h2>
+
+                    </div>
+
+                    <a href="{% url 'me' %}#experience" class="text-sm text-blue-600 font-semibold hover:underline">All</a>
+
+                </div>
+
+                <div class="mt-8 grid sm:grid-cols-2 gap-4">
+
+                    {% for event in events %}
+
+                    <div class="flex gap-4 p-4 rounded-2xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition">
+
+                        {% if event.start_date %}
+
+                        <div class="w-14 h-14 shrink-0 rounded-xl bg-rose-500 text-white flex flex-col items-center justify-center">
+                            <span class="text-[10px] uppercase leading-none">{{ event.start_date|date:"M" }}</span>
+                            <span class="text-lg font-bold leading-none">{{ event.start_date|date:"d" }}</span>
+                        </div>
+
+                        {% endif %}
+
+                        <div class="min-w-0">
+
+                            <h3 class="font-bold text-slate-900">{{ event.title }}</h3>
+
+                            <p class="text-sm text-slate-600 mt-1">{{ event.description|truncatewords:14 }}</p>
+
+                            {% if event.location %}
+                            <p class="text-xs text-slate-500 mt-2">
+                                <i class="fa-solid fa-location-dot mr-1 text-blue-500"></i>{{ event.location.name }}
+                            </p>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                    {% empty %}
+
+                    <p class="col-span-full text-slate-500">No events scheduled yet.</p>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= COMMUNITY WORK ================= -->
+
+        <section class="mt-6 bg-white rounded-3xl shadow-md p-8 sm:p-10">
+
+            <div class="text-center">
+
+                <span class="text-teal-600 font-bold uppercase tracking-widest text-sm">
+
+                    Community Work
+                </span>
+
+                <h2 class="mt-3 text-3xl sm:text-4xl font-black text-slate-900">
+                    Projects that reach people
+                </h2>
+
+                <p class="mt-4 text-slate-600 max-w-3xl mx-auto">
+                    Beyond software, I use technology and leadership on community
+                    programmes — from environmental clean-ups to child care and civic tracking.
+                </p>
+
+            </div>
+
+            <div class="mt-10 grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
+
+                {% for item in portfolio_items %}
+
+                <div class="bg-slate-50 rounded-2xl overflow-hidden hover:-translate-y-1 hover:shadow-lg transition flex flex-col">
+
+                    {% if item.image %}
+
+                    <img src="{{ item.image.url }}"
+                         alt="{{ item.title }}"
+                         class="w-full h-44 object-cover">
+
+                    {% endif %}
+
+                    <div class="p-6 flex flex-col flex-grow">
+
+                        <div class="flex items-center gap-3">
+
+                            <span class="px-3 py-1 rounded-full bg-teal-100 text-teal-700 text-xs font-bold uppercase">
+                                {{ item.category }}
+                            </span>
+
+                            <span class="text-xs text-slate-400">{{ item.date_created|date:"M Y" }}</span>
+
+                        </div>
+
+                        <h3 class="mt-4 text-lg font-bold text-slate-900">{{ item.title }}</h3>
+
+                        <p class="mt-2 text-sm text-slate-600 flex-grow">
+                            {{ item.description|truncatewords:26 }}
+                        </p>
+
+                        {% if item.technology %}
+
+                        <p class="mt-4 text-xs text-slate-500">
+                            <span class="font-semibold text-slate-700">Tools:</span>
+                            {{ item.technology|truncatewords:12 }}
+                        </p>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                {% empty %}
+
+                <p class="col-span-full text-center text-slate-500 py-8">Community work coming soon.</p>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+        <!-- ================= TESTIMONIALS ================= -->
+
+        <section class="mt-6 bg-white rounded-3xl shadow-md p-8 sm:p-10">
+
+            <div class="text-center">
+
+                <span class="text-amber-500 font-bold uppercase tracking-widest text-sm">
+                    Testimonials
+                </span>
+
+                <h2 class="mt-3 text-3xl sm:text-4xl font-black text-slate-900">What people say</h2>
+
+            </div>
+
+            <div class="mt-10 grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+                {% for testimonial in testimonials %}
+
+                <div class="bg-slate-50 rounded-2xl p-7">
+
+                    <div class="text-yellow-400 tracking-widest">★★★★★</div>
+
+                    <p class="mt-4 text-slate-600 italic leading-7">
+                        “{{ testimonial.message }}”
+                    </p>
+
+                    <div class="mt-6 flex items-center gap-3">
+
+                        {% if testimonial.image %}
+
+                        <img src="{{ testimonial.image.url }}" alt="{{ testimonial.name }}"
+                             class="w-11 h-11 rounded-full object-cover">
+
+                        {% else %}
+
+                        <span class="w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
+                            {{ testimonial.name|slice:":1" }}
+                        </span>
+
+                        {% endif %}
+
+                        <div>
+
+                            <p class="font-bold text-slate-900">{{ testimonial.name }}</p>
+
+                            <p class="text-xs text-slate-500">{{ testimonial.designation }}</p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% empty %}
+
+                <p class="col-span-full text-center text-slate-500 py-8">Testimonials coming soon.</p>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+        <!-- ================= GALLERY ================= -->
+
+        <section class="mt-6 bg-white rounded-3xl shadow-md p-8 sm:p-10">
+
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+
+                <div>
+
+                    <span class="text-cyan-600 font-bold uppercase tracking-widest text-sm">
+                        Gallery
+                    </span>
+
+                    <h2 class="mt-3 text-3xl sm:text-4xl font-black text-slate-900">Moments from the journey</h2>
+
+                </div>
+
+                <a href="{% url 'me' %}#gallery"
+                   class="px-6 py-3 rounded-xl bg-slate-900 text-white font-semibold hover:bg-blue-700 transition text-center">
+                    Open gallery →
+                </a>
+
+            </div>
+
+            <div class="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+
+                {% for item in media %}
+
+                <a href="{% url 'me' %}#gallery"
+                   class="group relative overflow-hidden rounded-2xl bg-slate-100 aspect-[4/3]">
+
+                    {% if item.image %}
+
+                    <img src="{{ item.image.url }}"
+                         alt="{{ item.title }}"
+                         class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+
+                    {% endif %}
+
+                    <span class="absolute inset-0 bg-black/55 opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-3">
+                        <span class="text-white text-sm font-semibold">{{ item.title }}</span>
+                    </span>
+
+                </a>
+
+                {% empty %}
+
+                <p class="col-span-full text-center text-slate-500 py-8">No photos yet.</p>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+        <!-- ================= FAQ ================= -->
+
+        {% if faqs %}
+
+        <section class="mt-6 bg-white rounded-3xl shadow-md p-8 sm:p-10" x-data="{ open: null }">
+
+            <div class="text-center">
+
+                <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">
+                    FAQ
+                </span>
+
+                <h2 class="mt-3 text-3xl sm:text-4xl font-black text-slate-900">Frequently asked questions</h2>
+
+            </div>
+
+            <div class="mt-10 max-w-4xl mx-auto">
+
+                {% for faq in faqs %}
+
+                <div class="border-b border-slate-200 last:border-0">
+
+                    <button type="button"
+                            @click="open = open === {{ forloop.counter }} ? null : {{ forloop.counter }}"
+                            class="w-full text-left py-5 flex items-center justify-between gap-6">
+
+                        <span class="font-bold text-slate-800 text-lg">{{ faq.question }}</span>
+
+                        <span class="text-blue-600 text-2xl font-bold"
+                              x-text="open === {{ forloop.counter }} ? '−' : '+'"></span>
+
+                    </button>
+
+                    <div x-show="open === {{ forloop.counter }}" x-transition class="pb-5 text-slate-600">
+                        {{ faq.answer }}
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
+        <!-- ================= FUN FACTS ================= -->
+
+        <section class="mt-6 grid sm:grid-cols-2 xl:grid-cols-4 gap-5">
+
+            <div class="bg-purple-50 rounded-2xl p-7">
+                <div class="text-3xl">🧪</div>
+                <h3 class="mt-4 text-lg font-bold text-purple-800">Fun facts</h3>
+                <p class="mt-2 text-slate-600 text-sm">
+                    I have memorised the periodic table for fun and I dream of climbing
+                    Mount Kilimanjaro one day.
                 </p>
             </div>
 
-            <!-- Interests -->
-            <div class="bg-red-50 p-6 rounded-xl shadow-sm hover:shadow-md transition">
-                <h4 class="text-xl font-semibold text-red-700 mb-2">Outside of Tech</h4>
-                <p class="text-gray-700">
-                    I enjoy <strong>family time</strong>, tackling new challenges, and meeting people from different backgrounds to learn from their stories.
+            <div class="bg-amber-50 rounded-2xl p-7">
+                <div class="text-3xl">⚽</div>
+                <h3 class="mt-4 text-lg font-bold text-amber-800">Off the clock</h3>
+                <p class="mt-2 text-slate-600 text-sm">
+                    Football, photography, family time and meeting people from different
+                    backgrounds to learn from their stories.
                 </p>
             </div>
 
-            <!-- Achievements -->
-            <div class="bg-gray-50 p-6 rounded-xl shadow-sm hover:shadow-md transition col-span-1 md:col-span-2">
-                <h4 class="text-xl font-semibold text-gray-700 mb-3">My Achievements</h4>
-                <ul class="list-disc pl-6 text-gray-700 space-y-2">
-                    <li>🏆 Winner of a <strong>regional coding competition</strong>.</li>
-                    <li>📱 Built a <strong>student progress tracking app</strong>.</li>
-                    <li>🤖 Created a <strong>smart home automation system</strong> using AI & IoT.</li>
-                    <li>👨‍🏫 Honored as a <strong>mentor</strong> for upcoming developers.</li>
-                </ul>
-            </div>
-
-            <!-- Volunteering -->
-            <div class="bg-teal-50 p-6 rounded-xl shadow-sm hover:shadow-md transition col-span-1 md:col-span-2">
-                <h4 class="text-xl font-semibold text-teal-700 mb-2">Giving Back</h4>
-                <p class="text-gray-700">
-                    I volunteer in <strong>coding bootcamps</strong> to empower underprivileged youth with digital skills. Sharing knowledge is my way of creating positive change.
+            <div class="bg-rose-50 rounded-2xl p-7">
+                <div class="text-3xl">💭</div>
+                <h3 class="mt-4 text-lg font-bold text-rose-800">Favourite quote</h3>
+                <p class="mt-2 text-slate-600 text-sm italic">
+                    “The best way to predict the future is to invent it.” — Alan Kay
                 </p>
             </div>
-        </div>
 
-    </div>
-</div>
+            <div class="bg-emerald-50 rounded-2xl p-7">
+                <div class="text-3xl">🚀</div>
+                <h3 class="mt-4 text-lg font-bold text-emerald-800">Right now</h3>
+                <p class="mt-2 text-slate-600 text-sm">
+                    Exploring AI and machine learning for fintech while mentoring young
+                    tech enthusiasts to spark innovation.
+                </p>
+            </div>
+
+        </section>
+
+        <!-- ================= CTA ================= -->
+
+        <section class="mt-6 rounded-3xl bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 text-white p-10 sm:p-14 text-center shadow-xl">
+
+            <h2 class="text-3xl sm:text-4xl font-black">Let’s build something meaningful</h2>
+
+            <p class="mt-4 text-blue-100 max-w-2xl mx-auto text-lg">
+                Whether you need a web application, a database system, a design refresh or
+                a mentor — I would love to hear from you.
+            </p>
+
+            <div class="mt-8 flex flex-wrap justify-center gap-4">
+
+                <a href="{% url 'me' %}#contact"
+                   class="px-8 py-4 rounded-xl bg-white text-blue-700 font-bold hover:bg-blue-50 transition">
+                    <i class="fa-solid fa-paper-plane mr-2"></i> Start a conversation
+                </a>
+
+                <a href="{% url 'me' %}"
+                   class="px-8 py-4 rounded-xl bg-white/10 hover:bg-white/20 border border-white/30 font-semibold transition">
+                    Back to home
+                </a>
+
+            </div>
+
+        </section>
+
     </main>
 
+    {% include "footer.html" %}
 
-{% include 'footer.html' %}
+</div>
+
 {% endblock content %}

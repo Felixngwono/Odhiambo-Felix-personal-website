@@ -1,0 +1,14 @@
+Django==4.2.13
+django-widget-tweaks==1.5.1
+django-cors-headers==4.9.0
+djangorestframework==3.17.1
+mysqlclient==2.2.8
+dj-database-url==3.1.2
+reportlab==5.0.0
+pillow==12.3.0
+twilio==9.10.9
+python-dotenv==1.2.3
+requests==2.34.2
+PyJWT==2.13.0
+gunicorn==23.0.0
+whitenoise==6.9.0

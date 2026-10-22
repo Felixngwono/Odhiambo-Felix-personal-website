@@ -1,0 +1,310 @@
+{% extends "header.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}{{ job.title }} | FelloMarley Foundation{% endblock %}
+
+{% block content %}
+
+{% include "sidebar.html" %}
+
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
+
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
+
+        <!-- ================= FLASH ================= -->
+
+        {% if messages %}
+
+        <div class="mb-6 space-y-3">
+
+            {% for message in messages %}
+
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+        <!-- ================= HERO ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white shadow-2xl p-6 sm:p-10">
+
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1pt);background-size:60px 60px;"></div>
+
+            <div class="absolute -top-24 -right-16 w-96 h-96 bg-blue-400 rounded-full blur-3xl opacity-20"></div>
+
+            <div class="relative flex items-start justify-between gap-6 flex-wrap">
+
+                <div class="min-w-0">
+
+                    <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                        <i class="fa-solid fa-briefcase"></i> {{ job.job_type_label }} &middot; {{ job.category_label }}
+                    </p>
+
+                    <h1 class="mt-4 text-3xl sm:text-4xl font-black leading-tight break-words">{{ job.title }}</h1>
+
+                    <p class="mt-3 text-slate-300 text-sm flex items-center gap-3 flex-wrap">
+                        <span class="inline-flex items-center gap-1.5">
+                            <i class="fa-solid fa-building"></i>
+                            {{ job.company }}
+                        </span>
+                        {% if job.location %}
+                        <span class="inline-flex items-center gap-1.5">
+                            <i class="fa-solid fa-location-dot"></i>
+                            {{ job.location }}
+                        </span>
+                        {% endif %}
+                        <span class="inline-flex items-center gap-1.5">
+                            <i class="fa-regular fa-clock"></i>
+                            Posted {{ job.posted_at|timesince }} ago
+                        </span>
+                    </p>
+
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3">
+
+                    <a href="{% url 'job_list' %}"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                        <i class="fa-solid fa-arrow-left"></i> All roles
+                    </a>
+
+                    {% if job.is_open and not already_applied %}
+                    <a href="{% url 'apply_for_job' job.pk %}"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-500 text-white font-bold hover:bg-blue-400 transition shadow-lg">
+                        <i class="fa-solid fa-paper-plane"></i> Apply now
+                    </a>
+                    {% elif already_applied %}
+                    <span class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 border border-white/20 font-semibold">
+                        <i class="fa-solid fa-circle-check"></i> Applied
+                    </span>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= DETAIL ================= -->
+
+        <section class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <div class="lg:col-span-2 space-y-6">
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <h2 class="text-lg font-black text-slate-800">About the role</h2>
+
+                    <p class="mt-4 text-sm leading-relaxed text-slate-600 whitespace-pre-line">{{ job.description }}</p>
+
+                </div>
+
+                {% if job.requirements %}
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <h2 class="text-lg font-black text-slate-800">What you bring</h2>
+
+                    <p class="mt-4 text-sm leading-relaxed text-slate-600 whitespace-pre-line">{{ job.requirements }}</p>
+
+                </div>
+
+                {% endif %}
+
+                {% if job.skill_list %}
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <h2 class="text-lg font-black text-slate-800">Skills</h2>
+
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        {% for skill in job.skill_list %}
+                        <span class="text-[11px] font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg">{{ skill }}</span>
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+                {% if job.benefits %}
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <h2 class="text-lg font-black text-slate-800">What you get</h2>
+
+                    <p class="mt-4 text-sm leading-relaxed text-slate-600 whitespace-pre-line">{{ job.benefits }}</p>
+
+                </div>
+
+                {% endif %}
+
+                {% if related_jobs %}
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <h2 class="text-lg font-black text-slate-800">Other roles</h2>
+
+                    <div class="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        {% for related in related_jobs %}
+                        <a href="{% url 'job_posting' related.pk %}"
+                           class="rounded-2xl border border-slate-100 bg-slate-50/60 p-4 hover:border-blue-200 hover:bg-white transition">
+                            <p class="font-bold text-slate-800 text-sm leading-snug">{{ related.title }}</p>
+                            <p class="mt-2 text-xs text-slate-400">{{ related.company }} &middot; {{ related.job_type_label }}</p>
+                        </a>
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            <!-- ================= SIDE PANEL ================= -->
+
+            <aside class="space-y-5">
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">At a glance</h2>
+
+                    <dl class="mt-4 space-y-4 text-sm">
+
+                        <div class="flex items-start justify-between gap-3">
+                            <dt class="text-slate-500">Status</dt>
+                            <dd class="font-black text-slate-800">{{ job.status_label }}</dd>
+                        </div>
+
+                        <div class="flex items-start justify-between gap-3">
+                            <dt class="text-slate-500">Type</dt>
+                            <dd class="font-black text-slate-800">{{ job.job_type_label }}</dd>
+                        </div>
+
+                        <div class="flex items-start justify-between gap-3">
+                            <dt class="text-slate-500">Category</dt>
+                            <dd class="font-black text-slate-800">{{ job.category_label }}</dd>
+                        </div>
+
+                        <div class="flex items-start justify-between gap-3">
+                            <dt class="text-slate-500">Seats</dt>
+                            <dd class="font-black text-slate-800">{{ job.slots|default:1 }}</dd>
+                        </div>
+
+                        {% if job.salary_range %}
+                        <div class="flex items-start justify-between gap-3">
+                            <dt class="text-slate-500">Salary</dt>
+                            <dd class="font-black text-slate-800">{{ job.salary_range }}</dd>
+                        </div>
+                        {% endif %}
+
+                        <div class="flex items-start justify-between gap-3">
+                            <dt class="text-slate-500">Applicants</dt>
+                            <dd class="font-black text-slate-800">{{ job.applications_count }}</dd>
+                        </div>
+
+                        {% if job.due_at %}
+                        <div class="flex items-start justify-between gap-3">
+                            <dt class="text-slate-500">Closes</dt>
+                            <dd class="font-black {% if job.is_expired %}text-rose-600{% else %}text-slate-800{% endif %}">{{ job.due_at|date:"d M Y" }}</dd>
+                        </div>
+                        {% endif %}
+
+                    </dl>
+
+                    {% if job.application_link %}
+                    <a href="{{ job.application_link }}" target="_blank"
+                       class="mt-5 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 transition">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i> External application
+                    </a>
+                    {% endif %}
+
+                    {% if job.is_open and not already_applied %}
+                    <a href="{% url 'apply_for_job' job.pk %}"
+                       class="mt-3 w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-500 transition">
+                        <i class="fa-solid fa-paper-plane text-xs"></i> Apply for this role
+                    </a>
+                    {% endif %}
+
+                </div>
+
+                {% if application_count %}
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Applicants</h2>
+
+                    <p class="mt-3 text-sm text-slate-500">
+                        <span class="font-black text-slate-800">{{ application_count }}</span>
+                        {{ application_count|pluralize:"person has,people have" }} applied{{ application_count|pluralize:"s" }} so far.
+                    </p>
+
+                    <p class="mt-3 text-xs text-slate-400">
+                        Names stay private, only the hiring team can see who applied.
+                    </p>
+                </div>
+                {% endif %}
+
+                {% if job_applications %}
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Applicants</h2>
+
+                    <ul class="mt-4 space-y-3 text-sm">
+                        {% for application in job_applications|slice:":5" %}
+                        <li class="flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-[10px] font-black shrink-0">
+                                {{ application.applicant_initials }}
+                            </span>
+                            <span class="min-w-0">
+                                <a href="{% url 'jobdetails' application.pk %}" class="block font-bold text-slate-700 hover:text-blue-700 truncate">{{ application.applicant_display }}</a>
+                                <span class="block text-xs text-slate-400">{{ application.status_label }}</span>
+                            </span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+
+                    <a href="{% url 'job_application_list' %}?job={{ job.pk }}"
+                       class="mt-5 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 transition">
+                        <i class="fa-solid fa-inbox text-xs"></i> All applications
+                    </a>
+
+                </div>
+
+                {% endif %}
+
+                {% if request.user.is_superuser %}
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Manage</h2>
+
+                    <a href="{% url 'update_job' job.pk %}"
+                       class="mt-4 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 transition">
+                        <i class="fa-solid fa-pen text-xs"></i> Edit the role
+                    </a>
+
+                    <a href="{% url 'delete_job' job.pk %}"
+                       class="mt-3 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-rose-50 text-rose-700 font-bold hover:bg-rose-100 transition">
+                        <i class="fa-solid fa-trash text-xs"></i> Delete the role
+                    </a>
+                </div>
+
+                {% endif %}
+
+            </aside>
+
+        </section>
+
+    </main>
+
+    {% include "footer.html" %}
+
+</div>
+
+{% endblock %}

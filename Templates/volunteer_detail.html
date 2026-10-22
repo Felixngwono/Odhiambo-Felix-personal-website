@@ -1,0 +1,249 @@
+{% extends "header.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}{{ volunteer.full_name }} | FelloMarley Foundation{% endblock %}
+
+{% block content %}
+
+{% include "sidebar.html" %}
+
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
+
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
+
+        <!-- ================= FLASH ================= -->
+
+        {% if messages %}
+
+        <div class="mb-6 space-y-3">
+
+            {% for message in messages %}
+
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+        <!-- ================= HERO ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-teal-900 to-emerald-900 text-white shadow-2xl p-6 sm:p-10">
+
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:60px 60px;"></div>
+
+            <div class="absolute -top-24 -right-16 w-96 h-96 bg-teal-400 rounded-full blur-3xl opacity-20"></div>
+
+            <div class="relative flex items-start justify-between gap-6 flex-wrap">
+
+                <div class="flex items-start gap-4 min-w-0">
+
+                    <span class="w-16 h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center font-black text-xl shrink-0">
+                        {{ volunteer.initials }}
+                    </span>
+
+                    <div class="min-w-0">
+
+                        <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-teal-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                            <i class="fa-solid fa-hands-holding-circle"></i> {{ volunteer.status_label }}
+                        </p>
+
+                        <h1 class="mt-3 text-3xl sm:text-4xl font-black leading-tight break-words">{{ volunteer.full_name }}</h1>
+
+                        <p class="mt-2 text-slate-300 text-sm">
+                            {{ volunteer.area_label }} &middot; joined {{ volunteer.joined_at|date:"F Y" }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3">
+
+                    <a href="{% url 'volunteer_list' %}"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                        <i class="fa-solid fa-arrow-left"></i> Roster
+                    </a>
+
+                    <a href="{% url 'update_volunteer' volunteer.pk %}"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-teal-500 text-white font-bold hover:bg-teal-400 transition shadow-lg">
+                        <i class="fa-solid fa-pen"></i> Edit
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= DETAIL ================= -->
+
+        <section class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <div class="lg:col-span-2 space-y-6">
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <h2 class="text-lg font-black text-slate-800">Why they joined</h2>
+
+                    <p class="mt-4 text-sm leading-relaxed text-slate-600 whitespace-pre-line">
+                        {{ volunteer.reason|default:"No message was left with this application." }}
+                    </p>
+
+                    {% if volunteer.skill_list %}
+                    <div class="mt-6">
+                        <h3 class="text-xs font-black uppercase tracking-widest text-slate-400">Skills</h3>
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            {% for skill in volunteer.skill_list %}
+                            <span class="text-[11px] font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-lg">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if volunteer.notes %}
+                    <div class="mt-6 rounded-2xl bg-amber-50 border border-amber-200 p-5">
+                        <h3 class="text-xs font-black uppercase tracking-widest text-amber-700">Internal note</h3>
+                        <p class="mt-2 text-sm text-amber-900 whitespace-pre-line">{{ volunteer.notes }}</p>
+                    </div>
+                    {% endif %}
+
+                </div>
+
+                {% if volunteer_fellows %}
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <h2 class="text-lg font-black text-slate-800">Working alongside</h2>
+
+                    <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                        {% for fellow in volunteer_fellows %}
+                        <a href="{% url 'volunteer_detail' fellow.pk %}"
+                           class="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/60 p-4 hover:border-teal-200 hover:bg-white transition">
+                            <span class="w-9 h-9 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center text-xs font-black shrink-0">
+                                {{ fellow.initials }}
+                            </span>
+                            <span class="min-w-0">
+                                <span class="block text-sm font-bold text-slate-800 truncate">{{ fellow.full_name }}</span>
+                                <span class="block text-xs text-slate-400">{{ fellow.status_label }}</span>
+                            </span>
+                        </a>
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            <!-- ================= SIDE PANEL ================= -->
+
+            <aside class="space-y-5">
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Details</h2>
+
+                    <dl class="mt-4 space-y-4 text-sm">
+
+                        <div class="flex items-start justify-between gap-3">
+                            <dt class="text-slate-500">Email</dt>
+                            <dd class="font-black text-slate-800 break-all text-right">{{ volunteer.email }}</dd>
+                        </div>
+
+                        {% if volunteer.phone %}
+                        <div class="flex items-start justify-between gap-3">
+                            <dt class="text-slate-500">Phone</dt>
+                            <dd class="font-black text-slate-800">{{ volunteer.phone }}</dd>
+                        </div>
+                        {% endif %}
+
+                        <div class="flex items-start justify-between gap-3">
+                            <dt class="text-slate-500">Availability</dt>
+                            <dd class="font-black text-slate-800 text-right">{{ volunteer.availability|default:"Not set" }}</dd>
+                        </div>
+
+                        {% if volunteer.hours_per_week %}
+                        <div class="flex items-start justify-between gap-3">
+                            <dt class="text-slate-500">Hours a week</dt>
+                            <dd class="font-black text-slate-800">{{ volunteer.hours_per_week }}</dd>
+                        </div>
+                        {% endif %}
+
+                        {% if volunteer.start_date %}
+                        <div class="flex items-start justify-between gap-3">
+                            <dt class="text-slate-500">Started</dt>
+                            <dd class="font-black text-slate-800">{{ volunteer.start_date|date:"d M Y" }}</dd>
+                        </div>
+                        {% endif %}
+
+                        <div class="flex items-start justify-between gap-3">
+                            <dt class="text-slate-500">Area</dt>
+                            <dd class="font-black text-slate-800">{{ volunteer.area_label }}</dd>
+                        </div>
+
+                    </dl>
+
+                    {% if volunteer.resume %}
+                    <a href="{{ volunteer.resume.url }}" target="_blank"
+                       class="mt-5 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 transition">
+                        <i class="fa-solid fa-file-arrow-down text-xs"></i> Open resume
+                    </a>
+                    {% endif %}
+
+                    {% if volunteer.linkedin %}
+                    <a href="{{ volunteer.linkedin }}" target="_blank"
+                       class="mt-3 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 transition">
+                        <i class="fa-brands fa-linkedin text-xs"></i> LinkedIn profile
+                    </a>
+                    {% endif %}
+
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Move the application</h2>
+
+                    <form method="POST" action="{% url 'update_volunteer_status' volunteer.pk %}" class="mt-4 space-y-3">
+                        {% csrf_token %}
+
+                        <select name="status"
+                                class="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-500 text-sm">
+                            {% for slug, label in volunteer_status_choices %}
+                            <option value="{{ slug }}" {% if volunteer.status == slug %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <button type="submit"
+                                class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-teal-600 text-white font-bold hover:bg-teal-500 transition">
+                            <i class="fa-solid fa-arrow-right-arrow-left text-xs"></i> Update status
+                        </button>
+
+                    </form>
+
+                    <a href="{% url 'delete_volunteer' volunteer.pk %}"
+                       class="mt-4 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-rose-50 text-rose-700 font-bold hover:bg-rose-100 transition">
+                        <i class="fa-solid fa-trash text-xs"></i> Remove volunteer
+                    </a>
+
+                </div>
+
+            </aside>
+
+        </section>
+
+    </main>
+
+    {% include "footer.html" %}
+
+</div>
+
+{% endblock %}

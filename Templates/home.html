@@ -4,22 +4,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FelloMarley Foundation</title>
+    <title>{{ owner_name }} | {{ owner_headline }}</title>
+    <meta name="description" content="{{ site_description }}">
+    {% if site_settings.keywords %}<meta name="keywords" content="{{ site_settings.keywords }}">{% endif %}
+    <meta name="author" content="{{ owner_name }}">
+    <meta name="robots" content="{{ meta_robots }}">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ site_name }}">
+    <meta property="og:title" content="{{ owner_name }} | {{ owner_headline }}">
+    <meta property="og:description" content="{{ site_description }}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    {% if owner_avatar %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ owner_avatar.url }}">{% endif %}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ owner_name }} | {{ owner_headline }}">
+    <meta name="twitter:description" content="{{ site_description }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="{% static 'images/logo.png' %}" rel="icon" />
+    <link href="{% static 'images/logo.PNG' %}" rel="icon" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
+
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased">
 
 <div x-data="{ mobileMenu:false }">
 
+<!-- ================= FLASH MESSAGES ================= -->
+
+{% if messages %}
+
+<div class="fixed top-24 right-4 z-[60] w-full max-w-sm space-y-3">
+
+    {% for message in messages %}
+
+    <div class="rounded-2xl px-5 py-4 shadow-2xl text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'info' %}bg-blue-500 text-white{% else %}bg-rose-500 text-white{% endif %}">
+
+        {{ message }}
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endif %}
+
 <!-- ================= NAVIGATION ================= -->
 
 <header class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl border-b border-slate-200 shadow-sm">
 
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="w-full px-6 sm:px-8 lg:px-12 xl:px-16">
 
         <div class="flex items-center justify-between h-20">
 
@@ -27,20 +61,20 @@
 
             <a href="#" class="flex items-center space-x-3">
 
-                <img src="{% static 'images/logo.png' %}"
+                <img src="{% static 'images/logo.PNG' %}"
                      class="w-12 h-12 rounded-full shadow-md">
 
                 <div>
 
                     <h1 class="font-black text-xl text-slate-900">
 
-                        Felix Odhiambo
+                        {{ owner_name }}
 
                     </h1>
 
                     <p class="text-xs text-slate-500">
 
-                        Software Developer
+                        {{ site_tagline|default:"Software Developer" }}
 
                     </p>
 
@@ -50,13 +84,17 @@
 
             <!-- Desktop Menu -->
 
-            <nav class="hidden lg:flex items-center space-x-8">
+            <nav class="hidden lg:flex items-center space-x-7 xl:space-x-10">
 
                 <a href="#about" class="hover:text-blue-600 transition">About</a>
 
+                <a href="#skills" class="hover:text-blue-600 transition">Skills</a>
+
                 <a href="#projects" class="hover:text-blue-600 transition">Projects</a>
 
-                <a href="#skills" class="hover:text-blue-600 transition">Skills</a>
+                <a href="#education" class="hover:text-blue-600 transition">Education</a>
+
+                <a href="#blog" class="hover:text-blue-600 transition">Blog</a>
 
                 <a href="#gallery" class="hover:text-blue-600 transition">Gallery</a>
 
@@ -68,6 +106,17 @@
 
             <div class="hidden lg:flex items-center gap-3">
 
+                {% if request.user.is_authenticated %}
+
+                <a href="{% url 'index' %}"
+                   class="px-5 py-2 rounded-xl border border-slate-300 hover:bg-slate-100">
+
+                    Dashboard
+
+                </a>
+
+                {% else %}
+
                 <a href="{% url 'login' %}"
                    class="px-5 py-2 rounded-xl border border-slate-300 hover:bg-slate-100">
 
@@ -75,7 +124,9 @@
 
                 </a>
 
-                <a href="{% static 'files/Felix_Odhiambo_CV.pdf' %}"
+                {% endif %}
+
+                <a href="{{ cv_url }}"
                    download
                    class="px-6 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700">
 
@@ -108,35 +159,45 @@
 
         <a href="#about" class="block px-6 py-4 hover:bg-slate-100">About</a>
 
+        <a href="#skills" class="block px-6 py-4 hover:bg-slate-100">Skills</a>
+
         <a href="#projects" class="block px-6 py-4 hover:bg-slate-100">Projects</a>
 
-        <a href="#skills" class="block px-6 py-4 hover:bg-slate-100">Skills</a>
+        <a href="#education" class="block px-6 py-4 hover:bg-slate-100">Education</a>
+
+        <a href="#blog" class="block px-6 py-4 hover:bg-slate-100">Blog</a>
 
         <a href="#gallery" class="block px-6 py-4 hover:bg-slate-100">Gallery</a>
 
         <a href="#contact" class="block px-6 py-4 hover:bg-slate-100">Contact</a>
 
+        {% if request.user.is_authenticated %}
+
+        <a href="{% url 'index' %}" class="block px-6 py-4 text-blue-600 font-semibold">Dashboard</a>
+
+        {% else %}
+
+        <a href="{% url 'login' %}" class="block px-6 py-4 text-blue-600 font-semibold">Login</a>
+
+        {% endif %}
+
     </div>
 
 </header>
 
+<main>
+
 <!-- ================= HERO ================= -->
 
-<section class="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center">
+<section class="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center pt-24 pb-16">
 
     <!-- Background Blur -->
 
-    <div class="absolute inset-0">
+   
 
-        <div class="absolute -top-24 -left-24 w-96 h-96 bg-blue-500 rounded-full blur-3xl opacity-20"></div>
+    <div class="relative w-full px-6 sm:px-8 lg:px-12 xl:px-16">
 
-        <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-cyan-400 rounded-full blur-3xl opacity-20"></div>
-
-    </div>
-
-    <div class="relative max-w-7xl mx-auto px-6 lg:px-8 w-full">
-
-        <div class="grid lg:grid-cols-2 gap-20 items-center">
+        <div class="grid lg:grid-cols-2 gap-16 xl:gap-24 items-center">
 
             <!-- Left -->
 
@@ -150,13 +211,11 @@
 
                 <h1 class="mt-8 text-5xl md:text-7xl font-black leading-tight text-white">
 
-                    
-
                     I'm
 
                     <span class="text-cyan-300">
 
-                        Felix Odhiambo
+                        {{ owner_name }}
 
                     </span>
 
@@ -164,16 +223,16 @@
 
                 <h2 class="mt-5 text-3xl md:text-4xl font-bold text-slate-200">
 
-                    Software Developer
+                    {{ owner_headline }}
 
                 </h2>
 
-                <p class="mt-8 text-lg text-slate-300 leading-8 max-w-2xl">
+                <p class="mt-8 text-lg text-slate-300 leading-8 max-w-3xl">
 
-                    I design and develop modern web applications using Django,
+                    {% if owner_bio %}{{ owner_bio }}{% else %}I design and develop modern web applications using Django,
                     Python, JavaScript, SQL and modern UI frameworks.
                     I enjoy solving real-world problems through clean,
-                    scalable and impactful software.
+                    scalable and impactful software.{% endif %}
 
                 </p>
 
@@ -192,6 +251,27 @@
                         Contact Me
 
                     </a>
+
+                </div>
+
+                <!-- Quick highlights -->
+
+                <div class="mt-12 flex flex-wrap gap-x-10 gap-y-4 text-sm text-slate-300">
+
+                    <span class="inline-flex items-center gap-2">
+                        <i class="fa-solid fa-location-dot text-cyan-300"></i>
+                        {{ owner_location }}
+                    </span>
+
+                    <span class="inline-flex items-center gap-2">
+                        <i class="fa-solid fa-briefcase text-cyan-300"></i>
+                        Open to opportunities
+                    </span>
+
+                    <span class="inline-flex items-center gap-2">
+                        <i class="fa-solid fa-code text-cyan-300"></i>
+                        {{ projects.count }} live projects
+                    </span>
 
                 </div>
 
@@ -250,13 +330,124 @@
     </div>
 
 </section>
+
+<!-- ================= STATS STRIP ================= -->
+
+<section class="bg-white border-b border-slate-200">
+
+    <div class="w-full px-6 sm:px-8 lg:px-12 xl:px-16 py-14">
+
+        <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-8 text-center">
+
+            <div>
+
+                <h3 class="text-4xl font-black text-blue-600">
+
+                    {{ projects.count }}
+
+                </h3>
+
+                <p class="text-gray-500 mt-2">
+
+                    Projects
+
+                </p>
+
+            </div>
+
+            <div>
+
+                <h3 class="text-4xl font-black text-green-600">
+
+                    {{ skills.count }}
+
+                </h3>
+
+                <p class="text-gray-500 mt-2">
+
+                    Skills
+
+                </p>
+
+            </div>
+
+            <div>
+
+                <h3 class="text-4xl font-black text-purple-600">
+
+                    {{ blogs|length }}
+
+                </h3>
+
+                <p class="text-gray-500 mt-2">
+
+                    Articles
+
+                </p>
+
+            </div>
+
+            <div>
+
+                <h3 class="text-4xl font-black text-red-500">
+
+                    {{ portfolio_items|length }}
+
+                </h3>
+
+                <p class="text-gray-500 mt-2">
+
+                    Portfolio Items
+
+                </p>
+
+            </div>
+
+            <div>
+
+                <h3 class="text-4xl font-black text-indigo-600">
+
+                    {{ education_levels.count }}
+
+                </h3>
+
+                <p class="text-gray-500 mt-2">
+
+                    Education Levels
+
+                </p>
+
+            </div>
+
+            <div>
+
+                <h3 class="text-4xl font-black text-cyan-600">
+
+                    {{ certifications.count }}
+
+                </h3>
+
+                <p class="text-gray-500 mt-2">
+
+                    Certifications
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
 <!-- ================= ABOUT ME ================= -->
 
-<section id="about" class="py-24 bg-white">
+<section id="about" class="py-24 bg-white scroll-mt-20">
 
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="w-full px-6 sm:px-8 lg:px-12 xl:px-16">
 
-        <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <div class="grid lg:grid-cols-2 gap-16 xl:gap-24 items-center">
 
             <!-- Left Image -->
 
@@ -268,7 +459,7 @@
 
                 <div class="absolute -bottom-6 -right-6 bg-blue-600 text-white rounded-2xl px-6 py-5 shadow-xl">
 
-                    <h2 class="text-3xl font-bold">2026</h2>
+                    <h2 class="text-3xl font-bold">{{ current_year }}</h2>
 
                     <p class="text-sm">Building Software</p>
 
@@ -292,11 +483,15 @@
 
                 </h2>
 
-                <p class="mt-8 text-lg leading-8 text-slate-600">
+                <p class="mt-8 text-lg leading-8 text-slate-600 max-w-3xl">
 
-                    I'm Felix Odhiambo, a software developer passionate about
+                    {% if owner_bio %}{{ owner_bio }}{% else %}I'm {{ owner_name }}, a software developer passionate about
                     building modern web applications, database systems and
-                    digital solutions that solve real-world problems.
+                    digital solutions that solve real-world problems.{% endif %}
+
+                </p>
+
+                <p class="mt-5 text-lg leading-8 text-slate-600 max-w-3xl">
 
                     I enjoy working with Django, Python, JavaScript,
                     Tailwind CSS, SQL and cloud technologies while
@@ -304,71 +499,59 @@
 
                 </p>
 
-                <!-- Statistics -->
+                <!-- Highlights -->
 
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
+                <div class="grid sm:grid-cols-2 gap-6 mt-12">
 
-                    <div class="text-center">
+                    <div class="flex items-start gap-4">
 
-                        <h3 class="text-4xl font-black text-blue-600">
+                        <div class="w-12 h-12 shrink-0 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-code"></i>
+                        </div>
 
-                            20+
-
-                        </h3>
-
-                        <p class="text-gray-500 mt-2">
-
-                            Projects
-
-                        </p>
+                        <div>
+                            <h3 class="font-bold text-lg">Full Stack Development</h3>
+                            <p class="text-gray-500 mt-1">Backend, frontend and database design end to end.</p>
+                        </div>
 
                     </div>
 
-                    <div class="text-center">
+                    <div class="flex items-start gap-4">
 
-                        <h3 class="text-4xl font-black text-green-600">
+                        <div class="w-12 h-12 shrink-0 rounded-2xl bg-green-100 text-green-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
 
-                            5+
-
-                        </h3>
-
-                        <p class="text-gray-500 mt-2">
-
-                            Technologies
-
-                        </p>
+                        <div>
+                            <h3 class="font-bold text-lg">System Thinking</h3>
+                            <p class="text-gray-500 mt-1">Turning requirements into maintainable business systems.</p>
+                        </div>
 
                     </div>
 
-                    <div class="text-center">
+                    <div class="flex items-start gap-4">
 
-                        <h3 class="text-4xl font-black text-purple-600">
+                        <div class="w-12 h-12 shrink-0 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
 
-                            100%
-
-                        </h3>
-
-                        <p class="text-gray-500 mt-2">
-
-                            Commitment
-
-                        </p>
+                        <div>
+                            <h3 class="font-bold text-lg">Continuous Learning</h3>
+                            <p class="text-gray-500 mt-1">Always learning, from certifications to open source.</p>
+                        </div>
 
                     </div>
 
-                    <div class="text-center">
+                    <div class="flex items-start gap-4">
 
-                        <h3 class="text-4xl font-black text-red-500">
+                        <div class="w-12 h-12 shrink-0 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-handshake"></i>
+                        </div>
 
-                            ∞
-
-                        </h3>
-
-                        <p class="text-gray-500 mt-2">
-
-                            Learning
-
-                        </p>
+                        <div>
+                            <h3 class="font-bold text-lg">Team Player</h3>
+                            <p class="text-gray-500 mt-1">Collaborating with teams, clients and communities.</p>
+                        </div>
 
                     </div>
 
@@ -382,12 +565,11 @@
 
 </section>
 
-
 <!-- ================= SKILLS ================= -->
 
-<section id="skills" class="py-24 bg-slate-100">
+<section id="skills" class="py-24 bg-slate-100 scroll-mt-20">
 
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="w-full px-6 sm:px-8 lg:px-12 xl:px-16">
 
         <div class="text-center">
 
@@ -412,117 +594,122 @@
 
         </div>
 
-        <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-16">
+        <!-- Skill bars -->
 
-            <!-- Skill Card -->
+        {% if skills %}
 
-            <div class="bg-white rounded-3xl shadow-lg p-8 hover:-translate-y-3 hover:shadow-2xl transition">
+        <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-8 mt-16">
 
-                <div class="text-5xl mb-5">🐍</div>
+            {% for skill in skills %}
 
-                <h3 class="text-2xl font-bold">Python</h3>
+            <div class="bg-white rounded-3xl shadow-lg p-8 hover:-translate-y-2 hover:shadow-2xl transition">
 
-                <p class="text-gray-500 mt-3">
+                <div class="flex items-center justify-between">
 
-                    Backend development, automation and scripting.
+                    <h3 class="text-xl font-bold">{{ skill.name }}</h3>
+
+                    <span class="text-sm font-bold text-blue-600">{{ skill.proficiency }}%</span>
+
+                </div>
+
+                <div class="w-full bg-slate-200 rounded-full h-3 mt-5">
+
+                    <div class="bg-gradient-to-r from-blue-500 to-cyan-400 h-3 rounded-full"
+                         style="width: {{ skill.proficiency }}%"></div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+        <!-- Core stack -->
+
+        <div class="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-6 mt-16">
+
+            <div class="bg-white rounded-3xl shadow-lg p-6 text-center hover:-translate-y-2 hover:shadow-2xl transition">
+
+                <div class="text-4xl mb-4">🐍</div>
+
+                <h3 class="text-lg font-bold">Python</h3>
+
+                <p class="text-gray-500 mt-2 text-sm">
+
+                    Backend, automation and scripting.
 
                 </p>
 
             </div>
 
-            <div class="bg-white rounded-3xl shadow-lg p-8 hover:-translate-y-3 hover:shadow-2xl transition">
+            <div class="bg-white rounded-3xl shadow-lg p-6 text-center hover:-translate-y-2 hover:shadow-2xl transition">
 
-                <div class="text-5xl mb-5">🌐</div>
+                <div class="text-4xl mb-4">🌐</div>
 
-                <h3 class="text-2xl font-bold">Django</h3>
+                <h3 class="text-lg font-bold">Django</h3>
 
-                <p class="text-gray-500 mt-3">
+                <p class="text-gray-500 mt-2 text-sm">
 
-                    Building secure and scalable web applications.
-
-                </p>
-
-            </div>
-
-            <div class="bg-white rounded-3xl shadow-lg p-8 hover:-translate-y-3 hover:shadow-2xl transition">
-
-                <div class="text-5xl mb-5">💻</div>
-
-                <h3 class="text-2xl font-bold">JavaScript</h3>
-
-                <p class="text-gray-500 mt-3">
-
-                    Interactive interfaces and frontend development.
+                    Secure, scalable web applications.
 
                 </p>
 
             </div>
 
-            <div class="bg-white rounded-3xl shadow-lg p-8 hover:-translate-y-3 hover:shadow-2xl transition">
+            <div class="bg-white rounded-3xl shadow-lg p-6 text-center hover:-translate-y-2 hover:shadow-2xl transition">
 
-                <div class="text-5xl mb-5">🎨</div>
+                <div class="text-4xl mb-4">💻</div>
 
-                <h3 class="text-2xl font-bold">Tailwind CSS</h3>
+                <h3 class="text-lg font-bold">JavaScript</h3>
 
-                <p class="text-gray-500 mt-3">
+                <p class="text-gray-500 mt-2 text-sm">
 
-                    Responsive and modern UI design.
-
-                </p>
-
-            </div>
-
-            <div class="bg-white rounded-3xl shadow-lg p-8 hover:-translate-y-3 hover:shadow-2xl transition">
-
-                <div class="text-5xl mb-5">🗄️</div>
-
-                <h3 class="text-2xl font-bold">MySQL</h3>
-
-                <p class="text-gray-500 mt-3">
-
-                    Database design and optimization.
+                    Interactive interfaces and logic.
 
                 </p>
 
             </div>
 
-            <div class="bg-white rounded-3xl shadow-lg p-8 hover:-translate-y-3 hover:shadow-2xl transition">
+            <div class="bg-white rounded-3xl shadow-lg p-6 text-center hover:-translate-y-2 hover:shadow-2xl transition">
 
-                <div class="text-5xl mb-5">⚙️</div>
+                <div class="text-4xl mb-4">🎨</div>
 
-                <h3 class="text-2xl font-bold">Oracle SQL</h3>
+                <h3 class="text-lg font-bold">Tailwind CSS</h3>
 
-                <p class="text-gray-500 mt-3">
+                <p class="text-gray-500 mt-2 text-sm">
 
-                    PL/SQL programming and enterprise databases.
-
-                </p>
-
-            </div>
-
-            <div class="bg-white rounded-3xl shadow-lg p-8 hover:-translate-y-3 hover:shadow-2xl transition">
-
-                <div class="text-5xl mb-5">☁️</div>
-
-                <h3 class="text-2xl font-bold">Cloud</h3>
-
-                <p class="text-gray-500 mt-3">
-
-                    Deployment with Render, GitHub and cloud platforms.
+                    Modern responsive UI design.
 
                 </p>
 
             </div>
 
-            <div class="bg-white rounded-3xl shadow-lg p-8 hover:-translate-y-3 hover:shadow-2xl transition">
+            <div class="bg-white rounded-3xl shadow-lg p-6 text-center hover:-translate-y-2 hover:shadow-2xl transition">
 
-                <div class="text-5xl mb-5">🚀</div>
+                <div class="text-4xl mb-4">🗄️</div>
 
-                <h3 class="text-2xl font-bold">Problem Solving</h3>
+                <h3 class="text-lg font-bold">SQL</h3>
 
-                <p class="text-gray-500 mt-3">
+                <p class="text-gray-500 mt-2 text-sm">
 
-                    Turning ideas into practical software solutions.
+                    MySQL, Oracle and database design.
+
+                </p>
+
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-lg p-6 text-center hover:-translate-y-2 hover:shadow-2xl transition">
+
+                <div class="text-4xl mb-4">☁️</div>
+
+                <h3 class="text-lg font-bold">Cloud</h3>
+
+                <p class="text-gray-500 mt-2 text-sm">
+
+                    Deployments with GitHub and Render.
 
                 </p>
 
@@ -533,11 +720,12 @@
     </div>
 
 </section>
+
 <!-- ================= FEATURED PROJECTS ================= -->
 
-<section id="projects" class="py-24 bg-white">
+<section id="projects" class="py-24 bg-white scroll-mt-20">
 
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="w-full px-6 sm:px-8 lg:px-12 xl:px-16">
 
         <!-- Heading -->
 
@@ -567,76 +755,85 @@
 
         <!-- Project Cards -->
 
-        <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-10">
+        <div class="grid md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-10">
 
-            <!-- ================= Project 1 ================= -->
+            {% for project in home_projects %}
 
-            <div class="bg-white rounded-3xl shadow-xl overflow-hidden hover:-translate-y-3 hover:shadow-2xl transition duration-300">
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden hover:-translate-y-3 hover:shadow-2xl transition duration-300 flex flex-col">
 
-                <img src="{% static 'images/project1.jpg' %}"
-                class="w-full h-56 object-cover">
+                {% if project.image %}
 
-                <div class="p-8">
+                <img src="{{ project.image.url }}"
+                     class="w-full h-56 object-cover">
+
+                {% else %}
+
+                <img src="{% static 'images/laptop.jpg' %}"
+                     class="w-full h-56 object-cover">
+
+                {% endif %}
+
+                <div class="p-8 flex flex-col flex-grow">
 
                     <h3 class="text-2xl font-bold">
 
-                        GovTracker
+                        {{ project.title }}
 
                     </h3>
 
-                    <p class="mt-4 text-gray-600">
+                    <p class="mt-4 text-gray-600 flex-grow">
 
-                        A government project monitoring system that promotes
-                        transparency by tracking development projects,
-                        budgets, contractors, milestones and public participation.
+                        {{ project.description|truncatewords:26 }}
 
                     </p>
 
                     <!-- Technologies -->
 
+                    {% if project.tech_list %}
+
                     <div class="flex flex-wrap gap-2 mt-6">
+
+                        {% for tech in project.tech_list %}
 
                         <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
 
-                            Django
+                            {{ tech }}
 
                         </span>
 
-                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
-
-                            Python
-
-                        </span>
-
-                        <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm">
-
-                            MySQL
-
-                        </span>
-
-                        <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm">
-
-                            Tailwind
-
-                        </span>
+                        {% endfor %}
 
                     </div>
 
+                    {% endif %}
+
                     <div class="flex gap-4 mt-8">
 
-                        <a href="#"
-                        class="flex-1 text-center bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700">
+                        {% if project.live_demo %}
+
+                        <a href="{{ project.live_demo }}"
+                           target="_blank"
+                           rel="noopener"
+                           class="flex-1 text-center bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700">
 
                             Live Demo
 
                         </a>
 
-                        <a href="#"
-                        class="flex-1 text-center border border-slate-300 py-3 rounded-xl hover:bg-slate-100">
+                        {% endif %}
+
+                        {% if project.github_link %}
+
+                        <a href="{{ project.github_link }}"
+                           target="_blank"
+                           rel="noopener"
+                           class="flex-1 text-center border border-slate-300 py-3 rounded-xl hover:bg-slate-100">
 
                             GitHub
 
                         </a>
+
+                        {% endif %}
 
                     </div>
 
@@ -644,139 +841,27 @@
 
             </div>
 
-            <!-- ================= Project 2 ================= -->
+            {% empty %}
 
-            <div class="bg-white rounded-3xl shadow-xl overflow-hidden hover:-translate-y-3 hover:shadow-2xl transition duration-300">
+            <div class="col-span-full text-center py-16">
 
-                <img src="{% static 'images/project2.jpg' %}"
-                class="w-full h-56 object-cover">
+                <div class="text-7xl">💻</div>
 
-                <div class="p-8">
+                <h3 class="mt-6 text-3xl font-bold text-slate-700">
 
-                    <h3 class="text-2xl font-bold">
+                    Projects Coming Soon
 
-                        Loan Management System
+                </h3>
 
-                    </h3>
+                <p class="mt-3 text-slate-500">
 
-                    <p class="mt-4 text-gray-600">
+                    Software projects will appear here once they are uploaded.
 
-                        A complete loan application and approval platform with
-                        borrower management, repayments, reports,
-                        authentication and secure dashboards.
-
-                    </p>
-
-                    <div class="flex flex-wrap gap-2 mt-6">
-
-                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
-
-                            Django
-
-                        </span>
-
-                        <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm">
-
-                            Bootstrap
-
-                        </span>
-
-                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
-
-                            SQLite
-
-                        </span>
-
-                    </div>
-
-                    <div class="flex gap-4 mt-8">
-
-                        <a href="#"
-                        class="flex-1 text-center bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700">
-
-                            Live Demo
-
-                        </a>
-
-                        <a href="#"
-                        class="flex-1 text-center border border-slate-300 py-3 rounded-xl hover:bg-slate-100">
-
-                            GitHub
-
-                        </a>
-
-                    </div>
-
-                </div>
+                </p>
 
             </div>
 
-            <!-- ================= Project 3 ================= -->
-
-            <div class="bg-white rounded-3xl shadow-xl overflow-hidden hover:-translate-y-3 hover:shadow-2xl transition duration-300">
-
-                <img src="{% static 'images/project3.jpg' %}"
-                class="w-full h-56 object-cover">
-
-                <div class="p-8">
-
-                    <h3 class="text-2xl font-bold">
-
-                        Personal Portfolio
-
-                    </h3>
-
-                    <p class="mt-4 text-gray-600">
-
-                        A responsive personal portfolio showcasing my
-                        software projects, gallery, skills,
-                        certifications and professional journey.
-
-                    </p>
-
-                    <div class="flex flex-wrap gap-2 mt-6">
-
-                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
-
-                            Django
-
-                        </span>
-
-                        <span class="bg-cyan-100 text-cyan-700 px-3 py-1 rounded-full text-sm">
-
-                            Tailwind
-
-                        </span>
-
-                        <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm">
-
-                            Alpine.js
-
-                        </span>
-
-                    </div>
-
-                    <div class="flex gap-4 mt-8">
-
-                        <a href="#"
-                        class="flex-1 text-center bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700">
-
-                            Live Demo
-
-                        </a>
-
-                        <a href="#"
-                        class="flex-1 text-center border border-slate-300 py-3 rounded-xl hover:bg-slate-100">
-
-                            GitHub
-
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
+            {% endfor %}
 
         </div>
 
@@ -784,8 +869,8 @@
 
         <div class="text-center mt-16">
 
-            <a href="#"
-            class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-slate-900 text-white hover:bg-blue-700 transition">
+            <a href="{% url 'projects_list' %}"
+               class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-slate-900 text-white hover:bg-blue-700 transition">
 
                 View All Projects
 
@@ -798,11 +883,402 @@
     </div>
 
 </section>
-<!-- ================= EXPERIENCE & EDUCATION ================= -->
 
-<section id="experience" class="py-24 bg-slate-100">
+<!-- ================= EDUCATION JOURNEY ================= -->
 
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+<section id="education" class="py-24 bg-slate-100 scroll-mt-20">
+
+    <div class="w-full px-6 sm:px-8 lg:px-12 xl:px-16">
+
+        <div class="text-center mb-16">
+
+            <span class="text-blue-600 font-bold uppercase tracking-widest">
+
+                Education
+
+            </span>
+
+            <h2 class="mt-4 text-5xl font-black text-slate-900">
+
+                My Academic Journey
+            </h2>
+
+            <p class="mt-5 max-w-3xl mx-auto text-slate-600 text-lg">
+
+                Every step of my learning path, from primary school to university.
+            </p>
+
+        </div>
+
+        <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
+
+            {% for edu in education_levels %}
+
+            <div class="bg-white rounded-3xl shadow-lg p-8 hover:-translate-y-2 hover:shadow-2xl transition">
+
+                <div class="flex items-start justify-between gap-4">
+
+                    <div class="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl shrink-0">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+
+                    <div class="text-right">
+
+                        {% if edu.Year %}
+
+                        <p class="text-sm font-bold text-blue-600">{{ edu.Year }}</p>
+
+                        {% endif %}
+
+                        {% if edu.Grade %}
+
+                        <p class="text-xs text-gray-500 mt-1">Grade: {{ edu.Grade }}</p>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                <h3 class="mt-6 text-2xl font-bold">{{ edu.level }}</h3>
+
+                <p class="mt-2 text-blue-600 font-semibold">{{ edu.school }}</p>
+
+                <p class="mt-4 text-gray-600">
+
+                    {{ edu.description|truncatewords:28 }}
+
+                </p>
+
+            </div>
+
+            {% empty %}
+
+            <div class="col-span-full text-center py-16">
+
+                <div class="text-7xl">🎓</div>
+
+                <h3 class="mt-6 text-3xl font-bold text-slate-700">
+
+                    Education Details Coming Soon
+                </h3>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= CERTIFICATIONS ================= -->
+
+<section class="py-24 bg-white">
+
+    <div class="w-full px-6 sm:px-8 lg:px-12 xl:px-16">
+
+        <div class="text-center mb-16">
+
+            <span class="text-blue-600 font-bold uppercase tracking-widest">
+
+                Credentials
+            </span>
+
+            <h2 class="mt-4 text-5xl font-black text-slate-900">
+
+                Certifications
+            </h2>
+
+            <p class="mt-5 max-w-3xl mx-auto text-slate-600 text-lg">
+
+                Verified certificates earned through continuous learning and practice.
+            </p>
+
+        </div>
+
+        <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-8">
+
+            {% for cert in certifications %}
+
+            <div class="bg-slate-50 rounded-3xl p-8 shadow-lg hover:-translate-y-2 hover:shadow-2xl transition flex flex-col">
+
+                <div class="w-14 h-14 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-2xl">
+                    <i class="fa-solid fa-certificate"></i>
+                </div>
+
+                <h3 class="mt-6 text-xl font-bold">{{ cert.title }}</h3>
+
+                <p class="mt-2 text-blue-600 font-semibold text-sm">{{ cert.issuing_organization }}</p>
+
+                <p class="mt-3 text-gray-500 text-sm">
+                    Issued {{ cert.date_issued|date:"M Y" }}
+                </p>
+
+                {% if cert.credential_url %}
+
+                <a href="{{ cert.credential_url }}"
+                   target="_blank"
+                   rel="noopener"
+                   class="mt-6 inline-flex items-center gap-2 text-blue-600 font-semibold hover:underline">
+
+                    View Credential
+
+                    <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+
+                </a>
+
+                {% endif %}
+
+            </div>
+
+            {% empty %}
+
+            <div class="col-span-full text-center py-16">
+
+                <div class="text-7xl">📜</div>
+
+                <h3 class="mt-6 text-3xl font-bold text-slate-700">
+
+                    Certifications Coming Soon
+                </h3>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= BLOG / ARTICLES ================= -->
+
+<section id="blog" class="py-24 bg-slate-100 scroll-mt-20">
+
+    <div class="w-full px-6 sm:px-8 lg:px-12 xl:px-16">
+
+        <div class="flex flex-col lg:flex-row justify-between items-center mb-14">
+
+            <div>
+
+                <span class="text-blue-600 font-bold uppercase tracking-widest">
+
+                    Blog
+
+                </span>
+
+                <h2 class="mt-3 text-5xl font-black text-slate-900">
+
+                    Latest Articles
+                </h2>
+
+                <p class="mt-4 text-slate-600 max-w-2xl">
+
+                    Thoughts on software development, technology and the
+                    lessons learned along the way.
+
+                </p>
+
+            </div>
+
+            <a href="{% url 'blog' %}"
+               class="mt-8 lg:mt-0 px-8 py-4 rounded-2xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">
+
+                Read All Articles →
+
+            </a>
+
+        </div>
+
+        <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-10">
+
+            {% for blog in blogs %}
+
+            <article class="bg-white rounded-3xl shadow-lg overflow-hidden hover:-translate-y-2 hover:shadow-2xl transition flex flex-col">
+
+                {% if blog.image %}
+
+                <img src="{{ blog.image.url }}"
+                     class="w-full h-52 object-cover">
+
+                {% else %}
+
+                <img src="{% static 'images/blog-1.jpg' %}"
+                     class="w-full h-52 object-cover">
+
+                {% endif %}
+
+                <div class="p-8 flex flex-col flex-grow">
+
+                    <div class="flex items-center gap-3 text-sm text-gray-500">
+
+                        <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 font-semibold capitalize">
+
+                            {{ blog.status|default:"article" }}
+
+                        </span>
+
+                        <span>{{ blog.created_at|date:"M d, Y" }}</span>
+
+                    </div>
+
+                    <h3 class="mt-5 text-2xl font-bold">{{ blog.title }}</h3>
+
+                    <p class="mt-4 text-gray-600 flex-grow">
+
+                        {{ blog.content|striptags|truncatewords:24 }}
+
+                    </p>
+
+                    <a href="{% url 'blog_details' blog.pk %}"
+                       class="mt-6 inline-flex items-center gap-2 text-blue-600 font-semibold hover:underline">
+
+                        Read Article
+
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+
+                    </a>
+
+                </div>
+
+            </article>
+
+            {% empty %}
+
+            <div class="col-span-full text-center py-16">
+
+                <div class="text-7xl">📝</div>
+
+                <h3 class="mt-6 text-3xl font-bold text-slate-700">
+
+                    No Articles Yet
+                </h3>
+
+                <p class="mt-3 text-slate-500">
+
+                    My first article is on the way.
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= PORTFOLIO HIGHLIGHTS ================= -->
+
+<section class="py-24 bg-white">
+
+    <div class="w-full px-6 sm:px-8 lg:px-12 xl:px-16">
+
+        <div class="text-center mb-16">
+
+            <span class="text-blue-600 font-bold uppercase tracking-widest">
+
+                Portfolio
+            </span>
+
+            <h2 class="mt-4 text-5xl font-black text-slate-900">
+
+                Selected Work
+            </h2>
+
+            <p class="mt-5 max-w-3xl mx-auto text-slate-600 text-lg">
+
+                A mix of software builds, community projects and creative work
+                I am proud to have delivered.
+            </p>
+
+        </div>
+
+        <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-10">
+
+            {% for item in portfolio_items %}
+
+            <div class="bg-slate-50 rounded-3xl p-8 shadow-lg hover:-translate-y-3 hover:shadow-2xl transition flex flex-col">
+
+                {% if item.image %}
+
+                <img src="{{ item.image.url }}"
+                     class="w-full h-48 object-cover rounded-2xl mb-6">
+
+                {% endif %}
+
+                <div class="flex items-center gap-3">
+
+                    <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-semibold capitalize">
+
+                        {{ item.category }}
+
+                    </span>
+
+                    <span class="text-sm text-gray-500">{{ item.date_created|date:"M Y" }}</span>
+
+                </div>
+
+                <h3 class="mt-5 text-2xl font-bold">{{ item.title }}</h3>
+
+                <p class="mt-4 text-gray-600 flex-grow">
+
+                    {{ item.description|truncatewords:24 }}
+
+                </p>
+
+                {% if item.technology %}
+
+                <p class="mt-5 text-sm text-slate-500">
+
+                    <span class="font-semibold text-slate-700">Stack:</span>
+                    {{ item.technology|truncatewords:14 }}
+
+                </p>
+
+                {% endif %}
+
+                <a href="{% url 'portfolio_details' item.pk %}"
+                   class="mt-6 inline-flex items-center gap-2 text-blue-600 font-semibold hover:underline">
+
+                    View Details
+
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
+
+                </a>
+
+            </div>
+
+            {% empty %}
+
+            <div class="col-span-full text-center py-16">
+
+                <div class="text-7xl">🗂️</div>
+
+                <h3 class="mt-6 text-3xl font-bold text-slate-700">
+
+                    Portfolio Items Coming Soon
+                </h3>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= EXPERIENCE, EVENTS & ACTIVITIES ================= -->
+
+<section id="experience" class="py-24 bg-slate-100 scroll-mt-20">
+
+    <div class="w-full px-6 sm:px-8 lg:px-12 xl:px-16">
 
         <!-- Heading -->
 
@@ -822,7 +1298,7 @@
 
         </div>
 
-        <div class="grid lg:grid-cols-2 gap-12">
+        <div class="grid lg:grid-cols-2 gap-12 xl:gap-16">
 
             <!-- ================= Timeline ================= -->
 
@@ -881,55 +1357,113 @@
 
                     </div>
 
+                    <div class="relative">
+
+                        <div class="absolute -left-11 top-1 w-6 h-6 rounded-full bg-purple-600 border-4 border-white"></div>
+
+                        <h4 class="text-2xl font-bold">
+                            Software Developer
+                        </h4>
+
+                        <p class="text-purple-600 font-semibold">
+                            FelloMarley Foundation
+                        </p>
+
+                        <p class="text-gray-500 text-sm">
+                            2022 - Present
+                        </p>
+
+                        <p class="mt-3 text-gray-600">
+                            Building community focused platforms, internal tools
+                            and digital resources for the foundation.
+                        </p>
+
+                    </div>
+
                 </div>
 
             </div>
 
-            <!-- ================= Education ================= -->
+            <!-- ================= Events & Activities ================= -->
 
             <div>
 
                 <h3 class="text-3xl font-bold mb-8">
-                    Education
+                    Events &amp; Activities
                 </h3>
 
                 <div class="space-y-6">
 
-                    <div class="bg-white rounded-3xl shadow-lg p-8">
+                    {% for event in events %}
 
-                        <h4 class="text-2xl font-bold">
-                            Bachelor of Information Technology
-                        </h4>
+                    <div class="bg-white rounded-3xl shadow-lg p-8 hover:-translate-y-1 hover:shadow-2xl transition">
 
-                        <p class="text-blue-600 font-semibold mt-2">
-                            University
+                        <div class="flex items-start justify-between gap-4">
+
+                            <h4 class="text-xl font-bold">{{ event.title }}</h4>
+
+                            {% if event.start_date %}
+
+                            <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full whitespace-nowrap">
+                                {{ event.start_date|date:"M d, Y" }}
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+                        <p class="mt-3 text-gray-600 text-sm">
+
+                            {{ event.description|truncatewords:18 }}
+
                         </p>
 
-                        <p class="mt-4 text-gray-600">
-                            Specialized in software engineering,
-                            database systems, networking,
-                            web development and system analysis.
+                        {% if event.location %}
+
+                        <p class="mt-4 text-sm text-gray-500">
+
+                            <i class="fa-solid fa-location-dot mr-2 text-blue-500"></i>
+                            {{ event.location.name }} — {{ event.location.address }}
+
                         </p>
+
+                        {% endif %}
 
                     </div>
 
-                    <div class="bg-white rounded-3xl shadow-lg p-8">
+                    {% empty %}
 
-                        <h4 class="text-2xl font-bold">
-                            Continuous Learning
-                        </h4>
+                    <div class="bg-white rounded-3xl shadow-lg p-8 text-center text-gray-500">
 
-                        <p class="text-blue-600 font-semibold mt-2">
-                            Self Development
-                        </p>
-
-                        <p class="mt-4 text-gray-600">
-                            Regularly improving my skills through
-                            personal projects, online courses,
-                            documentation and open-source development.
-                        </p>
+                        No events scheduled yet.
 
                     </div>
+
+                    {% endfor %}
+
+                    {% for activity in activities %}
+
+                    <div class="bg-white rounded-3xl shadow-lg p-6 flex items-center gap-5">
+
+                        <div class="w-12 h-12 shrink-0 rounded-2xl bg-green-100 text-green-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-sparkles"></i>
+                        </div>
+
+                        <div>
+
+                            <h4 class="font-bold">{{ activity.title }}</h4>
+
+                            <p class="text-sm text-gray-500 mt-1">
+
+                                {{ activity.description|truncatewords:14 }}
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
 
                 </div>
 
@@ -941,12 +1475,11 @@
 
 </section>
 
-
 <!-- ================= SERVICES ================= -->
 
 <section class="py-24 bg-white">
 
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="w-full px-6 sm:px-8 lg:px-12 xl:px-16">
 
         <div class="text-center mb-16">
 
@@ -1023,11 +1556,97 @@
     </div>
 
 </section>
+
+<!-- ================= TESTIMONIALS ================= -->
+
+<section class="py-24 bg-slate-100">
+
+    <div class="w-full px-6 sm:px-8 lg:px-12 xl:px-16">
+
+        <div class="text-center mb-16">
+
+            <span class="text-blue-600 font-bold uppercase tracking-widest">
+                Testimonials
+            </span>
+
+            <h2 class="mt-4 text-5xl font-black text-slate-900">
+                What People Say
+            </h2>
+
+            <p class="mt-5 max-w-3xl mx-auto text-slate-600 text-lg">
+                Feedback from clients, colleagues and collaborators.
+            </p>
+
+        </div>
+
+        <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
+
+            {% for testimonial in testimonials %}
+
+            <div class="bg-white rounded-3xl shadow-lg p-8 hover:-translate-y-2 hover:shadow-2xl transition flex flex-col">
+
+                <div class="text-yellow-400 text-xl tracking-widest">
+                    ★★★★★
+                </div>
+
+                <p class="mt-5 text-gray-600 flex-grow">
+
+                    "{{ testimonial.message }}"
+
+                </p>
+
+                <div class="mt-7 flex items-center gap-4">
+
+                    {% if testimonial.image %}
+
+                    <img src="{{ testimonial.image.url }}"
+                         class="w-12 h-12 rounded-full object-cover">
+
+                    {% else %}
+
+                    <div class="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
+                        {{ testimonial.name|slice:":1" }}
+                    </div>
+
+                    {% endif %}
+
+                    <div>
+
+                        <h4 class="font-bold">{{ testimonial.name }}</h4>
+
+                        <p class="text-sm text-gray-500">{{ testimonial.designation }}</p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="col-span-full text-center py-16">
+
+                <div class="text-7xl">💬</div>
+
+                <h3 class="mt-6 text-3xl font-bold text-slate-700">
+                    Testimonials Coming Soon
+                </h3>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
 <!-- ================= GALLERY PREVIEW ================= -->
 
-<section id="gallery" class="py-24 bg-slate-100">
+<section id="gallery" class="py-24 bg-white scroll-mt-20">
 
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="w-full px-6 sm:px-8 lg:px-12 xl:px-16">
 
         <!-- Heading -->
 
@@ -1044,7 +1663,6 @@
                 <h2 class="mt-3 text-5xl font-black text-slate-900">
 
                     Recent Memories
-
                 </h2>
 
                 <p class="mt-4 text-slate-600 max-w-2xl">
@@ -1068,16 +1686,16 @@
 
         <!-- Gallery Grid -->
 
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6 gap-6">
 
-            {% for image in images|slice:":8" %}
+            {% for image in images|slice:":12" %}
 
-            <div class="group relative overflow-hidden rounded-3xl shadow-xl bg-white">
+            <div class="group relative overflow-hidden rounded-3xl shadow-xl bg-white aspect-[3/4]">
 
                 {% if image.image %}
 
                 <img src="{{ image.image.url }}"
-                     class="w-full h-72 object-cover transition duration-700 group-hover:scale-110">
+                     class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
 
                 {% endif %}
 
@@ -1109,7 +1727,7 @@
 
             {% empty %}
 
-            <div class="col-span-4 text-center py-16">
+            <div class="col-span-full text-center py-16">
 
                 <div class="text-7xl">
 
@@ -1120,7 +1738,6 @@
                 <h3 class="mt-6 text-3xl font-bold text-slate-700">
 
                     Gallery Coming Soon
-
                 </h3>
 
                 <p class="mt-3 text-slate-500">
@@ -1139,7 +1756,7 @@
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
 
-            <div class="bg-white rounded-3xl p-8 text-center shadow-lg">
+            <div class="bg-slate-50 rounded-3xl p-8 text-center shadow-lg">
 
                 <h3 class="text-4xl font-black text-blue-600">
 
@@ -1155,7 +1772,7 @@
 
             </div>
 
-            <div class="bg-white rounded-3xl p-8 text-center shadow-lg">
+            <div class="bg-slate-50 rounded-3xl p-8 text-center shadow-lg">
 
                 <h3 class="text-4xl font-black text-green-600">
 
@@ -1171,7 +1788,7 @@
 
             </div>
 
-            <div class="bg-white rounded-3xl p-8 text-center shadow-lg">
+            <div class="bg-slate-50 rounded-3xl p-8 text-center shadow-lg">
 
                 <h3 class="text-4xl font-black text-purple-600">
 
@@ -1187,7 +1804,7 @@
 
             </div>
 
-            <div class="bg-white rounded-3xl p-8 text-center shadow-lg">
+            <div class="bg-slate-50 rounded-3xl p-8 text-center shadow-lg">
 
                 <h3 class="text-4xl font-black text-red-600">
 
@@ -1208,13 +1825,122 @@
     </div>
 
 </section>
+
+<!-- ================= FAQ ================= -->
+
+{% if faqs %}
+
+<section class="py-24 bg-slate-100">
+
+    <div class="w-full px-6 sm:px-8 lg:px-12 xl:px-16">
+
+        <div class="text-center mb-14">
+
+            <span class="text-blue-600 font-bold uppercase tracking-widest">
+                FAQ
+            </span>
+
+            <h2 class="mt-4 text-5xl font-black text-slate-900">
+                Frequently Asked Questions
+            </h2>
+
+        </div>
+
+        <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl p-6 lg:p-10"
+             x-data="{ open: null }">
+
+            {% for faq in faqs %}
+
+            <div class="border-b border-slate-200 last:border-0">
+
+                <button type="button"
+                        @click="open = open === {{ forloop.counter }} ? null : {{ forloop.counter }}"
+                        class="w-full text-left py-6 flex items-center justify-between gap-6">
+
+                    <span class="font-bold text-lg">{{ faq.question }}</span>
+
+                    <span class="text-blue-600 text-2xl font-bold"
+                          x-text="open === {{ forloop.counter }} ? '−' : '+'"></span>
+
+                </button>
+
+                <div x-show="open === {{ forloop.counter }}"
+                     x-transition
+                     class="pb-6 text-gray-600">
+
+                    {{ faq.answer }}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endif %}
+
+<!-- ================= NEWSLETTER ================= -->
+
+<section class="py-20 bg-gradient-to-r from-blue-700 to-indigo-700 text-white">
+
+    <div class="w-full px-6 sm:px-8 lg:px-12 xl:px-16">
+
+        <div class="grid lg:grid-cols-2 gap-10 items-center">
+
+            <div>
+
+                <h2 class="text-4xl font-black">
+
+                    Subscribe to my newsletter
+                </h2>
+
+                <p class="mt-4 text-blue-100 max-w-xl">
+
+                    Get an email whenever I publish a new article, release a
+                    project or share an update. No spam, ever.
+
+                </p>
+
+            </div>
+
+            <form method="post" action="{% url 'newsletter_subscribe' %}"
+                  class="flex flex-col sm:flex-row gap-4">
+
+                {% csrf_token %}
+
+                <input type="email"
+                       name="email"
+                       required
+                       placeholder="you@example.com"
+                       class="flex-grow rounded-2xl px-6 py-4 text-slate-900 outline-none focus:ring-4 focus:ring-white/40">
+
+                <button type="submit"
+                        class="px-8 py-4 rounded-2xl bg-white text-blue-700 font-bold hover:bg-blue-50 transition">
+
+                    Subscribe
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
 <!-- ================= CONTACT ================= -->
 
-<section id="contact" class="py-24 bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 text-white">
+<section id="contact" class="py-24 bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 text-white scroll-mt-20">
 
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="w-full px-6 sm:px-8 lg:px-12 xl:px-16">
 
-        <div class="grid lg:grid-cols-2 gap-16">
+        <div class="grid lg:grid-cols-2 gap-16 xl:gap-24">
 
             <!-- Left -->
 
@@ -1223,13 +1949,11 @@
                 <span class="uppercase tracking-widest text-cyan-300 font-bold">
 
                     Contact
-
                 </span>
 
                 <h2 class="text-5xl font-black mt-4">
 
                     Let's Build Something Amazing
-
                 </h2>
 
                 <p class="mt-6 text-lg text-slate-300 leading-8">
@@ -1282,13 +2006,11 @@
                             <p class="text-slate-400">
 
                                 Phone
-
                             </p>
 
                             <h3 class="font-bold">
 
                                 +254 XXX XXX XXX
-
                             </h3>
 
                         </div>
@@ -1308,13 +2030,35 @@
                             <p class="text-slate-400">
 
                                 Location
-
                             </p>
 
                             <h3 class="font-bold">
 
-                                Nairobi, Kenya
+                                {{ owner_location }}
+                            </h3>
 
+                        </div>
+
+                    </div>
+
+                    <div class="flex items-center gap-5">
+
+                        <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-2xl">
+
+                            🕐
+
+                        </div>
+
+                        <div>
+
+                            <p class="text-slate-400">
+
+                                Availability
+                            </p>
+
+                            <h3 class="font-bold">
+
+                                Mon – Fri, 9:00 – 18:00 EAT
                             </h3>
 
                         </div>
@@ -1322,6 +2066,23 @@
                     </div>
 
                 </div>
+
+                <!-- Social -->
+
+                {% if social_links %}
+                <div class="flex flex-wrap gap-4 mt-10 text-2xl">
+
+                    {% for social in social_links %}
+                    <a href="{{ social.url }}"
+                       {% if social.network != 'email' %}target="_blank" rel="noopener noreferrer"{% endif %}
+                       aria-label="{{ social.network|title }}"
+                       class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center hover:bg-white/20 transition">
+                        <i class="fab {{ social.icon }}"></i>
+                    </a>
+                    {% endfor %}
+
+                </div>
+                {% endif %}
 
             </div>
 
@@ -1332,34 +2093,71 @@
                 <h3 class="text-3xl font-bold mb-8">
 
                     Send a Message
-
                 </h3>
 
-                <form>
+                <form method="post" action="{% url 'public_contact' %}">
+
+                    {% csrf_token %}
 
                     <div class="space-y-5">
 
                         <input
                         type="text"
+                        name="name"
+                        required
                         placeholder="Full Name"
+                        value="{{ contact_form.name.value|default:'' }}"
                         class="w-full rounded-xl border border-slate-300 px-5 py-4 focus:ring-2 focus:ring-blue-600 outline-none">
+
+                        {% if contact_form.name.errors %}
+
+                        <p class="text-sm text-rose-600 -mt-2">{{ contact_form.name.errors|striptags }}</p>
+
+                        {% endif %}
 
                         <input
                         type="email"
+                        name="email"
+                        required
                         placeholder="Email Address"
+                        value="{{ contact_form.email.value|default:'' }}"
                         class="w-full rounded-xl border border-slate-300 px-5 py-4 focus:ring-2 focus:ring-blue-600 outline-none">
+
+                        {% if contact_form.email.errors %}
+
+                        <p class="text-sm text-rose-600 -mt-2">{{ contact_form.email.errors|striptags }}</p>
+
+                        {% endif %}
 
                         <input
-                        type="text"
-                        placeholder="Subject"
+                        type="tel"
+                        name="phone"
+                        required
+                        placeholder="Phone Number"
+                        value="{{ contact_form.phone.value|default:'' }}"
                         class="w-full rounded-xl border border-slate-300 px-5 py-4 focus:ring-2 focus:ring-blue-600 outline-none">
 
+                        {% if contact_form.phone.errors %}
+
+                        <p class="text-sm text-rose-600 -mt-2">{{ contact_form.phone.errors|striptags }}</p>
+
+                        {% endif %}
+
                         <textarea
+                        name="message"
                         rows="6"
+                        required
                         placeholder="Your Message..."
-                        class="w-full rounded-xl border border-slate-300 px-5 py-4 focus:ring-2 focus:ring-blue-600 outline-none"></textarea>
+                        class="w-full rounded-xl border border-slate-300 px-5 py-4 focus:ring-2 focus:ring-blue-600 outline-none">{{ contact_form.message.value|default:'' }}</textarea>
+
+                        {% if contact_form.message.errors %}
+
+                        <p class="text-sm text-rose-600 -mt-2">{{ contact_form.message.errors|striptags }}</p>
+
+                        {% endif %}
 
                         <button
+                        type="submit"
                         class="w-full py-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold transition">
 
                             Send Message
@@ -1378,14 +2176,15 @@
 
 </section>
 
+</main>
 
 <!-- ================= FOOTER ================= -->
 
 <footer class="bg-slate-950 text-slate-400">
 
-    <div class="max-w-7xl mx-auto px-6 lg:px-8 py-16">
+    <div class="w-full px-6 sm:px-8 lg:px-12 xl:px-16 py-16">
 
-        <div class="grid md:grid-cols-3 gap-10">
+        <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-10">
 
             <!-- About -->
 
@@ -1393,14 +2192,13 @@
 
                 <h3 class="text-white text-2xl font-bold">
 
-                    Felix Odhiambo
-
+                    {{ owner_name }}
                 </h3>
 
                 <p class="mt-5 leading-8">
 
-                    Full Stack Software Developer specializing in
-                    Django, Python, SQL, JavaScript and modern web applications.
+                    {% if owner_bio %}{{ owner_bio|truncatechars:150 }}{% else %}Full Stack Software Developer specializing in
+                    Django, Python, SQL, JavaScript and modern web applications.{% endif %}
 
                 </p>
 
@@ -1413,7 +2211,6 @@
                 <h3 class="text-white text-xl font-bold mb-5">
 
                     Quick Links
-
                 </h3>
 
                 <div class="space-y-3">
@@ -1422,9 +2219,44 @@
 
                     <a href="#projects" class="block hover:text-white">Projects</a>
 
+                    <a href="#education" class="block hover:text-white">Education</a>
+
+                    <a href="#blog" class="block hover:text-white">Blog</a>
+
                     <a href="#gallery" class="block hover:text-white">Gallery</a>
 
                     <a href="#contact" class="block hover:text-white">Contact</a>
+
+                </div>
+
+            </div>
+
+            <!-- Explore -->
+
+            <div>
+
+                <h3 class="text-white text-xl font-bold mb-5">
+
+                    Explore
+                </h3>
+
+                <div class="space-y-3">
+
+                    <a href="{% url 'blog' %}" class="block hover:text-white">Blog</a>
+
+                    <a href="{% url 'portfolio' %}" class="block hover:text-white">Portfolio</a>
+
+                    <a href="{% url 'events' %}" class="block hover:text-white">Events</a>
+
+                    <a href="{% url 'testimonials_list' %}" class="block hover:text-white">Testimonials</a>
+
+                    <a href="{% url 'siblings_list' %}" class="block hover:text-white">Family</a>
+
+                    <a href="{% url 'education_journey' %}" class="block hover:text-white">Education Journey</a>
+
+                    <a href="{% url 'projects_list' %}" class="block hover:text-white">All Projects</a>
+
+                    <a href="{% url 'login' %}" class="block hover:text-white">Member Login</a>
 
                 </div>
 
@@ -1437,28 +2269,32 @@
                 <h3 class="text-white text-xl font-bold mb-5">
 
                     Connect
-
                 </h3>
 
-                <div class="flex gap-5 text-3xl">
+                {% if social_links %}
+                <div class="flex flex-wrap gap-5 text-3xl">
 
-                    <a href="https://github.com/" class="hover:text-white">
-                        <i class="fab fa-github"></i>
+                    {% for social in social_links %}
+                    <a href="{{ social.url }}"
+                       {% if social.network != 'email' %}target="_blank" rel="noopener noreferrer"{% endif %}
+                       aria-label="{{ social.network|title }}"
+                       class="hover:text-white">
+                        <i class="fab {{ social.icon }}"></i>
                     </a>
-
-                    <a href="https://linkedin.com/" class="hover:text-blue-400">
-                        <i class="fab fa-linkedin"></i>
-                    </a>
-
-                    <a href="https://x.com/" class="hover:text-sky-400">
-                        <i class="fab fa-x-twitter"></i>
-                    </a>
-
-                    <a href="https://instagram.com/" class="hover:text-pink-500">
-                        <i class="fab fa-instagram"></i>
-                    </a>
+                    {% endfor %}
 
                 </div>
+                {% endif %}
+
+                <a href="{{ cv_url }}"
+                   download
+                   class="mt-8 inline-flex items-center gap-3 px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">
+
+                    <i class="fa-solid fa-download"></i>
+
+                    Download CV
+
+                </a>
 
             </div>
 
@@ -1470,7 +2306,7 @@
 
             <p>
 
-                © {{ current_year }} Felix Odhiambo. All Rights Reserved.
+                © {{ current_year }} {{ owner_name }}. All Rights Reserved.
 
             </p>
 
@@ -1485,8 +2321,6 @@
     </div>
 
 </footer>
-
-</main>
 
 </div>
 

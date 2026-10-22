@@ -1,68 +1,144 @@
-{% extends 'header.html' %}
+{% extends "header.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Edit role | FelloMarley Foundation{% endblock %}
 
 {% block content %}
-        {% include "sidebar.html" %}
-{% load widget_tweaks %}
-{% load static %}
 
-<div class="flex flex-col sm:ml-64 h-screen">
+{% include "sidebar.html" %}
 
-    <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6">
-        <form action='' method='POST'>
-   {% csrf_token %}
-  <form action='' method='POST' enctype="multipart/form-data" class="bg-white shadow-md rounded-lg p-8 space-y-6">
-    <h2 class="text-3xl font-semibold mb-6">Update Job Application</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div class="sm:col-span-2">
-            <label class="block text-sm font-medium text-gray-700">title</label>
-            {% render_field form.title class="w-screen mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full title" %}
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
+
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
+
+        <!-- ================= FLASH ================= -->
+
+        {% if messages %}
+
+        <div class="mb-6 space-y-3">
+
+            {% for message in messages %}
+
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
+            </div>
+
+            {% endfor %}
+
         </div>
-        <div class="sm:col-span-2">
-            <label class="block text-sm font-medium text-gray-700">company</label>
-            {% render_field form.company class="w-screen mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter full applicants_name" %}
-        </div>
-        <div class="sm:col-span-2">
-            <label class="block text-sm font-medium text-gray-700">location</label>
-            {% render_field form.location class="w-screen mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" %}
-        </div>
-        <div class="sm:col-span-2">
-            <label class="block text-sm font-medium text-gray-700"> job_type</label>
-            {% render_field form.job_type class="w-screen mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" %}
-        </div>
-        <div class="sm:col-span-2">
-            <label class="block text-sm font-medium text-gray-700"> description</label>
-            {% render_field form.description class="w-screen mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" %}
-        </div>
-        <div class="sm:col-span-2">
-            <label class="block text-sm font-medium text-gray-700"> requirements</label>
-            {% render_field form.requirements class="w-screen mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" %}
-        </div>
-        <div class="sm:col-span-2">
-            <label class="block text-sm font-medium text-gray-700"> application_link</label>
-            {% render_field form.application_link class="w-screen mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" %}
-        </div>
-        <div class="sm:col-span-2">
-            <label class="block text-sm font-medium text-gray-700"> salary_range</label>
-            {% render_field form.salary_range class="w-screen mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" %}
-        </div>
-        <div class="sm:col-span-2">
-            <label class="block text-sm font-medium text-gray-700"> due_at</label>
-            {% render_field form.due_at class="w-screen mt-1 p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500" %}
-        </div>
-    </div>
-   <div class="mt-6 flex justify-center space-x-4">
-    <button type="submit" 
-            class="bg-yellow-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-yellow-500 transition duration-300 shadow-md">
-        ✅ Save Changes
-    </button>
-    <a href="{% url 'job_list' %}" 
-       class="text-white bg-gray-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-500 transition duration-300 shadow-md">
-       ❌ Cancel
-    </a>
+
+        {% endif %}
+
+        <!-- ================= HERO ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white shadow-2xl p-6 sm:p-10">
+
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1pt);background-size:60px 60px;"></div>
+
+            <div class="absolute -top-24 -right-16 w-96 h-96 bg-blue-400 rounded-full blur-3xl opacity-20"></div>
+
+            <div class="relative flex items-start justify-between gap-6 flex-wrap">
+
+                <div>
+
+                    <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                        <i class="fa-solid fa-pen"></i> Editing
+                    </p>
+
+                    <h1 class="mt-4 text-3xl sm:text-4xl font-black leading-tight break-words">{{ job.title }}</h1>
+
+                    <p class="mt-2 text-slate-300 text-sm">
+                        {{ job.company }} &middot; {{ job.job_type_label }} &middot; {{ job.applications_count }} applicant{{ job.applications_count|pluralize }}
+                    </p>
+
+                </div>
+
+                <a href="{% url 'job_posting' job.pk %}"
+                   class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                    <i class="fa-solid fa-arrow-left"></i> Back to the role
+                </a>
+
+            </div>
+
+        </section>
+
+        <!-- ================= FORM ================= -->
+
+        <section class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <div class="lg:col-span-2">
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <form method="POST" class="space-y-6">
+                        {% csrf_token %}
+
+                        {% include "_job_form_fields.html" %}
+
+                        <div class="pt-6 border-t border-slate-100 flex items-center gap-3 flex-wrap">
+
+                            <button type="submit"
+                                    class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-500 transition shadow-md">
+                                <i class="fa-solid fa-check"></i> Save changes
+                            </button>
+
+                            <a href="{% url 'job_posting' job.pk %}"
+                               class="px-6 py-3 rounded-xl bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 transition">
+                                Cancel
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            <aside class="space-y-5">
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Current state</h2>
+
+                    <div class="mt-4 space-y-3 text-sm">
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-600">Status</span>
+                            <span class="font-black text-slate-800">{{ job.status_label }}</span>
+                        </div>
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-600">Category</span>
+                            <span class="font-black text-slate-800">{{ job.category_label }}</span>
+                        </div>
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-600">Applicants</span>
+                            <span class="font-black text-slate-800">{{ job.applications_count }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Danger zone</h2>
+
+                    <p class="mt-3 text-sm text-slate-500">
+                        Deleting the role also removes the applications attached to it.
+                    </p>
+
+                    <a href="{% url 'delete_job' job.pk %}"
+                       class="mt-4 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-rose-50 text-rose-700 font-bold hover:bg-rose-100 transition">
+                        <i class="fa-solid fa-trash text-xs"></i> Delete the role
+                    </a>
+                </div>
+
+            </aside>
+
+        </section>
+
+    </main>
+
+    {% include "footer.html" %}
+
 </div>
-</main>
-</div>
- 
-{% include "footer.html" %}
-{% endblock content %}
+
+{% endblock %}

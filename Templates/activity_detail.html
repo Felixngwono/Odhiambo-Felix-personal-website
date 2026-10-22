@@ -1,48 +1,320 @@
 {% extends "header.html" %}
 
+{% block title %}{{ activity.title }} | Activities | FelloMarley Foundation{% endblock %}
+
 {% block content %}
+
 {% include "sidebar.html" %}
 
-<div class="flex flex-col sm:ml-64 h-screen">
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
 
-    <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6">
-{% for message in messages %}
-<p id="messages" class="font-semibold text-lg">{{ message }}</p>
-{% endfor %}
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
 
-<div class="flex justify-center">
-    <div class="max-w-4xl w-full bg-white shadow-lg rounded-lg p-8">
-        <h2 class="text-4xl font-bold text-center mb-6 text-gray-900">{{ activity.title }}</h2>
-        <p class="text-lg text-center mb-6 text-gray-500">{{ activity.description }}</p>
-        
-        <div class="text-lg text-gray-700 mb-6">
-            <strong>User:</strong> {{ activity.user }}
+        <!-- ================= FLASH ================= -->
+
+        {% if messages %}
+
+        <div class="mb-6 space-y-3">
+
+            {% for message in messages %}
+
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
+            </div>
+
+            {% endfor %}
+
         </div>
 
-        <div class="text-lg text-gray-700 mb-6">
-            <strong>Created At:</strong> {{ activity.created_at }}
-        </div>
-
-        <div class="text-lg text-gray-700 mb-6">
-            <strong>Updated At:</strong> {{ activity.updated_at }}
-        </div>
-
-        {% if request.user.is_superuser %}
-        <div class="mt-4 text-center flex justify-center space-x-4">
-            <a href="{% url 'update_activity' activity.id %}" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-500 transition-all shadow-md">
-                ✏️ Update 
-            </a>
-
-            <a href="{% url 'delete_activity' activity.id %}" class="inline-block bg-red-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-500 transition-all shadow-md">
-                🗑️ Delete 
-            </a>
-        </div>
         {% endif %}
-    </div>
+
+        <!-- ================= HERO ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-900 to-blue-900 text-white shadow-2xl p-6 sm:p-10">
+
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:60px 60px;"></div>
+
+            <div class="absolute -top-24 -right-16 w-96 h-96 bg-indigo-400 rounded-full blur-3xl opacity-20"></div>
+
+            <div class="relative flex items-start gap-6 flex-wrap">
+
+                <span class="w-16 h-16 shrink-0 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center">
+                    <i class="fa-solid
+                        {% if activity.type_slug == 'community' %}fa-people-group
+                        {% elif activity.type_slug == 'workshop' %}fa-screwdriver-wrench
+                        {% elif activity.type_slug == 'training' %}fa-graduation-cap
+                        {% elif activity.type_slug == 'meeting' %}fa-handshake
+                        {% elif activity.type_slug == 'fundraising' %}fa-hand-holding-heart
+                        {% else %}fa-shapes{% endif %} text-2xl"></i>
+                </span>
+
+                <div class="min-w-0 flex-1">
+
+                    <div class="flex items-center gap-2 flex-wrap">
+
+                        <span class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                            {{ activity.type_label }}
+                        </span>
+
+                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest
+                            {% if activity.status_slug == 'completed' %}bg-emerald-400/20 text-emerald-200
+                            {% elif activity.status_slug == 'ongoing' %}bg-blue-400/20 text-blue-200
+                            {% else %}bg-amber-400/20 text-amber-200{% endif %}">
+                            {{ activity.status_label }}
+                        </span>
+
+                    </div>
+
+                    <h1 class="mt-3 text-3xl sm:text-4xl font-black leading-tight break-words">
+                        {{ activity.title }}
+                    </h1>
+
+                    <div class="mt-4 flex items-center gap-2 flex-wrap text-xs font-semibold">
+                        <span class="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15">
+                            <i class="fa-regular fa-calendar mr-1.5"></i>
+                            {{ activity.created_at|date:"F j, Y" }}
+                        </span>
+                        {% if activity.location %}
+                        <span class="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15">
+                            <i class="fa-solid fa-location-dot mr-1.5"></i>
+                            {{ activity.location }}
+                        </span>
+                        {% endif %}
+                        {% if activity.participants %}
+                        <span class="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15">
+                            <i class="fa-solid fa-users mr-1.5"></i>
+                            {{ activity.participants }} attended
+                        </span>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+                <div class="flex items-center gap-3 flex-wrap">
+
+                    <a href="{% url 'activity_list' %}"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                        <i class="fa-solid fa-arrow-left"></i> All activities
+                    </a>
+
+                    {% if request.user.is_superuser %}
+                    <a href="{% url 'update_activity' activity.id %}"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white font-bold text-slate-900 hover:bg-slate-100 transition">
+                        <i class="fa-solid fa-pen"></i> Edit
+                    </a>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= BODY ================= -->
+
+        <div class="mt-6 grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+            <div class="xl:col-span-2 space-y-6">
+
+                <!-- Report -->
+
+                <section class="bg-white rounded-3xl shadow-md p-6 sm:p-10">
+
+                    <h2 class="text-lg font-bold text-slate-900">What happened</h2>
+
+                    <div class="mt-4 text-slate-700 leading-[1.9] text-[15px] space-y-5">
+                        {{ activity.description|linebreaks }}
+                    </div>
+
+                </section>
+
+                <!-- Author -->
+
+                <section class="bg-white rounded-3xl shadow-md p-6 sm:p-8 flex items-start gap-5 flex-wrap">
+
+                    {% if activity.author_avatar %}
+                    <img src="{{ activity.author_avatar }}" alt="{{ activity.author_name }}"
+                         class="w-14 h-14 rounded-2xl object-cover">
+                    {% else %}
+                    <span class="w-14 h-14 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-black">
+                        {{ activity.author_initials }}
+                    </span>
+                    {% endif %}
+
+                    <div class="min-w-0 flex-1">
+                        <p class="text-xs font-black uppercase tracking-widest text-slate-400">Logged by</p>
+                        <p class="mt-1 text-lg font-black text-slate-900">{{ activity.author_name }}</p>
+                        <p class="mt-1 text-sm text-slate-500">
+                            {{ activity.word_count }} words in this entry
+                        </p>
+                    </div>
+
+                    <a href="{% url 'activity_list' %}"
+                       class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 text-slate-700 text-sm font-bold hover:bg-slate-200 transition">
+                        <i class="fa-solid fa-clipboard-list"></i> Activity log
+                    </a>
+
+                </section>
+
+                <!-- Related -->
+
+                {% if related_activities %}
+
+                <section class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <h2 class="text-lg font-bold text-slate-900">Other activities</h2>
+                    <p class="text-sm text-slate-500 mt-1">More from the same log.</p>
+
+                    <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                        {% for item in related_activities %}
+
+                        <a href="{% url 'activity_detail' item.id %}"
+                           class="group rounded-2xl border border-slate-100 p-4 hover:border-indigo-200 hover:shadow-lg transition">
+
+                            <p class="text-[10px] font-black uppercase tracking-widest text-indigo-600">
+                                {{ item.type_label }}
+                            </p>
+
+                            <p class="mt-1 text-sm font-bold text-slate-800 leading-snug line-clamp-2 group-hover:text-indigo-600 transition">
+                                {{ item.title }}
+                            </p>
+
+                            <p class="mt-1.5 text-[11px] text-slate-400">
+                                {{ item.created_at|date:"M d, Y" }}
+                                {% if item.participants %}&middot; {{ item.participants }} attended{% endif %}
+                            </p>
+
+                        </a>
+
+                        {% endfor %}
+
+                    </div>
+
+                </section>
+
+                {% endif %}
+
+            </div>
+
+            <!-- ================= RAIL ================= -->
+
+            <aside class="space-y-5">
+
+                <!-- Facts -->
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Details</h2>
+
+                    <div class="mt-4 space-y-3 text-sm">
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-500">Type</span>
+                            <span class="font-black text-slate-800">{{ activity.type_label }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-500">Status</span>
+                            <span class="font-black text-slate-800">{{ activity.status_label }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-500">Participants</span>
+                            <span class="font-black text-slate-800">{{ activity.participants }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-500">Location</span>
+                            <span class="font-black text-slate-800">{{ activity.location|default:"—" }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-500">Logged</span>
+                            <span class="font-black text-slate-800">{{ activity.created_at|date:"M d, Y" }}</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Programme stats -->
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Programme to date</h2>
+
+                    <div class="mt-4 space-y-3 text-sm">
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-500">Activities logged</span>
+                            <span class="font-black text-slate-800">{{ activity_stats.total }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-500">Completed</span>
+                            <span class="font-black text-slate-800">{{ activity_stats.completed }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-500">In progress</span>
+                            <span class="font-black text-slate-800">{{ activity_stats.ongoing }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-500">Planned</span>
+                            <span class="font-black text-slate-800">{{ activity_stats.planned }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-500">Participants</span>
+                            <span class="font-black text-slate-800">{{ activity_stats.participants }}</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Admin -->
+
+                {% if request.user.is_superuser %}
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Manage entry</h2>
+
+                    <div class="mt-4 space-y-2">
+
+                        <a href="{% url 'update_activity' activity.id %}"
+                           class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-500 transition">
+                            <i class="fa-solid fa-pen"></i> Edit activity
+                        </a>
+
+                        <a href="{% url 'delete_activity' activity.id %}"
+                           class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-rose-50 text-rose-600 text-sm font-bold hover:bg-rose-100 transition">
+                            <i class="fa-solid fa-trash"></i> Delete activity
+                        </a>
+
+                        <a href="{% url 'activity_list' %}"
+                           class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-100 text-slate-700 text-sm font-bold hover:bg-slate-200 transition">
+                            <i class="fa-solid fa-clipboard-list"></i> Activity log
+                        </a>
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+            </aside>
+
+        </div>
+
+    </main>
+
+    {% include "footer.html" %}
+
 </div>
-</div>
-</main>
-{% include "footer.html" %}
 
 {% endblock %}

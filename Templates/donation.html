@@ -1,44 +1,368 @@
 {% extends "header.html" %}
 {% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Support the Foundation | FelloMarley Foundation{% endblock %}
+
 {% block content %}
-        {% include "sidebar.html" %}
 
+{% include "sidebar.html" %}
 
-<div class="flex flex-col sm:ml-64 h-screen">
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
 
-    <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6">    <h2 class="text-3xl font-bold text-center text-blue-600 mb-6">Make a Donation</h2>
-    
-    <!-- Display Messages -->
-    {% for message in messages %}
-        <p class="text-green-500 text-center font-bold">{{ message }}</p>
-    {% endfor %}
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
 
-    <form method="POST" class="max-w-lg mx-auto bg-white shadow-lg rounded-lg p-6">
-        {% csrf_token %}
+        <!-- ================= FLASH ================= -->
 
-        <label class="block font-semibold">Full Name</label>
-        <input type="text" name="name" class="w-full p-2 border rounded-lg" required>
+        {% if messages %}
 
-        <label class="block mt-4 font-semibold">Email</label>
-        <input type="email" name="email" class="w-full p-2 border rounded-lg" required>
+        <div class="mb-6 space-y-3">
 
-        <label class="block mt-4 font-semibold">Amount (USD)</label>
-        <input type="number" name="amount" class="w-full p-2 border rounded-lg" required>
+            {% for message in messages %}
 
-        <label class="block mt-4 font-semibold">Payment Method</label>
-        <select name="payment_method" class="w-full p-2 border rounded-lg">
-            <option value="mpesa">M-Pesa</option>
-            <option value="paypal">PayPal</option>
-            <option value="credit_card">Credit Card</option>
-            <option value="bank_transfer">Bank Transfer</option>
-        </select>
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
+            </div>
 
-        <button type="submit" class="mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg w-full">
-            <i class="fas fa-donate"></i> Donate Now
-        </button>
-    </form>
-</main>
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+        <!-- ================= HERO ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-emerald-900 to-teal-900 text-white shadow-2xl p-6 sm:p-10">
+
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:60px 60px;"></div>
+
+            <div class="absolute -top-24 -right-16 w-96 h-96 bg-emerald-400 rounded-full blur-3xl opacity-20"></div>
+
+            <div class="relative grid lg:grid-cols-3 gap-8 items-center">
+
+                <div class="lg:col-span-2">
+
+                    <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                        <i class="fa-solid fa-hand-holding-heart"></i> Give
+                    </p>
+
+                    <h1 class="mt-4 text-3xl sm:text-4xl font-black leading-tight">
+                        Every gift funds real work in the community
+                    </h1>
+
+                    <p class="mt-3 text-slate-300 max-w-2xl leading-relaxed">
+                        Your contribution pays for laptops in the classroom, servers for the
+                        lab and travel for students who would otherwise stay behind.
+                        Pick a cause, choose how you want to give, and we will send the
+                        details straight to your inbox.
+                    </p>
+
+                    <div class="mt-6 flex flex-wrap items-center gap-3">
+
+                        <a href="#give"
+                           class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 text-white font-bold hover:bg-emerald-400 transition shadow-lg">
+                            <i class="fa-solid fa-donate"></i> Make a donation
+                        </a>
+
+                        {% if request.user.is_authenticated %}
+                        <a href="{% url 'donations' %}"
+                           class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                            <i class="fa-solid fa-chart-line"></i> Manage donations
+                        </a>
+                        {% else %}
+                        <a href="{% url 'login' %}"
+                           class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                            <i class="fa-solid fa-right-to-bracket"></i> Sign in
+                        </a>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+
+                    <div class="rounded-2xl bg-white/10 border border-white/15 p-5">
+                        <p class="text-3xl font-black text-emerald-300">${{ donation_stats.total|floatformat:0 }}</p>
+                        <p class="mt-1 text-xs uppercase tracking-wider text-slate-300">Raised so far</p>
+                    </div>
+
+                    <div class="rounded-2xl bg-white/10 border border-white/15 p-5">
+                        <p class="text-3xl font-black text-emerald-300">{{ donation_stats.donors }}</p>
+                        <p class="mt-1 text-xs uppercase tracking-wider text-slate-300">Supporters</p>
+                    </div>
+
+                    <div class="rounded-2xl bg-white/10 border border-white/15 p-5">
+                        <p class="text-3xl font-black text-emerald-300">{{ donation_stats.count }}</p>
+                        <p class="mt-1 text-xs uppercase tracking-wider text-slate-300">Gifts received</p>
+                    </div>
+
+                    <div class="rounded-2xl bg-white/10 border border-white/15 p-5">
+                        <p class="text-3xl font-black text-emerald-300">${{ donation_stats.average|floatformat:0 }}</p>
+                        <p class="mt-1 text-xs uppercase tracking-wider text-slate-300">Average gift</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= MONTHLY TREND ================= -->
+
+        <section class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <div class="lg:col-span-2 bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                <div class="flex items-center justify-between gap-4 flex-wrap">
+                    <h2 class="text-lg font-black text-slate-800">Giving over the last six months</h2>
+                    <span class="text-xs font-bold uppercase tracking-widest text-emerald-600">
+                        ${{ donation_stats.month|floatformat:0 }} this month
+                    </span>
+                </div>
+
+                <div class="mt-6 flex items-end gap-3 sm:gap-5 h-52">
+
+                    {% for month in months %}
+
+                    <div class="flex-1 flex flex-col items-center justify-end gap-2 h-full">
+
+                        <span class="text-xs font-bold text-slate-500">${{ month.amount|floatformat:0 }}</span>
+
+                        <div class="w-full rounded-t-xl bg-gradient-to-t from-emerald-500 to-teal-400 transition"
+                             style="height: {{ month.percent|default:2 }}%"></div>
+
+                        <span class="text-xs font-semibold text-slate-500">{{ month.label }}</span>
+
+                    </div>
+
+                    {% empty %}
+
+                    <p class="w-full text-center text-sm text-slate-400 py-10">
+                        No gifts recorded yet — be the first.
+                    </p>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                <h2 class="text-lg font-black text-slate-800">Where the money goes</h2>
+
+                <div class="mt-6 space-y-5">
+
+                    {% for cause in causes %}
+                    <div>
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-sm font-bold text-slate-700">{{ cause.label }}</span>
+                            <span class="text-xs font-black text-emerald-600">${{ cause.amount|floatformat:0 }}</span>
+                        </div>
+                        <div class="mt-2 h-2.5 rounded-full bg-slate-100 overflow-hidden">
+                            <div class="h-full rounded-full bg-emerald-500" style="width: {{ cause.percent }}%"></div>
+                        </div>
+                        <p class="mt-1 text-xs text-slate-400">{{ cause.percent }}% of all giving</p>
+                    </div>
+                    {% empty %}
+                    <p class="text-sm text-slate-400">Causes appear once gifts start coming in.</p>
+                    {% endfor %}
+
+                </div>
+
+                <div class="mt-6 pt-6 border-t border-slate-100 grid grid-cols-2 gap-4 text-center">
+                    <div class="rounded-2xl bg-slate-50 py-4">
+                        <p class="text-xl font-black text-slate-800">${{ donation_stats.largest|floatformat:0 }}</p>
+                        <p class="text-[11px] uppercase tracking-wider text-slate-500 mt-1">Largest gift</p>
+                    </div>
+                    <div class="rounded-2xl bg-slate-50 py-4">
+                        <p class="text-xl font-black text-slate-800">{{ donation_stats.anonymous }}</p>
+                        <p class="text-[11px] uppercase tracking-wider text-slate-500 mt-1">Anonymous gifts</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= GIVE + METHODS ================= -->
+
+        <section id="give" class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6 scroll-mt-24">
+
+            <div class="lg:col-span-2 bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                <h2 class="text-2xl font-black text-slate-800">Make a donation</h2>
+
+                <p class="mt-2 text-sm text-slate-500">
+                    Tell us who you are and how much you would like to give. We confirm the
+                    payment and email your receipt.
+                </p>
+
+                <form method="POST" class="mt-6 space-y-6">
+                    {% csrf_token %}
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700" for="{{ form.name.id_for_label }}">Full name</label>
+                            {% render_field form.name class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900" %}
+                            {% if form.name.errors %}
+                            <p class="mt-1.5 text-xs font-semibold text-rose-600">{{ form.name.errors|join:", " }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700" for="{{ form.email.id_for_label }}">Email</label>
+                            {% render_field form.email class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900" %}
+                            {% if form.email.errors %}
+                            <p class="mt-1.5 text-xs font-semibold text-rose-600">{{ form.email.errors|join:", " }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700" for="{{ form.amount.id_for_label }}">Amount (USD)</label>
+                            {% render_field form.amount class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900" %}
+                            {% if form.amount.errors %}
+                            <p class="mt-1.5 text-xs font-semibold text-rose-600">{{ form.amount.errors|join:", " }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700" for="{{ form.purpose.id_for_label }}">Cause</label>
+                            {% render_field form.purpose class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900" %}
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-bold text-slate-700" for="{{ form.payment_method.id_for_label }}">Payment method</label>
+                            {% render_field form.payment_method class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900" %}
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-bold text-slate-700" for="{{ form.message.id_for_label }}">Message</label>
+                            {% render_field form.message class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 leading-relaxed" rows="4" %}
+                            <p class="mt-1.5 text-xs text-slate-400">Optional — add a note or dedicate this gift.</p>
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                {% render_field form.anonymous class="mt-1 h-5 w-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" %}
+                                <span>
+                                    <span class="block text-sm font-bold text-slate-700">Keep my name private</span>
+                                    <span class="block text-xs text-slate-400">Your gift is still counted, it is just listed as anonymous.</span>
+                                </span>
+                            </label>
+                        </div>
+
+                    </div>
+
+                    {% if form.non_field_errors %}
+                    <div class="rounded-2xl bg-rose-50 border border-rose-200 px-4 py-3 text-sm font-semibold text-rose-700">
+                        {{ form.non_field_errors|join:", " }}
+                    </div>
+                    {% endif %}
+
+                    <div class="pt-6 border-t border-slate-100 flex items-center gap-3 flex-wrap">
+
+                        <button type="submit"
+                                class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-500 transition shadow-md">
+                            <i class="fa-solid fa-donate"></i> Donate now
+                        </button>
+
+                        <p class="text-xs text-slate-400">
+                            <i class="fa-solid fa-lock"></i> Your details are never sold or shared.
+                        </p>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <aside class="space-y-5">
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Ways to give</h2>
+
+                    <ul class="mt-4 space-y-4 text-sm text-slate-600">
+
+                        <li class="flex items-start gap-3">
+                            <span class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-mobile-screen text-sm"></i>
+                            </span>
+                            <span>
+                                <span class="block font-bold text-slate-700">M-PESA</span>
+                                Select it and we send a payment prompt to your phone.
+                            </span>
+                        </li>
+
+                        <li class="flex items-start gap-3">
+                            <span class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
+                                <i class="fa-brands fa-paypal text-sm"></i>
+                            </span>
+                            <span>
+                                <span class="block font-bold text-slate-700">PayPal</span>
+                                You get a secure checkout link by email.
+                            </span>
+                        </li>
+
+                        <li class="flex items-start gap-3">
+                            <span class="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-building-columns text-sm"></i>
+                            </span>
+                            <span>
+                                <span class="block font-bold text-slate-700">Bank transfer</span>
+                                Account details arrive with your confirmation email.
+                            </span>
+                        </li>
+
+                        <li class="flex items-start gap-3">
+                            <span class="w-9 h-9 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center shrink-0">
+                                <i class="fa-brands fa-bitcoin text-sm"></i>
+                            </span>
+                            <span>
+                                <span class="block font-bold text-slate-700">Cryptocurrency</span>
+                                Wallet address is shared once you confirm.
+                            </span>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+                <div class="bg-gradient-to-br from-slate-900 to-emerald-900 text-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-emerald-300">Recent gifts</h2>
+
+                    <div class="mt-4 space-y-3">
+
+                        {% for gift in recent_donations %}
+                        <div class="flex items-center gap-3">
+                            <span class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-xs font-black">
+                                {{ gift.initials }}
+                            </span>
+                            <span class="min-w-0">
+                                <span class="block text-sm font-bold truncate">{{ gift.donor_display }}</span>
+                                <span class="block text-xs text-slate-400">{{ gift.purpose_label }}</span>
+                            </span>
+                            <span class="ml-auto text-sm font-black text-emerald-300">${{ gift.amount|floatformat:0 }}</span>
+                        </div>
+                        {% empty %}
+                        <p class="text-sm text-slate-400">No gifts yet. Yours would be the first.</p>
+                        {% endfor %}
+
+                    </div>
+                </div>
+
+            </aside>
+
+        </section>
+
+    </main>
+
+    {% include "footer.html" %}
+
 </div>
-{% include "footer.html" %}
+
 {% endblock %}

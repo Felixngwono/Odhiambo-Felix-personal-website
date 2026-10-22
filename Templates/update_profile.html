@@ -6,10 +6,10 @@
 <!-- Error Messages -->
 {% if form.errors %}
 
-<div class="flex flex-col sm:ml-64 h-screen">
+<div class="flex flex-col sm:ml-64 min-h-screen">
 
     <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6">
+    <main class="flex-1 pt-20 p-6">
           <div class="rounded bg-red-100 border border-red-400 text-red-700 p-4">
       <ul class="list-disc pl-5 space-y-1">
         {% for field in form %}

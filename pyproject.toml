@@ -1,0 +1,48 @@
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+exclude = [
+    "*/migrations/*",
+    "staticfiles",
+    "media",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle
+    "F",   # pyflakes
+    "W",   # warnings
+    "I",   # import sorting
+    "B",   # bugbear
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",    # line length is handled by the formatter
+    "B008",    # function calls in defaults are fine in Django views
+    "B905",    # zip() over parallel chart series is intentional
+    "UP008",   # super() style is not worth the churn here
+]
+
+[tool.ruff.lint.per-file-ignores]
+"StoryTeller/views.py" = ["E402", "F401"]
+"StoryTeller/urls.py" = ["E501", "F401"]
+"StoryTeller/migrations/*" = ["E501"]
+
+[tool.coverage.run]
+branch = true
+source = ["StoryTeller"]
+omit = [
+    "*/migrations/*",
+    "*/tests.py",
+    "*/test_*.py",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+fail_under = 55
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+]

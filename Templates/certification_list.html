@@ -1,57 +1,371 @@
-{% extends 'header.html' %}
+{% extends "header.html" %}
+{% load static %}
+
+{% block title %}Certifications | FelloMarley Foundation{% endblock %}
+
 {% block content %}
-        {% include "sidebar.html" %}
 
+{% include "sidebar.html" %}
 
-<div class="flex flex-col sm:ml-64 h-screen">
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
 
-    <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6">    <div class="container mx-auto p-6 bg-white shadow-md rounded-lg">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">🎓 Certifications</h1>
-            {% if request.user.is_superuser %}
-                <a href="{% url 'certification_add' %}" class="bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-500 transition-all">
-                    ➕ Add Certification
-                </a>
-            {% endif %}
-        </div>
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {% for certification in certifications %}
-                <div class="bg-gray-100 p-6 rounded-lg shadow-md hover:shadow-lg transition-all">
-                    <a href="{% url 'certification_detail' certification.id %}">
+        <!-- ================= FLASH ================= -->
 
-                    {% if certification.certificate_image %}
-                    <img src="{{ certification.certificate_image.url }}" alt="{{ certification.title }}" class="w-48 h-48 rounded-full mx-auto mt-4">
-                    {% else %}
-                    <p class="text-gray-500 mt-4">No image available</p>
-                    {% endif %}
-                    <h2 class="text-xl font-semibold text-blue-600">
-                        <a href="{% url 'certification_detail' certification.pk %}">
-                            {{ certification.title }}
-                        </a>
-                    </h2>
-                    <p class="text-gray-700 font-medium">{{ certification.issuing_organization }}</p>
-                    <span class="text-sm text-gray-500 block mb-4">📅 {{ certification.date_issued }}</span>
-                </a>
-                    {% if request.user.is_superuser %}
-                        <div class="flex justify-between mt-4">
-                            <a href="{% url 'certification_update' certification.id %}" class="bg-green-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-500 transition-all">
-                                ✏️ Edit
-                            </a>
-                            <a href="{% url 'certification_delete' certification.pk %}" class="bg-red-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-500 transition-all">
-                                🗑️ Delete
-                            </a>
-                        </div>
-                    {% endif %}
-                </div>
-            {% empty %}
-                <p class="text-gray-600">No certifications available yet.</p>
+        {% if messages %}
+
+        <div class="mb-6 space-y-3">
+
+            {% for message in messages %}
+
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
+            </div>
+
             {% endfor %}
+
         </div>
-    </div>
-</main>
+
+        {% endif %}
+
+        <!-- ================= HERO ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white shadow-2xl p-6 sm:p-10">
+
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:60px 60px;"></div>
+
+            <div class="absolute -top-24 -right-16 w-96 h-96 bg-blue-400 rounded-full blur-3xl opacity-20"></div>
+
+            <div class="relative flex items-start justify-between gap-6 flex-wrap">
+
+                <div>
+
+                    <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                        <i class="fa-solid fa-certificate"></i> Credential wallet
+                    </p>
+
+                    <h1 class="mt-4 text-3xl sm:text-4xl font-black leading-tight">Certifications</h1>
+
+                    <p class="mt-3 text-slate-300 max-w-2xl leading-relaxed">
+                        Every certificate, licence and credential on file, with the issuing
+                        body, the level and whether it is still valid.
+                    </p>
+
+                </div>
+                {% if request.user.is_superuser %}
+
+                <a href="{% url 'certification_add' %}"
+                   class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-500 text-white font-bold hover:bg-blue-400 transition shadow-lg">
+                    <i class="fa-solid fa-plus"></i> Add certification
+                </a>
+                {% endif %}
+
+            </div>
+
+        </section>
+
+        <!-- ================= STATS ================= -->
+
+        <section class="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+
+            <div class="bg-white rounded-3xl shadow-md p-5">
+                <span class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
+                    <i class="fa-solid fa-certificate"></i>
+                </span>
+                <p class="mt-4 text-2xl font-black text-slate-800">{{ certification_stats.total }}</p>
+                <p class="text-xs uppercase tracking-wider text-slate-400 mt-1">Credentials</p>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-md p-5">
+                <span class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                    <i class="fa-solid fa-circle-check"></i>
+                </span>
+                <p class="mt-4 text-2xl font-black text-slate-800">{{ certification_stats.active }}</p>
+                <p class="text-xs uppercase tracking-wider text-slate-400 mt-1">Still valid</p>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-md p-5">
+                <span class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
+                    <i class="fa-regular fa-hourglass"></i>
+                </span>
+                <p class="mt-4 text-2xl font-black text-slate-800">{{ certification_stats.expiring }}</p>
+                <p class="text-xs uppercase tracking-wider text-slate-400 mt-1">Expiring soon</p>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-md p-5">
+                <span class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
+                    <i class="fa-solid fa-building"></i>
+                </span>
+                <p class="mt-4 text-2xl font-black text-slate-800">{{ certification_stats.organizations }}</p>
+                <p class="text-xs uppercase tracking-wider text-slate-400 mt-1">Issuing bodies</p>
+            </div>
+
+        </section>
+
+        <!-- ================= FILTERS ================= -->
+
+        <section class="mt-6 bg-white rounded-3xl shadow-md p-5 sm:p-6">
+
+            <form method="GET" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
+
+                <div class="xl:col-span-2">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-400" for="cert-search">Search</label>
+                    <input type="search" name="q" id="cert-search" value="{{ certification_query }}"
+                           placeholder="Title, issuer or skill"
+                           class="w-full mt-1.5 px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-400" for="cert-level">Level</label>
+                    <select name="level" id="cert-level"
+                            class="w-full mt-1.5 px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 text-sm">
+                        <option value="">All levels</option>
+                        {% for level in certification_levels %}
+                        <option value="{{ level.slug }}" {% if certification_level == level.slug %}selected{% endif %}>{{ level.label }} ({{ level.count }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-400" for="cert-org">Issuer</label>
+                    <select name="org" id="cert-org"
+                            class="w-full mt-1.5 px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 text-sm">
+                        <option value="">All issuers</option>
+                        {% for org in certification_organizations %}
+                        <option value="{{ org.name }}" {% if certification_org == org.name %}selected{% endif %}>{{ org.name }} ({{ org.count }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-400" for="cert-year">Year</label>
+                    <select name="year" id="cert-year"
+                            class="w-full mt-1.5 px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 text-sm">
+                        <option value="">All years</option>
+                        {% for year in certification_years %}
+                        <option value="{{ year.year }}" {% if certification_year == year.year|stringformat:'s' %}selected{% endif %}>{{ year.year }} ({{ year.count }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="sm:col-span-2 xl:col-span-5 flex items-center gap-3 flex-wrap pt-1">
+
+                    <button type="submit"
+                            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-500 transition">
+                        <i class="fa-solid fa-filter"></i> Apply filters
+                    </button>
+
+                    <a href="{% url 'certification_list' %}"
+                       class="px-5 py-2.5 rounded-xl bg-slate-100 text-slate-600 text-sm font-bold hover:bg-slate-200 transition">
+                        Reset
+                    </a>
+
+                    <span class="text-xs font-semibold text-slate-400">
+                        {{ certifications|length }} credential{{ certifications|length|pluralize }} shown
+                        {% if certification_stats.expired %}<span class="ml-2 text-rose-600">{{ certification_stats.expired }} expired</span>{% endif %}
+                    </span>
+
+                </div>
+
+            </form>
+
+        </section>
+
+        <!-- ================= CREDENTIALS ================= -->
+
+        <section class="mt-6 grid grid-cols-1 xl:grid-cols-4 gap-6">
+
+            <div class="xl:col-span-3">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                    {% for certification in certifications %}
+
+                    <article class="bg-white rounded-3xl shadow-md p-5 sm:p-6 hover:shadow-xl transition flex flex-col">
+
+                        <div class="flex items-start gap-4">
+
+                            {% if certification.certificate_image %}
+                            <img src="{{ certification.certificate_image.url }}" alt="{{ certification.title }}"
+                                 class="w-16 h-16 rounded-2xl object-cover border border-slate-100 shrink-0">
+                            {% else %}
+                            <span class="w-16 h-16 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-certificate text-xl"></i>
+                            </span>
+                            {% endif %}
+
+                            <div class="min-w-0 flex-1">
+
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg
+                                        {% if certification.status_slug == 'active' %}bg-emerald-100 text-emerald-700
+                                        {% elif certification.status_slug == 'expiring' %}bg-amber-100 text-amber-700
+                                        {% else %}bg-rose-100 text-rose-700{% endif %}">
+                                        {{ certification.status_label }}
+                                    </span>
+                                    <span class="text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded-lg">
+                                        {{ certification.level_label }}
+                                    </span>
+                                </div>
+
+                                <a href="{% url 'certification_detail' certification.pk %}"
+                                   class="mt-2 block text-lg font-black text-slate-800 hover:text-blue-700 leading-snug">
+                                    {{ certification.title }}
+                                </a>
+
+                                <p class="mt-1 text-sm text-slate-500">
+                                    {{ certification.issuing_organization }}
+                                    &middot; issued {{ certification.date_issued|date:"M Y" }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        {% if certification.description %}
+                        <p class="mt-4 text-sm text-slate-600 leading-relaxed line-clamp-2">{{ certification.description }}</p>
+                        {% endif %}
+
+                        {% if certification.skill_list %}
+                        <div class="mt-3 flex flex-wrap gap-1.5">
+                            {% for skill in certification.skill_list|slice:":4" %}
+                            <span class="text-[11px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-lg">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        {% if certification.days_to_expiry is not None %}
+                        <p class="mt-3 text-[11px] font-bold {% if certification.is_expired %}text-rose-600{% else %}text-amber-600{% endif %}">
+                            <i class="fa-regular fa-hourglass"></i>
+                            {% if certification.is_expired %}
+                                Expired {{ certification.expiry_date|date:"d M Y" }}
+                            {% else %}
+                                Expires {{ certification.expiry_date|date:"d M Y" }} ({{ certification.days_to_expiry }} days left)
+                            {% endif %}
+                        </p>
+                        {% endif %}
+
+                        <div class="mt-auto pt-5 flex items-center justify-between gap-3 border-t border-slate-100 mt-5">
+
+                            <div class="flex items-center gap-2 text-[11px] text-slate-400">
+                                {% if certification.credential_url %}
+                                <a href="{{ certification.credential_url }}" target="_blank"
+                                   class="inline-flex items-center gap-1.5 font-bold text-blue-600 hover:text-blue-700">
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Verify
+                                </a>
+                                {% endif %}
+                                {% if certification.certificate_pdf %}
+                                <a href="{{ certification.certificate_pdf.url }}" download
+                                   class="inline-flex items-center gap-1.5 font-bold text-slate-600 hover:text-slate-800">
+                                    <i class="fa-solid fa-download text-[10px]"></i> PDF
+                                </a>
+                                {% endif %}
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <a href="{% url 'certification_detail' certification.pk %}"
+                                   class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold hover:bg-slate-200 transition">
+                                    View
+                                </a>
+                                {% if request.user.is_superuser %}
+                                <a href="{% url 'certification_update' certification.pk %}"
+                                   title="Edit certification"
+                                   class="w-9 h-9 rounded-xl bg-slate-100 text-slate-600 hover:bg-indigo-100 hover:text-indigo-700 flex items-center justify-center transition">
+                                    <i class="fa-solid fa-pen text-[10px]"></i>
+                                </a>
+                                <a href="{% url 'certification_delete' certification.pk %}"
+                                   title="Delete certification"
+                                   class="w-9 h-9 rounded-xl bg-slate-100 text-slate-600 hover:bg-rose-100 hover:text-rose-700 flex items-center justify-center transition">
+                                    <i class="fa-solid fa-trash text-[10px]"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                    {% empty %}
+
+                    <div class="md:col-span-2 bg-white rounded-3xl shadow-md p-12 text-center">
+                        <span class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+                            <i class="fa-solid fa-certificate text-xl"></i>
+                        </span>
+                        <p class="mt-4 font-bold text-slate-700">No credentials match these filters</p>
+                        <p class="text-sm text-slate-400 mt-1">Clear the filters or add a new certificate.</p>
+                        {% if request.user.is_superuser %}
+                        <a href="{% url 'certification_add' %}"
+                           class="inline-flex items-center gap-2 mt-5 px-5 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-500 transition">
+                            <i class="fa-solid fa-plus"></i> Add certification
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            <!-- ================= SIDE PANELS ================= -->
+
+            <aside class="space-y-5">
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">By level</h2>
+
+                    <div class="mt-4 space-y-3">
+                        {% for level in certification_levels %}
+                        <div>
+                            <div class="flex items-center justify-between gap-3">
+                                <a href="?level={{ level.slug }}" class="text-sm font-bold text-slate-700 hover:text-blue-700">{{ level.label }}</a>
+                                <span class="text-xs font-black text-slate-500">{{ level.count }}</span>
+                            </div>
+                            <div class="mt-1.5 h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                                <div class="h-full rounded-full bg-indigo-500" style="width: {{ level.percent }}%"></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Issuing bodies</h2>
+
+                    <ul class="mt-4 space-y-3 text-sm">
+                        {% for org in certification_organizations %}
+                        <li class="flex items-center justify-between gap-3">
+                            <a href="?org={{ org.name|urlencode }}" class="text-slate-600 hover:text-blue-700 truncate">{{ org.name }}</a>
+                            <span class="font-black text-slate-800">{{ org.count }}</span>
+                        </li>
+                        {% empty %}
+                        <li class="text-sm text-slate-400">No issuers recorded yet.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Skills covered</h2>
+
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        {% for skill in certification_skills %}
+                        <span class="text-[11px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg">{{ skill.name }} &middot; {{ skill.count }}</span>
+                        {% empty %}
+                        <p class="text-sm text-slate-400">No skills recorded yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </aside>
+
+        </section>
+
+    </main>
+
+    {% include "footer.html" %}
+
 </div>
 
-{% include "footer.html" %}
 {% endblock %}

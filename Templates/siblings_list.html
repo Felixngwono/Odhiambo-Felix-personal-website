@@ -1,69 +1,358 @@
 {% extends "header.html" %}
 
+{% block title %}Family | FelloMarley Foundation{% endblock %}
+
 {% block content %}
-        {% include "sidebar.html" %}
 
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-<div class="flex flex-col sm:ml-64 h-screen">
+<style>
+    [x-cloak] { display: none !important; }
+</style>
 
-    <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6">
-    <!-- Flash Messages -->
-    <div class="text-green-600 p-4 mb-6 w-1/2 text-center mx-auto">
-        {% for message in messages %}
-            <p id="messages" class="font-semibold text-lg">{{ message }}</p>
-        {% endfor %}
-    </div>
+{% include "sidebar.html" %}
 
-        <!-- Title -->
-        <div class="text-center mb-6">
-            <h2 class="text-3xl font-bold text-gray-800">👨‍👩‍👧‍👦 Meet Our Family</h2>
-            <p class="text-gray-600 mt-2">Click on each name to learn more about my family.</p>
-        </div>
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
 
-        <!-- Family Members Grid -->
-        <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {% for sibling in siblings %}
-            <div class="bg-gray-50 p-6 rounded-lg shadow-lg text-center transition-transform transform hover:scale-105">
-                <!-- Profile Picture -->
-                {% if sibling.profile_picture %}
-              <a href='{{sibling.profile_picture.url}}'>  <img src="{{ sibling.profile_picture.url }}" alt="{{ sibling.name }}" 
-                     class="w-32 h-32 rounded-full mx-auto border-4 border-green-500 shadow-md"></a>
-                {% else %}
-                <div class="w-32 h-32 rounded-full mx-auto bg-gray-300 flex items-center justify-center text-gray-500">
-                    No Image
-                </div>
-                {% endif %}
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
 
-                <!-- Name & Description -->
-                <h4 class="text-lg font-semibold text-gray-800 mt-4">{{ sibling.name }}</h4>
-                <p class="text-gray-600 mt-2">{{ sibling.short_description }}</p>
-               
-                <!-- Read More Button -->
-                <a href="{% url 'sibling_detail' sibling.id %}" 
-                   class="text-blue-600 font-medium hover:underline mt-4 block">
-                   🔍 Read More
-                </a>
+        <!-- ================= FLASH ================= -->
+
+        {% if messages %}
+
+        <div class="mb-6 space-y-3">
+
+            {% for message in messages %}
+
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
             </div>
+
             {% endfor %}
+
         </div>
 
-        <!-- Action Buttons -->
-        <div class="text-center mt-8 space-x-4">
-            {% if user.is_superuser %}
-            <a href="{% url 'add_family' %}" 
-               class="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-500 transition duration-300 shadow-md">
-               ➕ Add Family
-            </a>
+        {% endif %}
+
+        <!-- ================= HERO ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-amber-900 to-orange-900 text-white shadow-2xl p-6 sm:p-10">
+
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:60px 60px;"></div>
+
+            <div class="absolute -bottom-24 right-0 w-96 h-96 bg-amber-400 rounded-full blur-3xl opacity-20"></div>
+
+            <div class="relative grid lg:grid-cols-3 gap-8 items-center">
+
+                <div class="lg:col-span-2">
+
+                    <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-amber-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                        <i class="fa-solid fa-people-group"></i> The household
+                    </p>
+
+                    <h1 class="mt-4 text-3xl sm:text-5xl font-black leading-tight">
+                        The people who<br class="hidden sm:block"> made this possible.
+                    </h1>
+
+                    <p class="mt-4 text-slate-300 max-w-2xl leading-relaxed">
+                        Growth is rarely solo. This is the household behind FelloMarley — the
+                        people who shared the room, the laptop, the quiet and the encouragement
+                        that kept the work moving.
+                    </p>
+
+                    <div class="mt-7 flex flex-wrap gap-3">
+
+                        <a href="#members"
+                           class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white font-bold text-slate-900 hover:bg-slate-100 transition">
+                            <i class="fa-solid fa-arrow-down"></i> Meet everyone
+                        </a>
+
+                        <a href="{% url 'about' %}"
+                           class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                            <i class="fa-solid fa-circle-info"></i> The full story
+                        </a>
+
+                        {% if request.user.is_superuser %}
+                        <a href="{% url 'add_family' %}"
+                           class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                            <i class="fa-solid fa-plus"></i> Add a member
+                        </a>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                <!-- Hero stats -->
+
+                <div class="grid grid-cols-2 gap-3">
+
+                    <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                        <p class="text-3xl font-black">{{ family_stats.total }}</p>
+                        <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">Members</p>
+                    </div>
+
+                    <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                        <p class="text-3xl font-black">{{ family_stats.photos }}</p>
+                        <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">Photos</p>
+                    </div>
+
+                    <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                        <p class="text-3xl font-black">{{ family_stats.occupations }}</p>
+                        <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">Professions</p>
+                    </div>
+
+                    <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                        <p class="text-3xl font-black">
+                            {% if family_stats.youngest %}{{ family_stats.youngest }}&ndash;{{ family_stats.oldest }}{% else %}&mdash;{% endif %}
+                        </p>
+                        <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">Age range</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= MEMBERS ================= -->
+
+        <section id="members"
+                 class="mt-6 bg-white rounded-3xl shadow-md p-6 sm:p-8"
+                 x-data="{ q: '', role: 'all', count: 0 }"
+                 x-effect="count = Array.from($refs.grid.querySelectorAll('[data-card]')).filter(el => el.style.display !== 'none').length">
+
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+
+                <div>
+
+                    <h2 class="text-xl font-bold text-slate-900">Family members</h2>
+
+                    <p class="text-sm text-slate-500 mt-1">
+                        Open any profile for the long version, photos and the small details.
+                    </p>
+
+                </div>
+
+                <div class="relative w-full lg:w-80">
+
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+
+                    <input type="search"
+                           x-model="q"
+                           placeholder="Search names, roles..."
+                           class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 outline-none text-sm">
+
+                </div>
+
+            </div>
+
+            <!-- Role filters -->
+
+            {% if family_occupations %}
+
+            <div class="mt-6 flex flex-wrap items-center gap-2">
+
+                <button type="button"
+                        @click="role = 'all'"
+                        :class="role === 'all' ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-100 text-slate-700 border-transparent hover:bg-slate-200'"
+                        class="px-4 py-2 rounded-xl text-sm font-semibold border transition">
+                    Everyone <span class="opacity-70">({{ family_stats.total }})</span>
+                </button>
+
+                {% for occupation in family_occupations %}
+
+                <button type="button"
+                        @click="role = '{{ occupation.name }}'"
+                        :class="role === '{{ occupation.name }}' ? 'bg-amber-600 text-white border-amber-600' : 'bg-slate-100 text-slate-700 border-transparent hover:bg-slate-200'"
+                        class="px-4 py-2 rounded-xl text-sm font-semibold border transition">
+                    {{ occupation.name }} <span class="opacity-70">({{ occupation.count }})</span>
+                </button>
+
+                {% endfor %}
+
+            </div>
+
             {% endif %}
 
-            <a href="{% url 'about' %}" 
-               class="bg-gray-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-500 transition duration-300 shadow-md">
-               ⬅️ Go Back
-            </a>
-        </div>
+            <!-- Cards -->
+
+            <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6" x-ref="grid">
+
+                {% for sibling in siblings %}
+
+                <article class="group flex flex-col bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-amber-200 transition duration-300 overflow-hidden"
+                         data-card
+                         data-role="{{ sibling.occupation|default:'Unlisted' }}"
+                         data-search="{{ sibling.name }} {{ sibling.occupation }} {{ sibling.short_description }}"
+                         x-show="(role === 'all' || role === $el.dataset.role) && $el.dataset.search.toLowerCase().includes(q.toLowerCase())">
+
+                    <!-- Photo -->
+
+                    <div class="relative h-64 bg-slate-100 overflow-hidden">
+
+                        {% if sibling.profile_picture %}
+                        <img src="{{ sibling.profile_picture.url }}"
+                             alt="{{ sibling.name }}"
+                             class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-100 to-orange-100">
+                            <span class="text-5xl font-black text-amber-600/70">{{ sibling.initials }}</span>
+                        </div>
+                        {% endif %}
+
+                        {% if sibling.image_count %}
+                        <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur text-white text-[11px] font-bold">
+                            <i class="fa-solid fa-images"></i> {{ sibling.image_count }}
+                        </span>
+                        {% endif %}
+
+                        {% if sibling.occupation %}
+                        <span class="absolute bottom-3 left-3 px-3 py-1 rounded-full bg-white/90 backdrop-blur text-amber-800 text-[11px] font-bold uppercase tracking-wider">
+                            {{ sibling.occupation }}
+                        </span>
+                        {% endif %}
+
+                    </div>
+
+                    <!-- Body -->
+
+                    <div class="p-6 flex flex-col flex-1">
+
+                        <h3 class="text-lg font-bold text-slate-900">{{ sibling.name }}</h3>
+
+                        <p class="mt-1 text-xs text-slate-500 flex items-center gap-2">
+                            {% if sibling.age_display %}
+                            <span><i class="fa-solid fa-cake-candles text-slate-400 mr-1"></i>{{ sibling.age_display }} years</span>
+                            <span class="text-slate-300">|</span>
+                            {% endif %}
+                            <span class="truncate">{{ sibling.occupation|default:"Occupation not listed" }}</span>
+                        </p>
+
+                        <p class="mt-3 text-sm text-slate-600 leading-relaxed line-clamp-3">
+                            {{ sibling.excerpt|default:"No summary recorded yet." }}
+                        </p>
+
+                        <div class="mt-5 pt-4 border-t border-slate-100 flex items-center gap-2 mt-auto">
+
+                            <a href="{% url 'sibling_detail' sibling.id %}"
+                               class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-600 text-white text-xs font-bold hover:bg-amber-700 transition">
+                                Full profile <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </a>
+
+                            {% if sibling.birthdate %}
+                            <span class="px-3 py-2.5 rounded-xl bg-slate-100 text-slate-600 text-[11px] font-semibold">
+                                <i class="fa-regular fa-calendar mr-1"></i>{{ sibling.birthdate|date:"M Y" }}
+                            </span>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+                {% empty %}
+
+                <div class="col-span-full text-center py-16">
+                    <i class="fa-solid fa-people-group text-5xl text-slate-300 mb-4"></i>
+                    <p class="text-lg font-semibold text-slate-600">No family profiles yet</p>
+                    <p class="text-sm text-slate-400 mt-2">Profiles will appear here once they are added.</p>
+                </div>
+
+                {% endfor %}
+
+                <!-- No-match state -->
+
+                <div x-show="count === 0 && family_stats.total > 0"
+                     x-cloak
+                     class="col-span-full text-center py-16">
+                    <i class="fa-solid fa-filter-circle-xmark text-5xl text-slate-300 mb-4"></i>
+                    <p class="text-lg font-semibold text-slate-600">No one matches that filter</p>
+                    <p class="text-sm text-slate-400 mt-2">Try another keyword or pick a different profession.</p>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= PROFESSIONS ================= -->
+
+        {% if family_occupations %}
+
+        <section class="mt-6 grid lg:grid-cols-3 gap-5">
+
+            <div class="lg:col-span-2 bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                <div class="flex items-center gap-3">
+
+                    <span class="w-11 h-11 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
+                        <i class="fa-solid fa-briefcase"></i>
+                    </span>
+
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">Paths in the family</h2>
+                        <p class="text-sm text-slate-500">Every profession in the household, and how many are practising it.</p>
+                    </div>
+
+                </div>
+
+                <div class="mt-6 grid sm:grid-cols-2 gap-4">
+
+                    {% for occupation in family_occupations %}
+
+                    <div class="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                        <span class="w-11 h-11 shrink-0 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
+                            <i class="fa-solid fa-user"></i>
+                        </span>
+                        <div class="min-w-0 flex-1">
+                            <p class="font-bold text-slate-800 truncate">{{ occupation.name }}</p>
+                            <p class="text-xs text-slate-500">{{ occupation.count }} member{{ occupation.count|pluralize }}</p>
+                        </div>
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            <!-- CTA -->
+
+            <div class="rounded-3xl bg-gradient-to-br from-amber-600 to-orange-700 text-white shadow-xl p-6 sm:p-8 flex flex-col">
+
+                <span class="w-12 h-12 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center">
+                    <i class="fa-solid fa-house-chimney text-xl"></i>
+                </span>
+
+                <h2 class="mt-4 text-xl font-black">Support the household</h2>
+
+                <p class="mt-2 text-amber-50 text-sm leading-relaxed">
+                    Every project here was funded, hosted and fed by the people on this page.
+                    A small contribution keeps the lights on.
+                </p>
+
+                <a href="{% url 'donate' %}"
+                   class="mt-5 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white text-amber-700 font-bold hover:bg-amber-50 transition">
+                    <i class="fa-solid fa-hand-holding-heart"></i> Donate
+                </a>
+
+                <a href="{% url 'contactus' %}"
+                   class="mt-2 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white/15 hover:bg-white/25 border border-white/25 font-semibold transition">
+                    <i class="fa-solid fa-paper-plane"></i> Say hello
+                </a>
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
     </main>
+
+    {% include "footer.html" %}
+
 </div>
 
-{% include "footer.html" %}
 {% endblock %}

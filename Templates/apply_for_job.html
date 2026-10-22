@@ -1,50 +1,175 @@
-{% extends 'header.html' %}
+{% extends "header.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Apply for {{ job.title }} | FelloMarley Foundation{% endblock %}
 
 {% block content %}
-        {% include "sidebar.html" %}
-{% load widget_tweaks %}
-{% load static %}
 
-<div class="flex flex-col sm:ml-64 h-screen">
+{% include "sidebar.html" %}
 
-    <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6">
-    <!-- Displaying messages -->
-    {% for message in messages %}
-        <div class="bg-white shadow-lg rounded-lg p-5 mb-6 flex items-center justify-between space-x-4">
-            <p id="messages" class="text-lg font-medium text-green-600">{{ message }}</p>
-            <svg class="w-6 h-6 text-green-600 cursor-pointer hover:text-green-800" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M6 9l6 6 6-6" />
-            </svg>
-        </div>
-    {% endfor %}
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
 
-    <!-- Job Details Section -->
-    <div class="bg-white shadow-lg rounded-lg p-8 mb-8">
-        <h1 class="text-3xl font-semibold text-gray-800 mb-4">Apply for {{ job.title }}</h1>
-        <p class="text-lg text-gray-600 mb-6">{{ job.description }}</p>
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
 
-        <!-- Job Application Form -->
-        <form method="POST" enctype="multipart/form-data" class="space-y-6">
-            {% csrf_token %}
-            
-            <!-- Render Form Fields -->
-            <div class="space-y-4">
-                {{ form.as_p }}
+        <!-- ================= FLASH ================= -->
+
+        {% if messages %}
+
+        <div class="mb-6 space-y-3">
+
+            {% for message in messages %}
+
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
             </div>
 
-            <!-- Submit Button -->
-            <button type="submit" class="w-full py-3 bg-blue-600 text-white text-lg font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                Submit Application
-            </button>
-        </form>
+            {% endfor %}
 
-        <br>
-        <!-- Back to Job Listings -->
-        <a href="{% url 'job_list' %}" class="text-blue-600 hover:text-blue-800">Back to job listings</a>
-    </div>
-</main>
+        </div>
+
+        {% endif %}
+
+        <!-- ================= HERO ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white shadow-2xl p-6 sm:p-10">
+
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1pt);background-size:60px 60px;"></div>
+
+            <div class="absolute -top-24 -right-16 w-96 h-96 bg-blue-400 rounded-full blur-3xl opacity-20"></div>
+
+            <div class="relative">
+
+                <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                    <i class="fa-solid fa-paper-plane"></i> Apply
+                </p>
+
+                <h1 class="mt-4 text-3xl sm:text-4xl font-black leading-tight break-words">{{ job.title }}</h1>
+
+                <p class="mt-3 text-slate-300 text-sm">
+                    {{ job.company }}{% if job.location %} &middot; {{ job.location }}{% endif %}
+                    &middot; {{ job.job_type_label }}
+                </p>
+
+                <a href="{% url 'job_posting' job.pk %}"
+                   class="mt-5 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                    <i class="fa-solid fa-arrow-left"></i> Back to the role
+                </a>
+
+            </div>
+
+        </section>
+
+        <!-- ================= FORM ================= -->
+
+        <section class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <div class="lg:col-span-2">
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <h2 class="text-lg font-black text-slate-800">Your application</h2>
+
+                    <p class="mt-2 text-sm text-slate-500">
+                        Attach a resume and, if you have one, a cover letter. We will get back
+                        to you either way.
+                    </p>
+
+                    <form method="POST" enctype="multipart/form-data" class="mt-6 space-y-6">
+                        {% csrf_token %}
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700" for="{{ form.applicant_name.id_for_label }}">Full name</label>
+                                {% render_field form.applicant_name class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900" %}
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700" for="{{ form.job.id_for_label }}">Role</label>
+                                {% render_field form.job class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900" %}
+                            </div>
+
+                            <div class="sm:col-span-2">
+                                <label class="block text-sm font-bold text-slate-700" for="{{ form.resume.id_for_label }}">Resume</label>
+                                {% render_field form.resume class="w-full mt-1.5 p-3 border border-slate-200 rounded-xl bg-slate-50 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %}
+                                <p class="mt-1.5 text-xs text-slate-400">PDF or Word.</p>
+                            </div>
+
+                            <div class="sm:col-span-2">
+                                <label class="block text-sm font-bold text-slate-700" for="{{ form.cover_letter.id_for_label }}">Cover letter</label>
+                                {% render_field form.cover_letter class="w-full mt-1.5 p-3 border border-slate-200 rounded-xl bg-slate-50 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %}
+                                <p class="mt-1.5 text-xs text-slate-400">Optional, but it helps us get to know you.</p>
+                            </div>
+
+                        </div>
+
+                        {% if form.non_field_errors %}
+                        <div class="rounded-2xl bg-rose-50 border border-rose-200 px-4 py-3 text-sm font-semibold text-rose-700">
+                            {{ form.non_field_errors|join:", " }}
+                        </div>
+                        {% endif %}
+
+                        <div class="pt-6 border-t border-slate-100 flex items-center gap-3 flex-wrap">
+
+                            <button type="submit"
+                                    class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-500 transition shadow-md">
+                                <i class="fa-solid fa-paper-plane"></i> Send application
+                            </button>
+
+                            <a href="{% url 'job_list' %}"
+                               class="px-6 py-3 rounded-xl bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 transition">
+                                Cancel
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            <!-- ================= SIDE NOTES ================= -->
+
+            <aside class="space-y-5">
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">The role</h2>
+
+                    <p class="mt-4 text-sm text-slate-600 leading-relaxed line-clamp-6">{{ job.description }}</p>
+
+                    {% if job.skill_list %}
+                    <div class="mt-4 flex flex-wrap gap-1.5">
+                        {% for skill in job.skill_list|slice:":5" %}
+                        <span class="text-[11px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-lg">{{ skill }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="mt-5 pt-4 border-t border-slate-100 space-y-2 text-xs text-slate-500">
+                        <p class="flex items-center justify-between gap-3">
+                            <span>Applicants so far</span>
+                            <span class="font-black text-slate-700">{{ job.applications_count }}</span>
+                        </p>
+                        {% if job.due_at %}
+                        <p class="flex items-center justify-between gap-3">
+                            <span>Closes</span>
+                            <span class="font-black text-slate-700">{{ job.due_at|date:"d M Y" }}</span>
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </aside>
+
+        </section>
+
+    </main>
+
+    {% include "footer.html" %}
+
 </div>
 
-{% include "footer.html" %}
-{% endblock content %}
+{% endblock %}

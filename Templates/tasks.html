@@ -1,89 +1,384 @@
 {% extends "header.html" %}
-{% block content %}
 {% load static %}
+{% load widget_tweaks %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Tasks</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
+{% block title %}Task board | FelloMarley Foundation{% endblock %}
 
-        <!-- Sidebar -->
-        {% include "sidebar.html" %}
-        
-        <!-- Main Content -->
+{% block content %}
 
-<div class="flex flex-col sm:ml-64 h-screen">
+{% include "sidebar.html" %}
 
-    <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6">
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
 
-            <div class="w-full h-full max-w-full">
-                <!-- Page Title -->
-                <h1 class="text-4xl font-extrabold text-gray-900 text-center mb-4">Task Management</h1>
-                <p class="text-lg text-gray-700 text-center mb-8">Track and manage your tasks efficiently.</p>
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
 
-                <!-- Task List -->
-                <div class="bg-white p-6 rounded-lg shadow-lg">
-                    <h2 class="text-2xl font-semibold mb-4 text-gray-900">Your Tasks</h2>
-                    <ul class="space-y-3 text-gray-800">
-                        <li class="text-lg">✅ Task 1: Complete the project report</li>
-                        <li class="text-lg">✅ Task 2: Review meeting notes</li>
-                        <li class="text-lg">✅ Task 3: Prepare presentation slides</li>
-                    </ul>
+        <!-- ================= FLASH ================= -->
+
+        {% if messages %}
+
+        <div class="mb-6 space-y-3">
+
+            {% for message in messages %}
+
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% elif message.tags == 'info' %}bg-indigo-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+        <!-- ================= HERO ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-900 to-blue-900 text-white shadow-2xl p-6 sm:p-10">
+
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:60px 60px;"></div>
+
+            <div class="absolute -top-24 -right-16 w-96 h-96 bg-indigo-400 rounded-full blur-3xl opacity-20"></div>
+
+            <div class="relative flex items-start justify-between gap-6 flex-wrap">
+
+                <div>
+
+                    <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                        <i class="fa-solid fa-list-check"></i> Workbench
+                    </p>
+
+                    <h1 class="mt-4 text-3xl sm:text-4xl font-black leading-tight">Task board</h1>
+
+                    <p class="mt-3 text-slate-300 max-w-2xl leading-relaxed">
+                        Everything the foundation is working on, from the first idea to the
+                        finished piece. Move a task, set a due date and watch the
+                        workload stay honest.
+                    </p>
+
+                </div>
+                {% if request.user.is_superuser %}
+                <div class="flex flex-wrap items-center gap-3">
+
+                    <a href="{% url 'add_task' %}"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-indigo-500 text-white font-bold hover:bg-indigo-400 transition shadow-lg">
+                        <i class="fa-solid fa-plus"></i> New task
+                    </a>
+
+                </div>
+                {% endif %}
+
+            </div>
+
+        </section>
+
+        <!-- ================= STATS ================= -->
+
+        <section class="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+
+            <div class="bg-white rounded-3xl shadow-md p-5">
+                <span class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                    <i class="fa-solid fa-list-check"></i>
+                </span>
+                <p class="mt-4 text-2xl font-black text-slate-800">{{ task_stats.open }}</p>
+                <p class="text-xs uppercase tracking-wider text-slate-400 mt-1">Open tasks</p>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-md p-5">
+                <span class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                    <i class="fa-solid fa-circle-check"></i>
+                </span>
+                <p class="mt-4 text-2xl font-black text-slate-800">{{ task_stats.completed }}</p>
+                <p class="text-xs uppercase tracking-wider text-slate-400 mt-1">Completed</p>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-md p-5">
+                <span class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </span>
+                <p class="mt-4 text-2xl font-black {% if task_stats.overdue %}text-rose-600{% else %}text-slate-800{% endif %}">{{ task_stats.overdue }}</p>
+                <p class="text-xs uppercase tracking-wider text-slate-400 mt-1">Overdue</p>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-md p-5">
+                <span class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
+                    <i class="fa-solid fa-gauge-high"></i>
+                </span>
+                <p class="mt-4 text-2xl font-black text-slate-800">{{ task_stats.completion_rate }}%</p>
+                <p class="text-xs uppercase tracking-wider text-slate-400 mt-1">Completion rate</p>
+            </div>
+
+        </section>
+
+        <!-- ================= FILTERS ================= -->
+
+        <section class="mt-6 bg-white rounded-3xl shadow-md p-5 sm:p-6">
+
+            <form method="GET" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
+
+                <div class="xl:col-span-2">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-400" for="task-search">Search</label>
+                    <input type="search" name="q" id="task-search" value="{{ task_query }}"
+                           placeholder="Title, description, notes or assignee"
+                           class="w-full mt-1.5 px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm">
                 </div>
 
-                <!-- Dynamic Task Section -->
-                <section class="mt-12">
-                    <h2 class="text-3xl font-bold text-gray-900 text-center mb-6">My Tasks</h2>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {% for x in tasking %}
-                        <div class="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition-transform hover:scale-105">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-400" for="task-status">Status</label>
+                    <select name="status" id="task-status"
+                            class="w-full mt-1.5 px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm">
+                        <option value="">All statuses</option>
+                        {% for status in task_statuses %}
+                        <option value="{{ status.slug }}" {% if task_status == status.slug %}selected{% endif %}>{{ status.label }} ({{ status.count }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-400" for="task-priority">Priority</label>
+                    <select name="priority" id="task-priority"
+                            class="w-full mt-1.5 px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm">
+                        <option value="">All priorities</option>
+                        {% for priority in task_priorities %}
+                        <option value="{{ priority.slug }}" {% if task_priority == priority.slug %}selected{% endif %}>{{ priority.label }} ({{ priority.count }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-400" for="task-sort">Sort</label>
+                    <select name="sort" id="task-sort"
+                            class="w-full mt-1.5 px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm">
+                        {% for value, label in task_sort_options %}
+                        <option value="{{ value }}" {% if task_sort == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="sm:col-span-2 xl:col-span-5 flex items-center gap-3 flex-wrap pt-1">
+
+                    <button type="submit"
+                            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-500 transition">
+                        <i class="fa-solid fa-filter"></i> Apply filters
+                    </button>
+
+                    <a href="{% url 'tasks' %}"
+                       class="px-5 py-2.5 rounded-xl bg-slate-100 text-slate-600 text-sm font-bold hover:bg-slate-200 transition">
+                        Reset
+                    </a>
+
+                    <span class="text-xs font-semibold text-slate-400">
+                        {{ tasks|length }} task{{ tasks|length|pluralize }} shown
+                        {% if task_stats.unassigned %}<span class="ml-2 text-amber-600">{{ task_stats.unassigned }} unassigned</span>{% endif %}
+                    </span>
+
+                </div>
+
+            </form>
+
+        </section>
+
+        <!-- ================= BOARD ================= -->
+
+        <section class="mt-6 grid grid-cols-1 xl:grid-cols-4 gap-5">
+
+            {% for column in task_columns %}
+
+            <div class="bg-white rounded-3xl shadow-md p-4 flex flex-col">
+
+                <div class="flex items-center justify-between gap-3 px-1">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full
+                            {% if column.accent == 'indigo' %}bg-indigo-500
+                            {% elif column.accent == 'rose' %}bg-rose-500
+                            {% elif column.accent == 'emerald' %}bg-emerald-500
+                            {% else %}bg-slate-400{% endif %}"></span>
+                        <h2 class="text-sm font-black uppercase tracking-widest text-slate-600">{{ column.label }}</h2>
+                    </div>
+                    <span class="text-xs font-black text-slate-400 bg-slate-100 px-2 py-0.5 rounded-lg">{{ column.count }}</span>
+                </div>
+
+                <div class="mt-4 space-y-3 flex-1">
+
+                    {% for task in column.items %}
+
+                    <article class="rounded-2xl border border-slate-100 bg-slate-50/60 p-4 hover:border-indigo-200 hover:bg-white hover:shadow-md transition">
+
+                        <div class="flex items-start justify-between gap-3">
+
+                            <a href="{% url 'task_details' task.pk %}" class="font-bold text-slate-800 hover:text-indigo-700 leading-snug">
+                                {{ task.title }}
+                            </a>
+
+                            <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg shrink-0
+                                {% if task.priority_slug == 'urgent' %}bg-rose-100 text-rose-700
+                                {% elif task.priority_slug == 'high' %}bg-orange-100 text-orange-700
+                                {% elif task.priority_slug == 'medium' %}bg-amber-100 text-amber-700
+                                {% else %}bg-slate-200 text-slate-600{% endif %}">
+                                {{ task.priority_label }}
+                            </span>
+
+                        </div>
+
+                        <p class="mt-2 text-xs text-slate-500 line-clamp-2">{{ task.description }}</p>
+
+                        <div class="mt-3">
+                            <div class="flex items-center justify-between text-[11px] font-bold text-slate-400">
+                                <span>Progress</span>
+                                <span>{{ task.progress }}%</span>
+                            </div>
+                            <div class="mt-1 h-1.5 rounded-full bg-slate-200 overflow-hidden">
+                                <div class="h-full rounded-full {% if task.completed %}bg-emerald-500{% elif task.status_slug == 'blocked' %}bg-rose-500{% else %}bg-indigo-500{% endif %}"
+                                     style="width: {{ task.progress }}%"></div>
+                            </div>
+                        </div>
+
+                        <div class="mt-3 flex items-center justify-between gap-2 text-[11px]">
+
+                            <span class="flex items-center gap-1.5 {% if task.is_overdue %}text-rose-600 font-bold{% else %}text-slate-500{% endif %}">
+                                <i class="fa-regular fa-clock"></i>
+                                {% if task.completed %}
+                                    Done {{ task.completed_at|date:"d M" }}
+                                {% elif task.is_overdue %}
+                                    Overdue
+                                {% elif task.days_left == 0 %}
+                                    Due today
+                                {% elif task.days_left == 1 %}
+                                    Due tomorrow
+                                {% else %}
+                                    {{ task.due_date|date:"d M Y" }}
+                                {% endif %}
+                            </span>
+
+                            <span class="flex items-center gap-1.5 text-slate-500">
+                                <span class="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-[9px] font-black">
+                                    {{ task.assignee_initials }}
+                                </span>
+                            </span>
+
+                        </div>
+                        {% if request.user.is_superuser %}
+
+                        <div class="mt-3 flex items-center gap-2">
+
+                            <form method="POST" action="{% url 'toggle_task' task.pk %}">
+                                {% csrf_token %}
+                                <button type="submit"
+                                        class="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition
+                                        {% if task.completed %}bg-slate-100 text-slate-600 hover:bg-slate-200{% else %}bg-emerald-500 text-white hover:bg-emerald-400{% endif %}">
+                                    <i class="fa-solid {% if task.completed %}fa-rotate-left{% else %}fa-check{% endif %} text-[10px]"></i>
+                                    {% if task.completed %}Reopen{% else %}Mark done{% endif %}
+                                </button>
+                            </form>
                             
-                            <a href="{% url 'task_details' x.id %}">
-                                <h3 class="text-2xl font-semibold text-gray-900 mb-2">📌 {{ x.title }}</h3>
-                                <p class="text-gray-700 mb-3"><strong>Description:</strong> {{ x.description }}</p>
-                                
-                                <div class="text-gray-700">
-                                    <p><strong>Created:</strong> {{ x.created_at }}</p>
-                                    <p><strong>Due Date:</strong> {{ x.due_date }}</p>
-                                    <p><strong>Completed:</strong> {{ x.completed }}</p>
-                                    <p><strong>Completed At:</strong> {{ x.completed_at }}</p>
-                                    <p><strong>Assigned To:</strong> {{ x.assigned_to }}</p>
-                                    <p><strong>Created By:</strong> {{ x.created_by }}</p>
-                                </div>
+
+                            <a href="{% url 'update_task' task.pk %}"
+                               class="w-9 h-9 rounded-xl bg-slate-100 text-slate-600 hover:bg-indigo-100 hover:text-indigo-700 flex items-center justify-center transition"
+                               title="Edit task">
+                                <i class="fa-solid fa-pen text-[10px]"></i>
                             </a>
                             
-                            <!-- Update Button for Superuser -->
-                            {% if request.user.is_superuser %}
-                            <div class="mt-4 text-center">
-                                <a href="{% url 'update_task' x.id %}" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-500 transition-all shadow-md">
-                                    ✏️ Update
-                                </a>
-                            </div>
-                            {% endif %}
-                        </div>
-                        {% empty %}
-                        <p class="text-gray-600">No tasks available.</p>
-                        {% endfor %}
-                    </div>
 
-                    <!-- Add Task Button -->
-                    <div class="mt-10 text-center">
-                        <a href="{% url 'add_task' %}" class="inline-block bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-500 transition-all shadow-md">
-                            ➕ Add Task
-                        </a>
-                    </div>
-                </section>
+                        </div>
+                        {% endif %}
+
+                    </article>
+
+                    {% empty %}
+
+                    <p class="text-xs text-slate-400 text-center py-8">Nothing here yet.</p>
+
+                    {% endfor %}
+
+                </div>
+
             </div>
-        </div>
+
+            {% endfor %}
+
+        </section>
+
+        <!-- ================= SIDE PANELS ================= -->
+
+        <section class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+            <div class="bg-white rounded-3xl shadow-md p-6">
+                <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Next deadlines</h2>
+
+                <ul class="mt-4 space-y-3">
+
+                    {% for task in task_upcoming %}
+                    <li class="flex items-start gap-3">
+                        <span class="w-2 h-2 mt-2 rounded-full {% if task.is_overdue %}bg-rose-500{% elif task.days_left == 0 %}bg-amber-500{% else %}bg-indigo-500{% endif %} shrink-0"></span>
+                        <span class="min-w-0">
+                            <a href="{% url 'task_details' task.pk %}" class="block text-sm font-bold text-slate-700 hover:text-indigo-700 truncate">{{ task.title }}</a>
+                            <span class="block text-xs {% if task.is_overdue %}text-rose-600 font-bold{% else %}text-slate-400{% endif %}">
+                                {{ task.due_date|date:"D d M Y" }}
+                            </span>
+                        </span>
+                    </li>
+                    {% empty %}
+                    <li class="text-sm text-slate-400">Nothing due in the next seven days.</li>
+                    {% endfor %}
+
+                </ul>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-md p-6">
+                <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Workload</h2>
+
+                <ul class="mt-4 space-y-3 text-sm">
+
+                    {% for person in task_assignees %}
+                    <li class="flex items-center justify-between gap-3">
+                        <span class="text-slate-600 truncate">{{ person.name }}</span>
+                        <span class="font-black text-slate-800">{{ person.count }}</span>
+                    </li>
+                    {% empty %}
+                    <li class="text-slate-400">No tasks yet.</li>
+                    {% endfor %}
+
+                </ul>
+
+                <p class="mt-4 pt-4 border-t border-slate-100 text-xs text-slate-400">
+                    {{ task_stats.hours|floatformat:1 }} hours estimated &middot;
+                    {{ task_stats.hours_open|floatformat:1 }} still open
+                </p>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-md p-6">
+                <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Categories</h2>
+
+                <div class="mt-4 space-y-3">
+
+                    {% for category in task_categories %}
+                    <div>
+                        <div class="flex items-center justify-between gap-3">
+                            <a href="?category={{ category.slug }}" class="text-sm font-bold text-slate-700 hover:text-indigo-700">{{ category.label }}</a>
+                            <span class="text-xs font-black text-slate-500">{{ category.count }}</span>
+                        </div>
+                        <div class="mt-1.5 h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                            <div class="h-full rounded-full bg-indigo-500" style="width: {{ category.percent }}%"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+                {% if task_tags %}
+                <div class="mt-5 pt-4 border-t border-slate-100 flex flex-wrap gap-2">
+                    {% for tag in task_tags %}
+                    <span class="text-[11px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg">{{ tag.name }} &middot; {{ tag.count }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+        </section>
+
     </main>
-    </div>
 
     {% include "footer.html" %}
 
+</div>
 
 {% endblock %}

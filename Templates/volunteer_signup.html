@@ -1,68 +1,171 @@
-{% extends 'header.html' %}
+{% extends "header.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Sign up as a volunteer | FelloMarley Foundation{% endblock %}
 
 {% block content %}
-        {% include "sidebar.html" %}
-{% load widget_tweaks %}
-{% load static %}
 
+{% include "sidebar.html" %}
 
-<div class="flex flex-col sm:ml-64 h-screen">
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
 
-    <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6">
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
+
+        <!-- ================= FLASH ================= -->
+
+        {% if messages %}
+
+        <div class="mb-6 space-y-3">
+
             {% for message in messages %}
-        <p id="messages" class="font-semibold text-lg text-green-500 bg-white shadow-md p-3 rounded-lg text-center mb-4">{{ message }}</p>
-    {% endfor %}
-    
-    <div class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
-        <h2 class="text-2xl font-semibold text-gray-700 mb-4 text-center">Become a Volunteer</h2>
-        <p class="text-gray-600 text-center mb-6">Join us in making a difference by volunteering your time and skills. Fill out the form below.</p>
-        
-        <form method="POST" enctype="multipart/form-data" class="space-y-4">
-            {% csrf_token %}
-            
-            <div class="space-y-2">
-                <label class="block text-gray-700 font-medium">Full Name</label>
-                {%  render_field form.full_name class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" %}
-            </div>
-            <div class="space-y-2">
-                <label class="block text-gray-700 font-medium">availability</label>
-                {%  render_field form.availability class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" %}
+
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
             </div>
 
-            <div class="space-y-2">
-                <label class="block text-gray-700 font-medium">Email</label>
-                {% render_field form.email class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" %}
-            </div>
-            
-            <div class="space-y-2">
-                <label class="block text-gray-700 font-medium">Phone Number</label>
-                {% render_field form.phone class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" %}
-            </div>
-            <div class="space-y-2">
-                <label class="block text-gray-700 font-medium">User</label>
-                {%  render_field form.user class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" %}
-            </div>
-            <div class="space-y-2">
-                <label class="block text-gray-700 font-medium">skills</label>
-                {%  render_field form.skills class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" %}
-            </div>
-            
-            <div class="space-y-2">
-                <label class="block text-gray-700 font-medium">Upload Resume (Optional)</label>
-                {% render_field form.resume class="w-full px-4 py-2 border rounded-lg" %}
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+        <!-- ================= HERO ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-teal-900 to-emerald-900 text-white shadow-2xl p-6 sm:p-10">
+
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:60px 60px;"></div>
+
+            <div class="absolute -top-24 -right-16 w-96 h-96 bg-teal-400 rounded-full blur-3xl opacity-20"></div>
+
+            <div class="relative flex items-start justify-between gap-6 flex-wrap">
+
+                <div>
+
+                    <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-teal-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                        <i class="fa-solid fa-hands-holding-circle"></i> Join the team
+                    </p>
+
+                    <h1 class="mt-4 text-3xl sm:text-4xl font-black leading-tight">Sign up as a volunteer</h1>
+
+                    <p class="mt-3 text-slate-300 max-w-2xl leading-relaxed">
+                        Tell us what you can do and when you are free. We will match you with
+                        work that actually needs doing.
+                    </p>
+
+                </div>
+
+                <a href="{% url 'volunteer_list' %}"
+                   class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                    <i class="fa-solid fa-arrow-left"></i> Back to the roster
+                </a>
+
             </div>
 
-            <div class="space-y-2">
-                <label class="block text-gray-700 font-medium">Why do you want to volunteer?</label>
-                {% render_field form.reason class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" %}
+        </section>
+
+        <!-- ================= FORM ================= -->
+
+        <section class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <div class="lg:col-span-2">
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                        {% csrf_token %}
+
+                        {% include "_volunteer_form_fields.html" %}
+
+                        <div class="pt-6 border-t border-slate-100 flex items-center gap-3 flex-wrap">
+
+                            <button type="submit"
+                                    class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-teal-600 text-white font-bold hover:bg-teal-500 transition shadow-md">
+                                <i class="fa-solid fa-check"></i> Send application
+                            </button>
+
+                            <a href="{% url 'volunteer_list' %}"
+                               class="px-6 py-3 rounded-xl bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 transition">
+                                Cancel
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
             </div>
-            
-            <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition">Submit</button>
-        </form>
-    </div>
-</main>
+
+            <!-- ================= SIDE NOTES ================= -->
+
+            <aside class="space-y-5">
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">What happens next</h2>
+
+                    <ul class="mt-4 space-y-3 text-sm text-slate-600">
+
+                        <li class="flex items-start gap-3">
+                            <span class="w-8 h-8 rounded-lg bg-teal-100 text-teal-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-inbox text-xs"></i>
+                            </span>
+                            Your application lands on the roster as <span class="font-bold">Applied</span>.
+                        </li>
+
+                        <li class="flex items-start gap-3">
+                            <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-comments text-xs"></i>
+                            </span>
+                            A short conversation about what you enjoy doing.
+                        </li>
+
+                        <li class="flex items-start gap-3">
+                            <span class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-flag text-xs"></i>
+                            </span>
+                            You join a project and the status becomes <span class="font-bold">Active</span>.
+                        </li>
+
+                    </ul>
+
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">On the roster</h2>
+
+                    <div class="mt-4 space-y-3 text-sm">
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-600">Volunteers</span>
+                            <span class="font-black text-slate-800">{{ volunteer_stats.total }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-600">Active</span>
+                            <span class="font-black text-slate-800">{{ volunteer_stats.active }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-600">Hours a week</span>
+                            <span class="font-black text-slate-800">{{ volunteer_stats.hours }}</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </aside>
+
+        </section>
+
+    </main>
+
+    {% include "footer.html" %}
+
 </div>
 
-{% include "footer.html" %}
 {% endblock %}

@@ -1,80 +1,385 @@
 {% extends "header.html" %}
+
+{% block title %}{{ event.title }} | FelloMarley Foundation{% endblock %}
+
 {% block content %}
-        {% include "sidebar.html" %}
 
+{% include "sidebar.html" %}
 
-<div class="flex flex-col sm:ml-64 h-screen">
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
 
-    <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6">    <div class="container ">
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
 
-        <!-- Event Image -->
-        {% if event.image %}
-        <div class="w-full h-80 rounded-lg overflow-hidden shadow-lg bg-gray-300">
-           <a href='{{ event.image.url }}' >  <img src="{{ event.image.url }}" alt="{{ event.title }}" class="w-full h-full object-cover"></a>
-        </div>
-        {% endif %}
+        <!-- ================= FLASH ================= -->
 
-        <!-- Event Details -->
-        <div class="bg-white dark:bg-gray-900 shadow-lg rounded-lg p-8 mt-6">
-            <h2 class="text-4xl font-bold text-gray-800 dark:text-white text-center mb-6">{{ event.title }}</h2>
-            <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed text-center mb-6">{{ event.description }}</p>
+        {% if messages %}
 
-            <div class="grid grid-cols-2 gap-6 text-gray-800 dark:text-gray-300 text-lg">
-                <p><span class="font-semibold text-blue-500">📅 Date:</span> {{ event.date }}</p>
-                <p><span class="font-semibold text-blue-500">👤 Host:</span> {{ event.host }}</p>
-                <p><span class="font-semibold text-blue-500">🎟 Guests:</span> {{ event.guests }}</p>
-                <p><span class="font-semibold text-blue-500">📌 Category:</span> {{ event.category }}</p>
-                <p class="col-span-2"><span class="font-semibold text-blue-500">📍 Location:</span> {{ event.location }}</p>
+        <div class="mb-6 space-y-3">
+
+            {% for message in messages %}
+
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
             </div>
-            {% if event.video %}
-            <video controls class="w-full h-auto mt-4">
-                <source src="{{ event.video.url }}" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-        {% else %}
-            <p class="text-gray-500 mt-4">No video available</p>
+
+            {% endfor %}
+
+        </div>
+
         {% endif %}
-        </div>
 
-        <!-- Admin Response Section -->
-        <div class="bg-gray-50 dark:bg-gray-800 shadow-lg rounded-lg p-8 mt-6">
-            <h3 class="text-2xl font-bold text-gray-700 dark:text-white mb-4">Admin Response</h3>
-            
-            <form method="POST" action="{% url 'send_event_response' event.id %}">
-                {% csrf_token %}
-                <label class="block text-gray-700 dark:text-gray-300 font-bold mb-2">Response Message:</label>
-                <textarea name="response_message" rows="4" required 
-                          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:text-white"></textarea>
+        <!-- ================= BREADCRUMB ================= -->
 
-                <button type="submit" 
-                        class="mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg transition shadow-md">
-                    Send Response via SMS
-                </button>
-            </form>
-        </div>
+        <nav class="flex items-center gap-2 text-sm text-slate-500 mb-5">
+            <a href="{% url 'events' %}" class="hover:text-blue-600 font-medium transition">
+                Events
+            </a>
+            <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
+            <span class="text-slate-700 font-semibold truncate">{{ event.title }}</span>
+        </nav>
 
-        {% if request.user.is_superuser %}
-        <div class="mt-4 space-x-2">
-            <a href="{% url 'update_event' event.id %}" 
-               class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-500 transition duration-300 shadow-md">
-                ✏️ Update 
-            </a>
-            <a href="{% url 'delete_event' event.id %}" 
-               class="bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-500 transition duration-300 shadow-md">
-                🗑️ Delete
-            </a>
-        </div>
-        {% endif %}
-        <!-- Back to Home Button -->
-        <div class="mt-8 flex justify-center">
-            <a href="{% url 'events' %}" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg transition duration-300 shadow-md flex items-center gap-2">
-                <i class="fa-solid fa-arrow-left"></i> Back to Home
-            </a>
-        </div>
-    </div>
-</main>
+        <!-- ================= HERO ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-slate-900 shadow-2xl">
+
+            {% if event.image %}
+            <img src="{{ event.image.url }}"
+                 alt="{{ event.title }}"
+                 class="w-full h-72 sm:h-96 object-cover opacity-60">
+            {% endif %}
+
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-900/30"></div>
+
+            <div class="relative p-6 sm:p-10">
+
+                <div class="flex flex-wrap items-center gap-2">
+
+                    <span class="px-3 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur text-[11px] font-bold uppercase tracking-wider text-white">
+                        {{ event.category.name|default:"Uncategorised" }}
+                    </span>
+
+                    {% if event.is_upcoming %}
+                    <span class="px-3 py-1.5 rounded-full bg-emerald-500 text-[11px] font-bold uppercase tracking-wider text-white">
+                        Upcoming
+                    </span>
+                    {% else %}
+                    <span class="px-3 py-1.5 rounded-full bg-slate-700/80 text-[11px] font-bold uppercase tracking-wider text-white">
+                        Concluded
+                    </span>
+                    {% endif %}
+
+                </div>
+
+                <h1 class="mt-4 text-3xl sm:text-5xl font-black text-white max-w-4xl leading-tight">
+                    {{ event.title }}
+                </h1>
+
+                <p class="mt-3 text-slate-300 max-w-3xl leading-relaxed">
+                    {{ event.description }}
+                </p>
+
+                <div class="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-300">
+
+                    <span class="flex items-center gap-2">
+                        <i class="fa-regular fa-clock text-cyan-400"></i>
+                        {{ event.schedule_label }}
+                    </span>
+
+                    <span class="flex items-center gap-2">
+                        <i class="fa-solid fa-location-dot text-cyan-400"></i>
+                        {{ event.location.name|default:"To be announced" }}
+                    </span>
+
+                    {% if event.host %}
+                    <span class="flex items-center gap-2">
+                        <i class="fa-solid fa-user text-cyan-400"></i>
+                        {{ event.host.name|default:event.host.username }}
+                    </span>
+                    {% endif %}
+
+                </div>
+
+                <!-- Admin actions -->
+
+                {% if request.user.is_superuser %}
+
+                <div class="mt-7 flex flex-wrap gap-2">
+
+                    <a href="{% url 'admin_event_view' event.id %}"
+                       class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-slate-900 text-xs font-bold hover:bg-slate-100 transition">
+                        <i class="fa-solid fa-comment-dots"></i> Send a response
+                    </a>
+
+                    <a href="{% url 'update_event' event.id %}"
+                       class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold transition">
+                        <i class="fa-solid fa-pen"></i> Edit
+                    </a>
+
+                    <a href="{% url 'delete_event' event.id %}"
+                       class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-rose-500/90 hover:bg-rose-500 text-white text-xs font-bold transition">
+                        <i class="fa-solid fa-trash"></i> Delete
+                    </a>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+        <!-- ================= DETAIL GRID ================= -->
+
+        <section class="mt-6 grid lg:grid-cols-3 gap-5">
+
+            <!-- Main column -->
+
+            <div class="lg:col-span-2 space-y-5">
+
+                <!-- Facts -->
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <h2 class="text-lg font-bold text-slate-900">Event details</h2>
+
+                    <dl class="mt-6 grid sm:grid-cols-2 gap-5">
+
+                        <div class="flex items-start gap-3">
+                            <span class="w-11 h-11 shrink-0 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center">
+                                <i class="fa-regular fa-calendar"></i>
+                            </span>
+                            <div>
+                                <dt class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Starts</dt>
+                                <dd class="text-sm font-bold text-slate-800 mt-0.5">
+                                    {{ event.start_date|date:"F d, Y · H:i"|default:"To be scheduled" }}
+                                </dd>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="w-11 h-11 shrink-0 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                                <i class="fa-solid fa-flag-checkered"></i>
+                            </span>
+                            <div>
+                                <dt class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Ends</dt>
+                                <dd class="text-sm font-bold text-slate-800 mt-0.5">
+                                    {{ event.end_date|date:"F d, Y · H:i"|default:"—" }}
+                                </dd>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="w-11 h-11 shrink-0 rounded-2xl bg-violet-100 text-violet-600 flex items-center justify-center">
+                                <i class="fa-solid fa-hourglass-half"></i>
+                            </span>
+                            <div>
+                                <dt class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Duration</dt>
+                                <dd class="text-sm font-bold text-slate-800 mt-0.5">
+                                    {{ event.duration_label|default:"Not specified" }}
+                                </dd>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="w-11 h-11 shrink-0 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </span>
+                            <div>
+                                <dt class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Venue</dt>
+                                <dd class="text-sm font-bold text-slate-800 mt-0.5">
+                                    {{ event.location.name|default:"To be announced" }}
+                                </dd>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="w-11 h-11 shrink-0 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center">
+                                <i class="fa-solid fa-tag"></i>
+                            </span>
+                            <div>
+                                <dt class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Track</dt>
+                                <dd class="text-sm font-bold text-slate-800 mt-0.5">
+                                    {{ event.category.name|default:"Uncategorised" }}
+                                </dd>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="w-11 h-11 shrink-0 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                                <i class="fa-solid fa-user"></i>
+                            </span>
+                            <div>
+                                <dt class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Host</dt>
+                                <dd class="text-sm font-bold text-slate-800 mt-0.5">
+                                    {% if event.host %}{{ event.host.name|default:event.host.username }}{% else %}Unassigned{% endif %}
+                                </dd>
+                            </div>
+                        </div>
+
+                    </dl>
+
+                    {% if event.location.address %}
+                    <div class="mt-6 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                        <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Full address</p>
+                        <p class="text-sm text-slate-700 mt-1">{{ event.location.address }}</p>
+                    </div>
+                    {% endif %}
+
+                </div>
+
+                <!-- Attendees -->
+
+                {% if event.guests %}
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <div class="flex items-center justify-between gap-4 flex-wrap">
+
+                        <h2 class="text-lg font-bold text-slate-900">Who took part</h2>
+
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold">
+                            {{ event.guest_count }} registered
+                        </span>
+
+                    </div>
+
+                    <div class="mt-5 flex flex-wrap gap-2">
+
+                        {% for guest in event.guest_list %}
+                        <span class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-blue-50 text-blue-700 text-sm font-semibold">
+                            <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold">
+                                {{ guest|slice:":1"|upper }}
+                            </span>
+                            {{ guest }}
+                        </span>
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+                <!-- Video -->
+
+                {% if event.video %}
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+                    <h2 class="text-lg font-bold text-slate-900">Event footage</h2>
+                    <video controls class="w-full mt-4 rounded-2xl bg-slate-900">
+                        <source src="{{ event.video.url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            <!-- Sidebar -->
+
+            <aside class="space-y-5">
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-7">
+
+                    <h2 class="text-lg font-bold text-slate-900">At a glance</h2>
+
+                    <div class="mt-5 space-y-4">
+
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-slate-500">Total events</span>
+                            <span class="font-black text-slate-800">{{ event_stats.total }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-slate-500">Upcoming</span>
+                            <span class="font-black text-emerald-600">{{ event_stats.upcoming }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-slate-500">Venues used</span>
+                            <span class="font-black text-slate-800">{{ event_stats.locations }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-slate-500">Participants reached</span>
+                            <span class="font-black text-slate-800">{{ event_stats.guests }}</span>
+                        </div>
+
+                    </div>
+
+                    <a href="{% url 'events' %}"
+                       class="mt-6 inline-flex w-full items-center justify-center gap-2 px-4 py-3 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-700 transition">
+                        <i class="fa-solid fa-arrow-left"></i> Back to schedule
+                    </a>
+
+                </div>
+
+                <!-- Related -->
+
+                {% if related_events %}
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-7">
+
+                    <h2 class="text-lg font-bold text-slate-900">Similar events</h2>
+
+                    <div class="mt-5 space-y-4">
+
+                        {% for item in related_events %}
+
+                        <a href="{% url 'event_detail' item.id %}"
+                           class="group flex items-start gap-3 p-3 rounded-2xl hover:bg-slate-50 transition">
+
+                            <span class="w-12 h-12 shrink-0 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex flex-col items-center justify-center">
+                                <span class="text-[9px] font-bold uppercase">{{ item.start_date|date:"M" }}</span>
+                                <span class="text-lg font-black leading-none">{{ item.start_date|date:"d" }}</span>
+                            </span>
+
+                            <span class="min-w-0">
+                                <span class="block font-semibold text-slate-800 text-sm group-hover:text-blue-700 transition">{{ item.title }}</span>
+                                <span class="block text-xs text-slate-500 mt-0.5">{{ item.location.name|default:"TBA" }}</span>
+                            </span>
+
+                        </a>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+                <!-- Join CTA -->
+
+                <div class="rounded-3xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-xl p-6 sm:p-7">
+
+                    <span class="w-12 h-12 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center">
+                        <i class="fa-solid fa-hand-pointer text-xl"></i>
+                    </span>
+
+                    <h2 class="mt-4 text-xl font-black">Be part of the next session</h2>
+
+                    <p class="mt-2 text-blue-100 text-sm leading-relaxed">
+                        Bring a laptop, a question, or simply an hour to give back. Every
+                        session runs on volunteers.
+                    </p>
+
+                    <a href="{% url 'volunteer_signup' %}"
+                       class="mt-5 inline-flex w-full items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white text-blue-700 font-bold hover:bg-blue-50 transition">
+                        <i class="fa-solid fa-hands-helping"></i> Volunteer with us
+                    </a>
+
+                </div>
+
+            </aside>
+
+        </section>
+
+    </main>
+
+    {% include "footer.html" %}
+
 </div>
 
-{% include 'footer.html' %}
 {% endblock %}

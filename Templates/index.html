@@ -1,178 +1,1090 @@
-
 {% extends "header.html" %}
-{% block content %}
 {% load static %}
-<script src="https://cdn.tailwindcss.com"></script>
+
+{% block title %}Dashboard | FelloMarley Foundation{% endblock %}
+
+{% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+<style>
+    [x-cloak] { display: none !important; }
+</style>
 
 {% include "sidebar.html" %}
 
-<div class="flex flex-col sm:ml-64 h-screen">
+<!-- Chart payloads (real database figures) -->
+{{ chart_users_growth|json_script:"chart-users-growth" }}
+{{ chart_posts_over_time|json_script:"chart-posts-over-time" }}
+{{ chart_content_mix|json_script:"chart-content-mix" }}
+{{ chart_gender|json_script:"chart-gender" }}
+{{ chart_events_category|json_script:"chart-events-category" }}
+{{ chart_events_location|json_script:"chart-events-location" }}
+{{ chart_skills|json_script:"chart-skills" }}
+{{ chart_tasks|json_script:"chart-tasks" }}
+{{ chart_support|json_script:"chart-support" }}
+{{ chart_applications|json_script:"chart-applications" }}
 
-    <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6">
+<div class="flex flex-col sm:ml-64 min-h-screen bg-gray-100">
 
-        <!-- Dashboard Header -->
-        <div class="text-center mt-4">
-            {% if request.user.is_superuser %}
-                <p class="text-green-600 uppercase font-semibold">Admin's Dashboard</p>
-            {% else %}
-                <p class="text-green-600 uppercase font-semibold">User's Dashboard</p>
-            {% endif %}
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
 
-            <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mt-2">
-                Welcome, {{ user }}
-            </h1>
+        <!-- ================= PAGE HEADER ================= -->
 
-            <p class="text-gray-600 mt-1 text-sm sm:text-lg">
-                My personal dashboard for insights, messages, and updates.
-            </p>
-        </div>
+        <section class="bg-gradient-to-r from-gray-800 via-gray-900 to-teal-900 text-white rounded-2xl shadow-lg p-6 sm:p-8">
 
-        <!-- KPIs Section -->
-    <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
-        <!-- Events -->
-        <div class="p-6 rounded-lg shadow-md hover:shadow-xl transition transform hover:scale-105 bg-white">
-            <h3 class="text-2xl font-semibold text-gray-800">📅 Events Happening</h3>
-            <p class="text-gray-600 mt-2 text-lg">Total: <span class="font-bold text-green-600">{{ event_count }}</span></p>
-            <a href="{% url 'events' %}" class="inline-block mt-4 text-blue-600 font-semibold hover:underline">View Details</a>
-        </div>
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
 
-        <!-- Active Users -->
-        <div class="p-6 rounded-lg shadow-md hover:shadow-xl transition transform hover:scale-105 bg-white">
-            <h3 class="text-2xl font-semibold text-gray-800">👥 Active Users</h3>
-            <p class="text-gray-600 mt-2 text-lg">Total: <span class="font-bold text-yellow-600">{{ user_count }}</span></p>
-            <a href="{% url 'myuser' %}" class="inline-block mt-4 text-blue-600 font-semibold hover:underline">View Details</a>
-        </div>
+                <div>
 
-        <!-- Portfolio -->
-        <div class="p-6 rounded-lg shadow-md hover:shadow-xl transition transform hover:scale-105 bg-white">
-            <h3 class="text-2xl font-semibold text-gray-800">🖼️ Portfolio Posts</h3>
-            <p class="text-gray-600 mt-2 text-lg">Total: <span class="font-bold text-orange-600">{{ Portfolio_count }}</span></p>
-            <a href="{% url 'portfolio' %}" class="inline-block mt-4 text-blue-600 font-semibold hover:underline">View Details</a>
-        </div>
+                    <p class="text-teal-300 font-semibold uppercase tracking-widest text-sm">
+                        {% if request.user.is_superuser %}Administrator Console{% else %}Member Console{% endif %}
+                    </p>
 
-        <!-- Blog Posts -->
-        <div class="p-6 rounded-lg shadow-md hover:shadow-xl transition transform hover:scale-105 bg-white">
-            <h3 class="text-2xl font-semibold text-gray-800">📝 Blog Posts</h3>
-            <p class="text-gray-600 mt-2 text-lg">Total: <span class="font-bold text-orange-600">{{ blog_count }}</span></p>
-            <a href="{% url 'blog' %}" class="inline-block mt-4 text-blue-600 font-semibold hover:underline">View Details</a>
-        </div>
+                    <h1 class="mt-2 text-3xl sm:text-4xl font-bold">
+                        Welcome back, {{ request.user.name|default:request.user.username }}
+                    </h1>
 
-        <!-- Family -->
-        <div class="p-6 rounded-lg shadow-md hover:shadow-xl transition transform hover:scale-105 bg-white">
-            <h3 class="text-2xl font-semibold text-gray-800"><i class="fa fa-users"></i> Family</h3>
-            <p class="text-gray-600 mt-2 text-lg">Total: <span class="font-bold text-yellow-600">{{ sibling_count }}</span></p>
-            <a href="{% url 'siblings_list' %}" class="inline-block mt-4 text-blue-600 font-semibold hover:underline">View Details</a>
-        </div>
+                    <p class="mt-2 text-gray-300">
+                        Here is what is happening across your platform right now.
+                    </p>
 
-        <!-- Jobs -->
-        <div class="p-6 rounded-lg shadow-md hover:shadow-xl transition transform hover:scale-105 bg-white">
-            <h3 class="text-2xl font-semibold text-gray-800"><i class="fa fa-briefcase"></i> Available Jobs</h3>
-            <p class="text-gray-600 mt-2 text-lg">Total: <span class="font-bold text-yellow-600">{{ jobs_count }}</span></p>
-            <a href="{% url 'job_list' %}" class="inline-block mt-4 text-blue-600 font-semibold hover:underline">View Details</a>
-        </div>
-    </div>
+                    <p class="mt-4 inline-flex items-center gap-2 text-sm text-gray-300">
+                        <i class="fa-regular fa-calendar"></i>
+                        <span id="todayDate">{% now "l, d F Y" %}</span>
+                        <span class="text-gray-500">|</span>
+                        <i class="fa-regular fa-clock"></i>
+                        <span id="liveClock">--:--:--</span>
+                    </p>
 
-    <!-- Recent Activity -->
-    <section class="mt-12 p-6 sm:p-8 rounded-lg shadow-md bg-white">
-        <h2 class="text-2xl sm:text-3xl font-semibold text-gray-800">Recent Activity</h2>
-        <ul class="mt-4 space-y-3 text-gray-600">
-            <li class="border-b border-gray-300 py-2">🔔 New user registration: <strong>{{ user }}</strong></li>
-            {% for x in eventhappenings %}
-            <li class="border-b border-gray-300 py-2">💼 New Event Happening: <strong>{{ x.eventhappening }}</strong></li>
-            {% endfor %}
-            <li class="border-b border-gray-300 py-2">📈 Analytics update completed</li>
-            <li class="border-b border-gray-300 py-2">🔧 System maintenance scheduled</li>
-        </ul>
-    </section>
+                </div>
 
-    <!-- Analytics Charts -->
-    <section class="mt-12 p-6 sm:p-8 rounded-lg shadow-md bg-white">
-        <h2 class="text-2xl sm:text-3xl font-semibold text-gray-800">User Analytics</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
-            <div class="h-64 sm:h-80 w-full">
-                <canvas id="userGrowthChart"></canvas>
+                <!-- Quick actions -->
+
+                <div class="flex flex-wrap gap-3">
+
+                    <a href="{% url 'add_blog' %}"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-teal-500 hover:bg-teal-400 text-gray-900 font-semibold transition">
+                        <i class="fa-solid fa-pen"></i> New Post
+                    </a>
+
+                    <a href="{% url 'add_project' %}"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                        <i class="fa-solid fa-folder-plus"></i> New Project
+                    </a>
+
+                    <a href="{% url 'add_event' %}"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                        <i class="fa-solid fa-calendar-plus"></i> New Event
+                    </a>
+
+                    <a href="{% url 'add_image' %}"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Upload Media
+                    </a>
+
+                </div>
+
             </div>
-            <div class="h-64 sm:h-80 w-full">
-                <canvas id="trafficPieChart"></canvas>
+
+        </section>
+
+        <!-- ================= KPI CARDS ================= -->
+
+        <section class="mt-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+
+            <!-- Members -->
+            <div class="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl transition">
+                <div class="flex items-start justify-between">
+                    <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full {% if trend_users >= 0 %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
+                        <i class="fa-solid {% if trend_users >= 0 %}fa-arrow-trend-up{% else %}fa-arrow-trend-down{% endif %}"></i>
+                        {{ trend_users|floatformat:1 }}%
+                    </span>
+                </div>
+                <p class="mt-4 text-sm text-gray-500">Total Members</p>
+                <p class="text-3xl font-bold text-gray-800">{{ user_count }}</p>
+                <p class="mt-1 text-xs text-gray-400">{{ users_new }} joined in the last 30 days</p>
+                <a href="{% url 'myuser' %}" class="mt-3 inline-flex items-center gap-1 text-sm text-blue-600 font-semibold hover:underline">
+                    Manage members <i class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
             </div>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
-            <div class="h-64 sm:h-80 w-full">
-                <canvas id="revenueDoughnutChart"></canvas>
+
+            <!-- Projects -->
+            <div class="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl transition">
+                <div class="flex items-start justify-between">
+                    <div class="w-12 h-12 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-folder-open"></i>
+                    </div>
+                    <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-gray-100 text-gray-600">
+                        <i class="fa-solid fa-code"></i> {{ skill_count }} skills
+                    </span>
+                </div>
+                <p class="mt-4 text-sm text-gray-500">Projects</p>
+                <p class="text-3xl font-bold text-gray-800">{{ project_count }}</p>
+                <p class="mt-1 text-xs text-gray-400">{{ Portfolio_count }} portfolio entries published</p>
+                <a href="{% url 'projects_list' %}" class="mt-3 inline-flex items-center gap-1 text-sm text-blue-600 font-semibold hover:underline">
+                    View projects <i class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
             </div>
-        </div>
-        <div class="h-64 sm:h-80 mt-6 w-full">
-            <canvas id="eventsVsPortfolioChart"></canvas>
-        </div>
 
-        <!-- Quick Action -->
-        <div class="mt-6">
-            <a href="{% url 'download_report' %}" target="_blank" class="p-2 bg-green-500 text-white rounded hover:bg-green-600 transition">📄 View Report</a>
-        </div>
-    </section>
+            <!-- Blog -->
+            <div class="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl transition">
+                <div class="flex items-start justify-between">
+                    <div class="w-12 h-12 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-newspaper"></i>
+                    </div>
+                    <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full {% if trend_posts >= 0 %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
+                        <i class="fa-solid {% if trend_posts >= 0 %}fa-arrow-trend-up{% else %}fa-arrow-trend-down{% endif %}"></i>
+                        {{ trend_posts|floatformat:1 }}%
+                    </span>
+                </div>
+                <p class="mt-4 text-sm text-gray-500">Blog Posts</p>
+                <p class="text-3xl font-bold text-gray-800">{{ blog_count }}</p>
+                <p class="mt-1 text-xs text-gray-400">{{ posts_published }} published &middot; {{ posts_drafted }} in draft</p>
+                <a href="{% url 'blog' %}" class="mt-3 inline-flex items-center gap-1 text-sm text-blue-600 font-semibold hover:underline">
+                    Manage posts <i class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
+            </div>
 
-</div>
+            <!-- Media -->
+            <div class="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl transition">
+                <div class="flex items-start justify-between">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-photo-film"></i>
+                    </div>
+                    <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full {% if trend_media >= 0 %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
+                        <i class="fa-solid {% if trend_media >= 0 %}fa-arrow-trend-up{% else %}fa-arrow-trend-down{% endif %}"></i>
+                        {{ trend_media|floatformat:1 }}%
+                    </span>
+                </div>
+                <p class="mt-4 text-sm text-gray-500">Gallery Media</p>
+                <p class="text-3xl font-bold text-gray-800">{{ media_count }}</p>
+                <p class="mt-1 text-xs text-gray-400">Images and videos in the gallery</p>
+                <a href="{% url 'gallery' %}" class="mt-3 inline-flex items-center gap-1 text-sm text-blue-600 font-semibold hover:underline">
+                    Open gallery <i class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
+            </div>
 
-<!-- Chart.js Library -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    // User Growth Chart
-    const ctx1 = document.getElementById('userGrowthChart').getContext('2d');
-    new Chart(ctx1, {
-        type: 'bar',
-        data: {
-            labels: [{% for portfolio in portfolios %}'{{ portfolio.title }}',{% endfor %}],
-            datasets: [{
-                label: 'New Users',
-                data: [50,100,200,250,300,500,600,700,800,900,1000,1100],
-                backgroundColor: 'rgba(75,192,192,0.5)',
-                borderColor: 'rgba(75,192,192,1)',
-                borderWidth: 1
-            }]
-        },
-        options: { responsive:true, maintainAspectRatio:false }
-    });
+            <!-- Events -->
+            <div class="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl transition">
+                <div class="flex items-start justify-between">
+                    <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-calendar-day"></i>
+                    </div>
+                    <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-teal-100 text-teal-700">
+                        <i class="fa-solid fa-bolt"></i> {{ events_upcoming }} upcoming
+                    </span>
+                </div>
+                <p class="mt-4 text-sm text-gray-500">Events</p>
+                <p class="text-3xl font-bold text-gray-800">{{ event_count }}</p>
+                <p class="mt-1 text-xs text-gray-400">{{ sibling_count }} family members &middot; {{ volunteer_count }} volunteers</p>
+                <a href="{% url 'events' %}" class="mt-3 inline-flex items-center gap-1 text-sm text-blue-600 font-semibold hover:underline">
+                    Manage events <i class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
+            </div>
 
-    // Traffic Pie Chart
-    const ctx2 = document.getElementById('trafficPieChart').getContext('2d');
-    new Chart(ctx2, {
-        type: 'pie',
-        data: {
-            labels: [{% for sibling in siblings %}'{{ sibling.name }}'{% if not forloop.last %},{% endif %}{% endfor %}],
-            datasets:[{data:[{% for x in siblings %}{{ x.age }}{% if not forloop.last %},{% endif %}{% endfor %}],
-            backgroundColor:['#ff6384','#36a2eb','#ffce56','#4bc0c0','#f46384','#36a6eb','#ff8e56','#4b80c0']}]
-        },
-        options: { responsive:true, maintainAspectRatio:false }
-    });
+            <!-- Tasks -->
+            <div class="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl transition">
+                <div class="flex items-start justify-between">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
+                    <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full {% if tasks_overdue %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}">
+                        <i class="fa-solid fa-clock"></i> {{ tasks_overdue }} overdue
+                    </span>
+                </div>
+                <p class="mt-4 text-sm text-gray-500">Tasks</p>
+                <p class="text-3xl font-bold text-gray-800">{{ tasks_open }}</p>
+                <p class="mt-1 text-xs text-gray-400">{{ tasks_done }} completed of {{ task_count }} total</p>
+                <a href="{% url 'tasks' %}" class="mt-3 inline-flex items-center gap-1 text-sm text-blue-600 font-semibold hover:underline">
+                    Open tasks <i class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
+            </div>
 
-    // Revenue Doughnut
-    const ctx4 = document.getElementById('revenueDoughnutChart').getContext('2d');
-    new Chart(ctx4, {
-        type:'doughnut',
-        data:{
-            labels:[{% for portfolio in portfolios %}'{{portfolio.title}}',{% endfor %}],
-            datasets:[{data:[40,25,20,15,80,70,34,67], backgroundColor:['#ff6384','#36a2eb','#ffce56','#4bc0c0']}]
-        },
-        options:{responsive:true, maintainAspectRatio:false}
-    });
+            <!-- Messages -->
+            <div class="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl transition">
+                <div class="flex items-start justify-between">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-envelope"></i>
+                    </div>
+                    <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full {% if trend_messages >= 0 %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
+                        <i class="fa-solid {% if trend_messages >= 0 %}fa-arrow-trend-up{% else %}fa-arrow-trend-down{% endif %}"></i>
+                        {{ trend_messages|floatformat:1 }}%
+                    </span>
+                </div>
+                <p class="mt-4 text-sm text-gray-500">Messages</p>
+                <p class="text-3xl font-bold text-gray-800">{{ message_count }}</p>
+                <p class="mt-1 text-xs text-gray-400">{{ support_open }} support tickets still open</p>
+                <a href="{% url 'admins' %}" class="mt-3 inline-flex items-center gap-1 text-sm text-blue-600 font-semibold hover:underline">
+                    Open inbox <i class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
+            </div>
 
-    // Events vs Portfolio
-    const ctx5 = document.getElementById('eventsVsPortfolioChart').getContext('2d');
-    new Chart(ctx5,{
-        type:'bar',
-        data:{
-            labels:[{% for sibling in siblings %}'{{ sibling.name }}',{% endfor %}],
-            datasets:[{label:'Age',data:[{% for x in siblings %}{{ x.age }},{% endfor %}],backgroundColor:'rgba(75,192,192,0.5)', borderColor:'rgba(75,192,192,1)', borderWidth:1}]
-        },
-        options:{responsive:true, maintainAspectRatio:false, scales:{y:{beginAtZero:true}}}
-    });
-</script><!-- YOUR KPI + CHART SECTIONS STAY HERE -->
+            <!-- Community -->
+            <div class="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl transition">
+                <div class="flex items-start justify-between">
+                    <div class="w-12 h-12 rounded-xl bg-green-100 text-green-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-gray-100 text-gray-600">
+                        <i class="fa-solid fa-award"></i> {{ certification_count }} certs
+                    </span>
+                </div>
+                <p class="mt-4 text-sm text-gray-500">Community</p>
+                <p class="text-3xl font-bold text-gray-800">{{ subscriber_count }}</p>
+                <p class="mt-1 text-xs text-gray-400">{{ testimonial_count }} testimonials &middot; {{ jobs_count }} jobs posted</p>
+                <a href="{% url 'analytics' %}" class="mt-3 inline-flex items-center gap-1 text-sm text-blue-600 font-semibold hover:underline">
+                    Deep analytics <i class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
+            </div>
+
+            <!-- Giving -->
+            <div class="sm:col-span-2 xl:col-span-4 bg-white rounded-2xl shadow-md p-5 hover:shadow-xl transition">
+                <div class="flex items-center justify-between gap-4 flex-wrap">
+                    <div class="flex items-center gap-4">
+                        <span class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl shrink-0">
+                            <i class="fa-solid fa-hand-holding-heart"></i>
+                        </span>
+                        <div>
+                            <p class="text-sm text-gray-500">Giving</p>
+                            <p class="text-3xl font-bold text-gray-800">${{ donation_total|floatformat:0 }}</p>
+                            <p class="text-xs text-gray-400">
+                                {{ donation_count }} gift{{ donation_count|pluralize }} received
+                                {% if donation_pending %}&middot; ${{ donation_pending|floatformat:0 }} still pending{% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <a href="{% url 'donations' %}" class="inline-flex items-center gap-1 text-sm text-blue-600 font-semibold hover:underline">
+                            Manage donations <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </a>
+                        <a href="{% url 'add_donation' %}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-semibold transition">
+                            <i class="fa-solid fa-plus text-xs"></i> Record donation
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ================= CHARTS ================= -->
+
+        <section class="mt-6 grid grid-cols-1 xl:grid-cols-3 gap-5">
+
+            <!-- Users growth -->
+            <div class="bg-white rounded-2xl shadow-md p-6 xl:col-span-2">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-800">Member Growth</h2>
+                        <p class="text-sm text-gray-500">New accounts created per month</p>
+                    </div>
+                    <span class="text-2xl font-black text-blue-600">{{ user_count }}</span>
+                </div>
+                <div class="mt-4 h-72">
+                    <canvas id="usersGrowthChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Content mix -->
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <h2 class="text-lg font-bold text-gray-800">Content Mix</h2>
+                <p class="text-sm text-gray-500">Everything published on the platform</p>
+                <div class="mt-4 h-72">
+                    <canvas id="contentMixChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Publishing velocity -->
+            <div class="bg-white rounded-2xl shadow-md p-6 xl:col-span-2">
+                <h2 class="text-lg font-bold text-gray-800">Publishing Velocity</h2>
+                <p class="text-sm text-gray-500">Posts, portfolio entries, media and messages per month</p>
+                <div class="mt-4 h-72">
+                    <canvas id="velocityChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Gender -->
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <h2 class="text-lg font-bold text-gray-800">Member Split</h2>
+                <p class="text-sm text-gray-500">Registered members by gender</p>
+                <div class="mt-4 h-72">
+                    <canvas id="genderChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Events by category -->
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <h2 class="text-lg font-bold text-gray-800">Events by Category</h2>
+                <p class="text-sm text-gray-500">Where events are being organised</p>
+                <div class="mt-4 h-64">
+                    <canvas id="eventsCategoryChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Events by location -->
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <h2 class="text-lg font-bold text-gray-800">Events by Location</h2>
+                <p class="text-sm text-gray-500">Where events take place</p>
+                <div class="mt-4 h-64">
+                    <canvas id="eventsLocationChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Skills -->
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <h2 class="text-lg font-bold text-gray-800">Top Skills</h2>
+                <p class="text-sm text-gray-500">Proficiency levels on record</p>
+                <div class="mt-4 h-64">
+                    <canvas id="skillsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Task pipeline -->
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <h2 class="text-lg font-bold text-gray-800">Task Pipeline</h2>
+                <p class="text-sm text-gray-500">Open versus completed tasks by priority</p>
+                <div class="mt-4 h-64">
+                    <canvas id="tasksChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Support -->
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <h2 class="text-lg font-bold text-gray-800">Support Tickets</h2>
+                <p class="text-sm text-gray-500">Tickets by resolution status</p>
+                <div class="mt-4 h-64">
+                    <canvas id="supportChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Job applications -->
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <h2 class="text-lg font-bold text-gray-800">Job Applications</h2>
+                <p class="text-sm text-gray-500">{{ applications_count }} applications received</p>
+                <div class="mt-4 h-64">
+                    <canvas id="applicationsChart"></canvas>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ================= ACTIVITY + PANELS ================= -->
+
+        <section class="mt-6 grid grid-cols-1 xl:grid-cols-3 gap-5">
+
+            <!-- Activity feed -->
+            <div class="xl:col-span-2 bg-white rounded-2xl shadow-md p-6">
+
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-bold text-gray-800">Recent Activity</h2>
+                    <a href="{% url 'activity_list' %}" class="text-sm text-blue-600 font-semibold hover:underline">View all</a>
+                </div>
+
+                <ol class="mt-5 space-y-4">
+
+                    {% for activity in recent_activities %}
+
+                    <li class="flex gap-4">
+                        <span class="w-10 h-10 shrink-0 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center">
+                            <i class="fa-solid fa-bolt"></i>
+                        </span>
+                        <div class="flex-1 border-b border-gray-100 pb-4">
+                            <p class="font-semibold text-gray-800">{{ activity.title }}</p>
+                            <p class="text-sm text-gray-500">{{ activity.description|truncatewords:16 }}</p>
+                            <p class="text-xs text-gray-400 mt-1">
+                                {{ activity.created_at|timesince }} ago &middot; {{ activity.user.name|default:activity.user.username }}
+                            </p>
+                        </div>
+                    </li>
+
+                    {% empty %}
+
+                    <li class="text-sm text-gray-500 py-6 text-center">No activity recorded yet.</li>
+
+                    {% endfor %}
+
+                </ol>
+
+                <!-- Recent messages (admin) -->
+                {% if request.user.is_superuser %}
+
+                <div class="mt-8">
+                    <h3 class="text-lg font-bold text-gray-800">Latest Messages</h3>
+
+                    <div class="mt-4 overflow-x-auto">
+
+                        <table class="min-w-full text-sm">
+
+                            <thead class="text-left text-xs uppercase tracking-wider text-gray-500">
+                                <tr>
+                                    <th class="py-3 pr-4">Sender</th>
+                                    <th class="py-3 pr-4">Message</th>
+                                    <th class="py-3 pr-4">Received</th>
+                                    <th class="py-3"></th>
+                                </tr>
+                            </thead>
+
+                            <tbody class="divide-y divide-gray-100">
+
+                                {% for message in recent_messages %}
+
+                                <tr class="hover:bg-gray-50">
+                                    <td class="py-3 pr-4">
+                                        <p class="font-semibold text-gray-800">{{ message.name }}</p>
+                                        <p class="text-xs text-gray-500">{{ message.email }}</p>
+                                    </td>
+                                    <td class="py-3 pr-4 text-gray-600">{{ message.message|truncatewords:14 }}</td>
+                                    <td class="py-3 pr-4 text-xs text-gray-500 whitespace-nowrap">
+                                        {{ message.date_created|date:"M d, Y" }}
+                                    </td>
+                                    <td class="py-3 text-right">
+                                        <a href="{% url 'contact_details' message.pk %}"
+                                           class="text-blue-600 font-semibold hover:underline">Open</a>
+                                    </td>
+                                </tr>
+
+                                {% empty %}
+
+                                <tr>
+                                    <td colspan="4" class="py-6 text-center text-gray-500">No messages yet.</td>
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            <!-- Right column -->
+            <div class="space-y-5">
+
+                <!-- Tasks -->
+                <div class="bg-white rounded-2xl shadow-md p-6">
+
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-lg font-bold text-gray-800">Open Tasks</h2>
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700">{{ tasks_open }} open</span>
+                    </div>
+
+                    <ul class="mt-4 space-y-4">
+
+                        {% for task in open_tasks %}
+
+                        <li>
+                            <div class="flex items-start justify-between gap-3">
+                                <p class="font-semibold text-gray-800 text-sm">{{ task.title }}</p>
+
+                                <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full
+                                    {% if task.priority == 'urgent' %}bg-red-100 text-red-700
+                                    {% elif task.priority == 'high' %}bg-orange-100 text-orange-700
+                                    {% elif task.priority == 'medium' %}bg-yellow-100 text-yellow-700
+                                    {% else %}bg-gray-100 text-gray-600{% endif %}">
+                                    {{ task.priority|default:"none" }}
+                                </span>
+                            </div>
+
+                            <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                                <div class="bg-indigo-500 h-2 rounded-full" style="width: {{ task.progress_percentage }}%"></div>
+                            </div>
+
+                            <p class="text-xs text-gray-500 mt-1">
+                                Due {{ task.due_date|date:"M d, Y" }} &middot; {{ task.progress_percentage }}% complete
+                            </p>
+                        </li>
+
+                        {% empty %}
+
+                        <li class="text-sm text-gray-500 text-center py-6">Nothing pending. Nice work.</li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                    <a href="{% url 'tasks' %}" class="mt-5 block text-center px-4 py-2 rounded-xl bg-gray-900 text-white text-sm font-semibold hover:bg-gray-700 transition">
+                        Manage all tasks
+                    </a>
+
+                </div>
+
+                <!-- Upcoming events -->
+                <div class="bg-white rounded-2xl shadow-md p-6">
+
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-lg font-bold text-gray-800">Upcoming Events</h2>
+                        <a href="{% url 'events' %}" class="text-sm text-blue-600 font-semibold hover:underline">All</a>
+                    </div>
+
+                    <ul class="mt-4 space-y-3">
+
+                        {% for event in upcoming_events %}
+
+                        <li class="flex items-center gap-4 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition">
+                            <div class="w-14 h-14 shrink-0 rounded-xl bg-rose-500 text-white flex flex-col items-center justify-center">
+                                <span class="text-[10px] uppercase leading-none">{{ event.start_date|date:"M" }}</span>
+                                <span class="text-lg font-bold leading-none">{{ event.start_date|date:"d" }}</span>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="font-semibold text-gray-800 text-sm truncate">{{ event.title }}</p>
+                                <p class="text-xs text-gray-500 truncate">
+                                    {{ event.location.name|default:"Location TBA" }} &middot; {{ event.start_date|date:"H:i" }}
+                                </p>
+                            </div>
+                        </li>
+
+                        {% empty %}
+
+                        <li class="text-sm text-gray-500 text-center py-6">No events scheduled.</li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+
+                <!-- Notifications -->
+                <div class="bg-white rounded-2xl shadow-md p-6">
+
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-lg font-bold text-gray-800">Notifications</h2>
+                        {% if notifications_unread %}
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-red-100 text-red-700">{{ notifications_unread }} new</span>
+                        {% endif %}
+                    </div>
+
+                    <ul class="mt-4 space-y-3">
+
+                        {% for note in recent_notifications %}
+
+                        <li class="flex items-start gap-3 {% if not note.read %}opacity-100{% else %}opacity-60{% endif %}">
+                            <span class="mt-1 w-2 h-2 shrink-0 rounded-full {% if note.read %}bg-gray-300{% else %}bg-teal-500{% endif %}"></span>
+                            <div class="min-w-0">
+                                <p class="text-sm font-semibold text-gray-800">{{ note.title }}</p>
+                                <p class="text-xs text-gray-500">{{ note.description|truncatewords:12 }}</p>
+                                <p class="text-[11px] text-gray-400 mt-0.5">{{ note.created_at|timesince }} ago</p>
+                            </div>
+                        </li>
+
+                        {% empty %}
+
+                        <li class="text-sm text-gray-500 text-center py-6">You are all caught up.</li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+
+                <!-- Newest members -->
+                <div class="bg-white rounded-2xl shadow-md p-6">
+
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-lg font-bold text-gray-800">Newest Members</h2>
+                        <a href="{% url 'myuser' %}" class="text-sm text-blue-600 font-semibold hover:underline">All</a>
+                    </div>
+
+                    <ul class="mt-4 space-y-3">
+
+                        {% for member in recent_users %}
+
+                        <li class="flex items-center gap-3">
+                            <span class="w-9 h-9 shrink-0 rounded-full bg-teal-500 text-white flex items-center justify-center font-bold text-sm">
+                                {{ member.username|slice:":1"|upper }}
+                            </span>
+                            <div class="min-w-0">
+                                <p class="text-sm font-semibold text-gray-800 truncate">{{ member.name|default:member.username }}</p>
+                                <p class="text-xs text-gray-500 truncate">Joined {{ member.date_joined|date:"M Y" }}</p>
+                            </div>
+                        </li>
+
+                        {% empty %}
+
+                        <li class="text-sm text-gray-500 text-center py-6">No members yet.</li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= TABS: LATEST CONTENT ================= -->
+
+        <section class="mt-6 bg-white rounded-2xl shadow-md p-6" x-data="{ tab: 'posts' }">
+
+            <div class="flex flex-wrap items-center justify-between gap-4">
+
+                <h2 class="text-lg font-bold text-gray-800">Latest Content</h2>
+
+                <div class="flex flex-wrap gap-2">
+
+                    <button type="button" @click="tab = 'posts'"
+                            :class="tab === 'posts' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700'"
+                            class="px-4 py-2 rounded-xl text-sm font-semibold transition">Posts</button>
+
+                    <button type="button" @click="tab = 'applications'"
+                            :class="tab === 'applications' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700'"
+                            class="px-4 py-2 rounded-xl text-sm font-semibold transition">Job Applications</button>
+
+                    <button type="button" @click="tab = 'media'"
+                            :class="tab === 'media' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700'"
+                            class="px-4 py-2 rounded-xl text-sm font-semibold transition">Media</button>
+
+                </div>
+
+            </div>
+
+            <!-- Posts -->
+            <div x-show="tab === 'posts'" x-transition class="mt-5 overflow-x-auto">
+
+                <table class="min-w-full text-sm">
+
+                    <thead class="text-left text-xs uppercase tracking-wider text-gray-500">
+                        <tr>
+                            <th class="py-3 pr-4">Title</th>
+                            <th class="py-3 pr-4">Status</th>
+                            <th class="py-3 pr-4">Published</th>
+                            <th class="py-3"></th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="divide-y divide-gray-100">
+
+                        {% for post in recent_posts %}
+
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-3 pr-4 font-semibold text-gray-800">{{ post.title }}</td>
+                            <td class="py-3 pr-4">
+                                <span class="text-[10px] font-bold uppercase px-2 py-1 rounded-full
+                                    {% if post.status == 'published' %}bg-green-100 text-green-700
+                                    {% elif post.status == 'drafted' %}bg-gray-100 text-gray-600
+                                    {% else %}bg-blue-100 text-blue-700{% endif %}">
+                                    {{ post.status|default:"live" }}
+                                </span>
+                            </td>
+                            <td class="py-3 pr-4 text-gray-500 whitespace-nowrap">{{ post.created_at|date:"M d, Y" }}</td>
+                            <td class="py-3 text-right">
+                                <a href="{% url 'blog_details' post.pk %}" class="text-blue-600 font-semibold hover:underline">Open</a>
+                            </td>
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="4" class="py-6 text-center text-gray-500">No posts yet.</td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- Job applications -->
+            <div x-show="tab === 'applications'" x-transition class="mt-5 overflow-x-auto" x-cloak>
+
+                <table class="min-w-full text-sm">
+
+                    <thead class="text-left text-xs uppercase tracking-wider text-gray-500">
+                        <tr>
+                            <th class="py-3 pr-4">Applicant</th>
+                            <th class="py-3 pr-4">Position</th>
+                            <th class="py-3 pr-4">Status</th>
+                            <th class="py-3"></th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="divide-y divide-gray-100">
+
+                        {% for application in recent_applications %}
+
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-3 pr-4 font-semibold text-gray-800">
+                                {{ application.applicant_name|default:application.applicant }}
+                            </td>
+                            <td class="py-3 pr-4 text-gray-600">{{ application.job.title }}</td>
+                            <td class="py-3 pr-4">
+                                <span class="text-[10px] font-bold uppercase px-2 py-1 rounded-full bg-blue-100 text-blue-700">
+                                    {{ application.get_status_display }}
+                                </span>
+                            </td>
+                            <td class="py-3 text-right">
+                                <a href="{% url 'jobdetails' application.pk %}" class="text-blue-600 font-semibold hover:underline">Open</a>
+                            </td>
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="4" class="py-6 text-center text-gray-500">No applications received.</td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- Media -->
+            <div x-show="tab === 'media'" x-transition class="mt-5" x-cloak>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+
+                    {% for item in recent_media %}
+
+                    <a href="{% url 'gallery' %}"
+                       class="group relative overflow-hidden rounded-xl bg-gray-100 aspect-square">
+
+                        {% if item.image %}
+                        <img src="{{ item.image.url }}"
+                             alt="{{ item.title }}"
+                             class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+                        {% else %}
+                        <span class="absolute inset-0 flex items-center justify-center text-3xl text-gray-400">
+                            <i class="fa-solid fa-film"></i>
+                        </span>
+                        {% endif %}
+
+                        <span class="absolute inset-x-0 bottom-0 bg-black/60 text-white text-[11px] px-2 py-1 truncate">
+                            {{ item.title }}
+                        </span>
+
+                    </a>
+
+                    {% empty %}
+
+                    <p class="col-span-full text-sm text-gray-500 text-center py-6">No media uploaded yet.</p>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= REPORTS & QUICK LINKS ================= -->
+
+        <section class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+            <div class="bg-white rounded-2xl shadow-md p-6 lg:col-span-2">
+
+                <h2 class="text-lg font-bold text-gray-800">Quick Actions</h2>
+
+                <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
+
+                    <a href="{% url 'add_blog' %}" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 hover:bg-teal-50 hover:text-teal-700 transition text-center">
+                        <i class="fa-solid fa-pen text-xl"></i>
+                        <span class="text-xs font-semibold">Write Post</span>
+                    </a>
+
+                    <a href="{% url 'add_project' %}" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 hover:bg-teal-50 hover:text-teal-700 transition text-center">
+                        <i class="fa-solid fa-folder-plus text-xl"></i>
+                        <span class="text-xs font-semibold">Add Project</span>
+                    </a>
+
+                    <a href="{% url 'add_portfolio' %}" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 hover:bg-teal-50 hover:text-teal-700 transition text-center">
+                        <i class="fa-solid fa-briefcase text-xl"></i>
+                        <span class="text-xs font-semibold">Portfolio Item</span>
+                    </a>
+
+                    <a href="{% url 'add_event' %}" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 hover:bg-teal-50 hover:text-teal-700 transition text-center">
+                        <i class="fa-solid fa-calendar-plus text-xl"></i>
+                        <span class="text-xs font-semibold">Create Event</span>
+                    </a>
+
+                    <a href="{% url 'add_image' %}" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 hover:bg-teal-50 hover:text-teal-700 transition text-center">
+                        <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
+                        <span class="text-xs font-semibold">Upload Media</span>
+                    </a>
+
+                    <a href="{% url 'add_task' %}" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 hover:bg-teal-50 hover:text-teal-700 transition text-center">
+                        <i class="fa-solid fa-list-check text-xl"></i>
+                        <span class="text-xs font-semibold">New Task</span>
+                    </a>
+
+                    <a href="{% url 'add_testimonial' %}" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 hover:bg-teal-50 hover:text-teal-700 transition text-center">
+                        <i class="fa-solid fa-comment-dots text-xl"></i>
+                        <span class="text-xs font-semibold">Testimonial</span>
+                    </a>
+
+                    <a href="{% url 'add_notification' %}" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 hover:bg-teal-50 hover:text-teal-700 transition text-center">
+                        <i class="fa-solid fa-bell text-xl"></i>
+                        <span class="text-xs font-semibold">Notify</span>
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6">
+
+                <h2 class="text-lg font-bold text-gray-800">Reports</h2>
+                <p class="text-sm text-gray-500">Download a snapshot of the platform data.</p>
+
+                <div class="mt-4 space-y-3">
+
+                    <a href="{% url 'fellomarley_pdf' %}"
+                       class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition">
+                        <span class="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center">
+                            <i class="fa-solid fa-file-pdf"></i>
+                        </span>
+                        <span class="text-sm font-semibold text-gray-800">Full platform report</span>
+                    </a>
+
+                    <a href="{% url 'download_report' %}"
+                       class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition">
+                        <span class="w-10 h-10 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center">
+                            <i class="fa-solid fa-users"></i>
+                        </span>
+                        <span class="text-sm font-semibold text-gray-800">Family report</span>
+                    </a>
+
+                    <a href="{% url 'analytics' %}"
+                       class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition">
+                        <span class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
+                            <i class="fa-solid fa-chart-pie"></i>
+                        </span>
+                        <span class="text-sm font-semibold text-gray-800">Analytics workspace</span>
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
 
     </main>
 
     {% include "footer.html" %}
 
+</div>
 
+<script>
+
+(function () {
+
+const read = function (id) {
+    const node = document.getElementById(id);
+    return node ? JSON.parse(node.textContent) : { labels: [], data: [] };
+};
+
+const usersGrowth = read("chart-users-growth");
+const velocity = read("chart-posts-over-time");
+const contentMix = read("chart-content-mix");
+const gender = read("chart-gender");
+const eventsCategory = read("chart-events-category");
+const eventsLocation = read("chart-events-location");
+const skills = read("chart-skills");
+const tasks = read("chart-tasks");
+const support = read("chart-support");
+const applications = read("chart-applications");
+
+const palette = ["#2563eb", "#0d9488", "#8b5cf6", "#f59e0b", "#f43f5e", "#06b6d4", "#64748b", "#a855f7"];
+
+if (window.Chart) {
+    Chart.defaults.font.family = "ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif";
+    Chart.defaults.font.size = 12;
+    Chart.defaults.color = "#64748b";
+    Chart.defaults.plugins.legend.labels.usePointStyle = true;
+    Chart.defaults.plugins.legend.labels.boxWidth = 8;
+    Chart.defaults.plugins.tooltip.backgroundColor = "#0f172a";
+    Chart.defaults.plugins.tooltip.padding = 12;
+    Chart.defaults.plugins.tooltip.cornerRadius = 10;
+    Chart.defaults.maintainAspectRatio = false;
+}
+
+const grid = { color: "#e2e8f0" };
+const axis = { grid: grid, border: { display: false } };
+
+const build = function (id, config) {
+    const canvas = document.getElementById(id);
+    if (!canvas) return;
+    new Chart(canvas.getContext("2d"), config);
+};
+
+build("usersGrowthChart", {
+    type: "line",
+    data: {
+        labels: usersGrowth.labels,
+        datasets: [{
+            label: "New members",
+            data: usersGrowth.data,
+            borderColor: "#2563eb",
+            backgroundColor: "rgba(37, 99, 235, 0.12)",
+            fill: true,
+            tension: 0.35,
+            pointRadius: 4,
+            pointBackgroundColor: "#2563eb"
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: { x: axis, y: { ...axis, beginAtZero: true, ticks: { precision: 0 } } }
+    }
+});
+
+build("contentMixChart", {
+    type: "doughnut",
+    data: {
+        labels: contentMix.labels,
+        datasets: [{
+            data: contentMix.data,
+            backgroundColor: palette,
+            borderWidth: 0,
+            hoverOffset: 8
+        }]
+    },
+    options: {
+        responsive: true,
+        cutout: "62%",
+        plugins: { legend: { position: "bottom" } }
+    }
+});
+
+build("velocityChart", {
+    type: "line",
+    data: {
+        labels: velocity.labels,
+        datasets: [
+            { label: "Blog posts", data: velocity.blog, borderColor: "#8b5cf6", backgroundColor: "#8b5cf6", tension: 0.35, pointRadius: 3 },
+            { label: "Portfolio", data: velocity.portfolio, borderColor: "#0d9488", backgroundColor: "#0d9488", tension: 0.35, pointRadius: 3 },
+            { label: "Media", data: velocity.media, borderColor: "#f59e0b", backgroundColor: "#f59e0b", tension: 0.35, pointRadius: 3 },
+            { label: "Messages", data: velocity.messages, borderColor: "#f43f5e", backgroundColor: "#f43f5e", tension: 0.35, pointRadius: 3 }
+        ]
+    },
+    options: {
+        responsive: true,
+        interaction: { mode: "index", intersect: false },
+        scales: { x: axis, y: { ...axis, beginAtZero: true, ticks: { precision: 0 } } }
+    }
+});
+
+build("genderChart", {
+    type: "doughnut",
+    data: {
+        labels: gender.labels,
+        datasets: [{ data: gender.data, backgroundColor: palette, borderWidth: 0, hoverOffset: 8 }]
+    },
+    options: {
+        responsive: true,
+        cutout: "62%",
+        plugins: { legend: { position: "bottom" } }
+    }
+});
+
+build("eventsCategoryChart", {
+    type: "bar",
+    data: {
+        labels: eventsCategory.labels,
+        datasets: [{ label: "Events", data: eventsCategory.data, backgroundColor: "#0d9488", borderRadius: 8, maxBarThickness: 48 }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { x: axis, y: { ...axis, beginAtZero: true, ticks: { precision: 0 } } }
+    }
+});
+
+build("eventsLocationChart", {
+    type: "bar",
+    data: {
+        labels: eventsLocation.labels,
+        datasets: [{ label: "Events", data: eventsLocation.data, backgroundColor: "#f59e0b", borderRadius: 8, maxBarThickness: 48 }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { x: axis, y: { ...axis, beginAtZero: true, ticks: { precision: 0 } } }
+    }
+});
+
+build("skillsChart", {
+    type: "bar",
+    data: {
+        labels: skills.labels,
+        datasets: [{ label: "Proficiency %", data: skills.data, backgroundColor: "#8b5cf6", borderRadius: 8, maxBarThickness: 24 }]
+    },
+    options: {
+        indexAxis: "y",
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { x: { ...axis, beginAtZero: true, max: 100 }, y: axis }
+    }
+});
+
+build("tasksChart", {
+    type: "bar",
+    data: {
+        labels: tasks.labels,
+        datasets: [
+            { label: "Open", data: tasks.open, backgroundColor: "#f59e0b", borderRadius: 6, maxBarThickness: 32 },
+            { label: "Completed", data: tasks.done, backgroundColor: "#0d9488", borderRadius: 6, maxBarThickness: 32 }
+        ]
+    },
+    options: {
+        responsive: true,
+        scales: { x: { stacked: true, ...axis }, y: { stacked: true, ...axis, beginAtZero: true, ticks: { precision: 0 } } }
+    }
+});
+
+build("supportChart", {
+    type: "polarArea",
+    data: {
+        labels: support.labels,
+        datasets: [{ data: support.data, backgroundColor: ["#2563eb", "#f59e0b", "#0d9488", "#64748b"], borderWidth: 0 }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { position: "bottom" } },
+        scales: { r: { ticks: { precision: 0 }, grid: { color: "#e2e8f0" } } }
+    }
+});
+
+build("applicationsChart", {
+    type: "bar",
+    data: {
+        labels: applications.labels,
+        datasets: [{ label: "Applications", data: applications.data, backgroundColor: "#f43f5e", borderRadius: 8, maxBarThickness: 40 }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { x: axis, y: { ...axis, beginAtZero: true, ticks: { precision: 0 } } }
+    }
+});
+
+})();
+
+// Live clock
+function tick() {
+    const now = new Date();
+    const clock = document.getElementById("liveClock");
+    if (clock) {
+        clock.textContent = now.toLocaleTimeString();
+    }
+}
+
+tick();
+setInterval(tick, 1000);
+
+</script>
 
 {% endblock %}

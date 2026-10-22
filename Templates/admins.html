@@ -1,110 +1,1763 @@
 {% extends "header.html" %}
+{% load static %}
+
+{% block title %}Administration Console | FelloMarley Foundation{% endblock %}
+
 {% block content %}
 
-<div class="text-center my-4">
-    {% for message in messages %}
-        <p id="messages" class="font-semibold text-lg text-green-600">{{ message }}</p>
-    {% endfor %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+<style>
+    [x-cloak] { display: none !important; }
+</style>
+
+<!-- Chart payloads -->
+{{ chart_admin_growth|json_script:"chart-admin-growth" }}
+{{ chart_admin_members|json_script:"chart-admin-members" }}
+{{ chart_admin_inventory|json_script:"chart-admin-inventory" }}
+{{ chart_admin_support|json_script:"chart-admin-support" }}
+{{ chart_admin_applications|json_script:"chart-admin-applications" }}
+{{ chart_admin_categories|json_script:"chart-admin-categories" }}
+{{ chart_admin_tasks|json_script:"chart-admin-tasks" }}
+
+{% include "sidebar.html" %}
+
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
+
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
+
+        <!-- ================= FLASH ================= -->
+
+        {% if messages %}
+
+        <div class="mb-6 space-y-3">
+
+            {% for message in messages %}
+
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+        <!-- ================= HEADER ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-900 to-blue-900 text-white shadow-2xl p-6 sm:p-8">
+
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:60px 60px;"></div>
+
+            <div class="absolute -top-20 -right-10 w-80 h-80 bg-indigo-400 rounded-full blur-3xl opacity-20"></div>
+
+            <div class="relative flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+
+                <div>
+
+                    <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                        <i class="fa-solid fa-shield-halved"></i> Restricted area
+                    </p>
+
+                    <h1 class="mt-4 text-3xl sm:text-4xl font-black">
+                        Administration Console
+                    </h1>
+
+                    <p class="mt-2 text-slate-300">
+                        Signed in as <span class="font-semibold text-white">{{ request.user.name|default:request.user.username }}</span>
+                        &middot; full moderation, analytics and system control.
+                    </p>
+
+                </div>
+
+                <div class="flex flex-wrap gap-3">
+
+                    <a href="{% url 'add_blog' %}"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white font-bold text-slate-900 hover:bg-slate-100 transition">
+                        <i class="fa-solid fa-pen"></i> New post
+                    </a>
+
+                    <a href="{% url 'add_project' %}"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                        <i class="fa-solid fa-folder-plus"></i> New project
+                    </a>
+
+                    <a href="{% url 'add_event' %}"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                        <i class="fa-solid fa-calendar-plus"></i> New event
+                    </a>
+
+                    <a href="{% url 'fellomarley_pdf' %}"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                        <i class="fa-solid fa-file-arrow-down"></i> Export report
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= KPI STRIP ================= -->
+
+        <section class="mt-6 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
+
+            <a href="#members" class="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl hover:-translate-y-1 transition">
+                <div class="flex items-center justify-between">
+                    <span class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
+                        <i class="fa-solid fa-users"></i>
+                    </span>
+                    <span class="text-[11px] font-bold px-2 py-1 rounded-full {% if trend_members >= 0 %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
+                        {{ trend_members|floatformat:1 }}%
+                    </span>
+                </div>
+                <p class="mt-4 text-3xl font-black text-slate-800">{{ members_total }}</p>
+                <p class="text-sm text-slate-500">Members</p>
+                <p class="text-xs text-slate-400 mt-1">{{ members_new }} new this month</p>
+            </a>
+
+            <a href="#messages" class="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl hover:-translate-y-1 transition">
+                <div class="flex items-center justify-between">
+                    <span class="w-10 h-10 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center">
+                        <i class="fa-solid fa-envelope"></i>
+                    </span>
+                    {% if messages_recent %}
+                    <span class="text-[11px] font-bold px-2 py-1 rounded-full bg-cyan-100 text-cyan-700">{{ messages_recent }} new</span>
+                    {% endif %}
+                </div>
+                <p class="mt-4 text-3xl font-black text-slate-800">{{ messages_total }}</p>
+                <p class="text-sm text-slate-500">Messages</p>
+                <p class="text-xs text-slate-400 mt-1">Contact inbox</p>
+            </a>
+
+            <a href="#content" class="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl hover:-translate-y-1 transition">
+                <div class="flex items-center justify-between">
+                    <span class="w-10 h-10 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center">
+                        <i class="fa-solid fa-newspaper"></i>
+                    </span>
+                    {% if posts_draft %}
+                    <span class="text-[11px] font-bold px-2 py-1 rounded-full bg-amber-100 text-amber-700">{{ posts_draft }} draft</span>
+                    {% endif %}
+                </div>
+                <p class="mt-4 text-3xl font-black text-slate-800">{{ posts_total }}</p>
+                <p class="text-sm text-slate-500">Blog posts</p>
+                <p class="text-xs text-slate-400 mt-1">{{ posts_published }} published</p>
+            </a>
+
+            <a href="#content" class="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl hover:-translate-y-1 transition">
+                <div class="flex items-center justify-between">
+                    <span class="w-10 h-10 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center">
+                        <i class="fa-solid fa-folder-open"></i>
+                    </span>
+                </div>
+                <p class="mt-4 text-3xl font-black text-slate-800">{{ projects_total }}</p>
+                <p class="text-sm text-slate-500">Projects</p>
+                <p class="text-xs text-slate-400 mt-1">{{ portfolio_total }} portfolio entries</p>
+            </a>
+
+            <a href="#content" class="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl hover:-translate-y-1 transition">
+                <div class="flex items-center justify-between">
+                    <span class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
+                        <i class="fa-solid fa-photo-film"></i>
+                    </span>
+                </div>
+                <p class="mt-4 text-3xl font-black text-slate-800">{{ media_total }}</p>
+                <p class="text-sm text-slate-500">Media</p>
+                <p class="text-xs text-slate-400 mt-1">Gallery items</p>
+            </a>
+
+            <a href="#events" class="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl hover:-translate-y-1 transition">
+                <div class="flex items-center justify-between">
+                    <span class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
+                        <i class="fa-solid fa-calendar-day"></i>
+                    </span>
+                    <span class="text-[11px] font-bold px-2 py-1 rounded-full bg-teal-100 text-teal-700">{{ events_upcoming }} upcoming</span>
+                </div>
+                <p class="mt-4 text-3xl font-black text-slate-800">{{ events_total }}</p>
+                <p class="text-sm text-slate-500">Events</p>
+                <p class="text-xs text-slate-400 mt-1">{{ events_past }} already held</p>
+            </a>
+
+            <a href="#operations" class="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl hover:-translate-y-1 transition">
+                <div class="flex items-center justify-between">
+                    <span class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                        <i class="fa-solid fa-headset"></i>
+                    </span>
+                    {% if support_open %}
+                    <span class="text-[11px] font-bold px-2 py-1 rounded-full bg-red-100 text-red-700">{{ support_open }} open</span>
+                    {% endif %}
+                </div>
+                <p class="mt-4 text-3xl font-black text-slate-800">{{ support_total }}</p>
+                <p class="text-sm text-slate-500">Support tickets</p>
+                <p class="text-xs text-slate-400 mt-1">{{ tasks_open }} open tasks</p>
+            </a>
+
+            <a href="#applications" class="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl hover:-translate-y-1 transition">
+                <div class="flex items-center justify-between">
+                    <span class="w-10 h-10 rounded-xl bg-green-100 text-green-600 flex items-center justify-center">
+                        <i class="fa-solid fa-briefcase"></i>
+                    </span>
+                    {% if applications_pending %}
+                    <span class="text-[11px] font-bold px-2 py-1 rounded-full bg-amber-100 text-amber-700">{{ applications_pending }} to review</span>
+                    {% endif %}
+                </div>
+                <p class="mt-4 text-3xl font-black text-slate-800">{{ applications_total }}</p>
+                <p class="text-sm text-slate-500">Applications</p>
+                <p class="text-xs text-slate-400 mt-1">Job applicants</p>
+            </a>
+
+            <a href="#notifications" class="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl hover:-translate-y-1 transition">
+                <div class="flex items-center justify-between">
+                    <span class="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center">
+                        <i class="fa-solid fa-bell"></i>
+                    </span>
+                    {% if notifications_unread %}
+                    <span class="text-[11px] font-bold px-2 py-1 rounded-full bg-red-500 text-white">{{ notifications_unread }}</span>
+                    {% endif %}
+                </div>
+                <p class="mt-4 text-3xl font-black text-slate-800">{{ notification_list|length }}</p>
+                <p class="text-sm text-slate-500">Notifications</p>
+                <p class="text-xs text-slate-400 mt-1">{{ notifications_unread }} unread</p>
+            </a>
+
+            <a href="#directory" class="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl hover:-translate-y-1 transition">
+                <div class="flex items-center justify-between">
+                    <span class="w-10 h-10 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center">
+                        <i class="fa-solid fa-hands-helping"></i>
+                    </span>
+                </div>
+                <p class="mt-4 text-3xl font-black text-slate-800">{{ volunteers_total }}</p>
+                <p class="text-sm text-slate-500">Volunteers</p>
+                <p class="text-xs text-slate-400 mt-1">{{ subscribers_total }} subscribers</p>
+            </a>
+
+            <a href="#directory" class="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl hover:-translate-y-1 transition">
+                <div class="flex items-center justify-between">
+                    <span class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                        <i class="fa-solid fa-award"></i>
+                    </span>
+                </div>
+                <p class="mt-4 text-3xl font-black text-slate-800">{{ certifications_total }}</p>
+                <p class="text-sm text-slate-500">Certifications</p>
+                <p class="text-xs text-slate-400 mt-1">{{ skills_total }} skills tracked</p>
+            </a>
+
+            <a href="#directory" class="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl hover:-translate-y-1 transition">
+                <div class="flex items-center justify-between">
+                    <span class="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center">
+                        <i class="fa-solid fa-house-chimney"></i>
+                    </span>
+                </div>
+                <p class="mt-4 text-3xl font-black text-slate-800">{{ siblings_total }}</p>
+                <p class="text-sm text-slate-500">Family</p>
+                <p class="text-xs text-slate-400 mt-1">{{ testimonials_total }} testimonials</p>
+            </a>
+
+        </section>
+
+        <!-- ================= NEEDS ATTENTION ================= -->
+
+        {% if posts_draft or support_open or tasks_overdue or applications_pending or notifications_unread %}
+
+        <section class="mt-6 bg-white rounded-3xl shadow-md p-6 sm:p-8 border-l-4 border-amber-400">
+
+            <div class="flex items-center gap-3">
+
+                <span class="w-11 h-11 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-bell"></i>
+                </span>
+
+                <div>
+
+                    <h2 class="text-xl font-bold text-slate-900">Needs your attention</h2>
+
+                    <p class="text-sm text-slate-500">Items waiting on an administrator decision.</p>
+
+                </div>
+
+            </div>
+
+            <div class="mt-6 grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+
+                {% if posts_draft %}
+                <a href="#content" class="flex items-center gap-4 p-4 rounded-2xl bg-amber-50 hover:bg-amber-100 transition">
+                    <span class="w-11 h-11 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold">{{ posts_draft }}</span>
+                    <span class="text-sm font-semibold text-slate-700">Draft posts waiting to be published</span>
+                </a>
+                {% endif %}
+
+                {% if support_open %}
+                <a href="#operations" class="flex items-center gap-4 p-4 rounded-2xl bg-red-50 hover:bg-red-100 transition">
+                    <span class="w-11 h-11 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold">{{ support_open }}</span>
+                    <span class="text-sm font-semibold text-slate-700">Unresolved support tickets</span>
+                </a>
+                {% endif %}
+
+                {% if tasks_overdue %}
+                <a href="#operations" class="flex items-center gap-4 p-4 rounded-2xl bg-orange-50 hover:bg-orange-100 transition">
+                    <span class="w-11 h-11 rounded-xl bg-orange-500 text-white flex items-center justify-center font-bold">{{ tasks_overdue }}</span>
+                    <span class="text-sm font-semibold text-slate-700">Tasks past their due date</span>
+                </a>
+                {% endif %}
+
+                {% if applications_pending %}
+                <a href="#applications" class="flex items-center gap-4 p-4 rounded-2xl bg-blue-50 hover:bg-blue-100 transition">
+                    <span class="w-11 h-11 rounded-xl bg-blue-500 text-white flex items-center justify-center font-bold">{{ applications_pending }}</span>
+                    <span class="text-sm font-semibold text-slate-700">Job applications to review</span>
+                </a>
+                {% endif %}
+
+                {% if notifications_unread %}
+                <a href="#notifications" class="flex items-center gap-4 p-4 rounded-2xl bg-indigo-50 hover:bg-indigo-100 transition">
+                    <span class="w-11 h-11 rounded-xl bg-indigo-500 text-white flex items-center justify-center font-bold">{{ notifications_unread }}</span>
+                    <span class="text-sm font-semibold text-slate-700">Unread notifications</span>
+                </a>
+                {% endif %}
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
+        <!-- ================= CHARTS ================= -->
+
+        <section class="mt-6 grid grid-cols-1 xl:grid-cols-3 gap-5">
+
+            <div class="bg-white rounded-2xl shadow-md p-6 xl:col-span-2">
+                <h2 class="text-lg font-bold text-slate-800">Content &amp; message volume</h2>
+                <p class="text-sm text-slate-500">Everything published or received each month</p>
+                <div class="mt-4 h-72">
+                    <canvas id="adminGrowthChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <h2 class="text-lg font-bold text-slate-800">Platform inventory</h2>
+                <p class="text-sm text-slate-500">Everything stored on the platform</p>
+                <div class="mt-4 h-72">
+                    <canvas id="adminInventoryChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <h2 class="text-lg font-bold text-slate-800">Member growth</h2>
+                <p class="text-sm text-slate-500">Accounts created each month</p>
+                <div class="mt-4 h-64">
+                    <canvas id="adminMembersChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <h2 class="text-lg font-bold text-slate-800">Support pipeline</h2>
+                <p class="text-sm text-slate-500">Tickets by resolution status</p>
+                <div class="mt-4 h-64">
+                    <canvas id="adminSupportChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <h2 class="text-lg font-bold text-slate-800">Application pipeline</h2>
+                <p class="text-sm text-slate-500">Where applicants stand</p>
+                <div class="mt-4 h-64">
+                    <canvas id="adminApplicationsChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <h2 class="text-lg font-bold text-slate-800">Task workload</h2>
+                <p class="text-sm text-slate-500">Open versus completed by priority</p>
+                <div class="mt-4 h-64">
+                    <canvas id="adminTasksChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6 xl:col-span-3">
+                <h2 class="text-lg font-bold text-slate-800">Events by category</h2>
+                <p class="text-sm text-slate-500">Where the foundation is most active</p>
+                <div class="mt-4 h-64">
+                    <canvas id="adminCategoriesChart"></canvas>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ================= MANAGEMENT TABS ================= -->
+
+        <section class="mt-6 bg-white rounded-3xl shadow-md p-6 sm:p-8" x-data="{ tab: 'messages', q: '' }">
+
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+
+                <h2 class="text-xl font-bold text-slate-800">Manage the platform</h2>
+
+                <div class="flex items-center gap-3">
+
+                    <input type="search"
+                           x-model="q"
+                           placeholder="Filter this tab..."
+                           class="w-full sm:w-64 px-4 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+
+                </div>
+
+            </div>
+
+            <!-- Tab buttons -->
+
+            <div class="mt-6 flex flex-wrap gap-2">
+
+                <button type="button" @click="tab = 'messages'"
+                        :class="tab === 'messages' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'"
+                        class="px-4 py-2 rounded-xl text-sm font-semibold transition">
+                    Messages <span class="opacity-70">({{ messages_total }})</span>
+                </button>
+
+                <button type="button" @click="tab = 'members'"
+                        :class="tab === 'members' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'"
+                        class="px-4 py-2 rounded-xl text-sm font-semibold transition">
+                    Members <span class="opacity-70">({{ members_total }})</span>
+                </button>
+
+                <button type="button" @click="tab = 'content'"
+                        :class="tab === 'content' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'"
+                        class="px-4 py-2 rounded-xl text-sm font-semibold transition">
+                    Content
+                </button>
+
+                <button type="button" @click="tab = 'events'"
+                        :class="tab === 'events' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'"
+                        class="px-4 py-2 rounded-xl text-sm font-semibold transition">
+                    Events <span class="opacity-70">({{ events_total }})</span>
+                </button>
+
+                <button type="button" @click="tab = 'operations'"
+                        :class="tab === 'operations' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'"
+                        class="px-4 py-2 rounded-xl text-sm font-semibold transition">
+                    Support &amp; Tasks
+                </button>
+
+                <button type="button" @click="tab = 'applications'"
+                        :class="tab === 'applications' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'"
+                        class="px-4 py-2 rounded-xl text-sm font-semibold transition">
+                    Applications <span class="opacity-70">({{ applications_total }})</span>
+                </button>
+
+                <button type="button" @click="tab = 'notifications'"
+                        :class="tab === 'notifications' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'"
+                        class="px-4 py-2 rounded-xl text-sm font-semibold transition">
+                    Notifications
+                </button>
+
+                <button type="button" @click="tab = 'directory'"
+                        :class="tab === 'directory' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'"
+                        class="px-4 py-2 rounded-xl text-sm font-semibold transition">
+                    Directory
+                </button>
+
+            </div>
+
+            <!-- ============ MESSAGES ============ -->
+
+            <div x-show="tab === 'messages'" x-transition class="mt-6 overflow-x-auto">
+
+                <table class="min-w-full text-sm">
+
+                    <thead class="text-left text-xs uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                        <tr>
+                            <th class="py-3 pr-4">Sender</th>
+                            <th class="py-3 pr-4">Contact</th>
+                            <th class="py-3 pr-4">Message</th>
+                            <th class="py-3 pr-4">Received</th>
+                            <th class="py-3 text-right">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="divide-y divide-slate-100">
+
+                        {% for item in contactinfo %}
+
+                        <tr class="hover:bg-slate-50"
+                            data-search="{{ item.name }} {{ item.email }} {{ item.message }}"
+                            x-show="$el.dataset.search.toLowerCase().includes(q.toLowerCase())">
+
+                            <td class="py-3 pr-4">
+                                <p class="font-semibold text-slate-800">{{ item.name }}</p>
+                                <p class="text-xs text-slate-500">{{ item.email }}</p>
+                            </td>
+
+                            <td class="py-3 pr-4 text-slate-600 whitespace-nowrap">{{ item.phone }}</td>
+
+                            <td class="py-3 pr-4 text-slate-600 max-w-xs">{{ item.message|truncatewords:12 }}</td>
+
+                            <td class="py-3 pr-4 text-xs text-slate-500 whitespace-nowrap">
+                                {{ item.date_created|date:"M d, Y H:i" }}
+                            </td>
+
+                            <td class="py-3 text-right whitespace-nowrap">
+
+                                <a href="{% url 'contact_details' item.pk %}"
+                                   class="inline-block px-3 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition">
+                                    Reply
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="5" class="py-8 text-center text-slate-500">No messages received.</td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- ============ MEMBERS ============ -->
+
+            <div x-show="tab === 'members'" x-transition x-cloak class="mt-6 overflow-x-auto">
+
+                <table class="min-w-full text-sm">
+
+                    <thead class="text-left text-xs uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                        <tr>
+                            <th class="py-3 pr-4">Member</th>
+                            <th class="py-3 pr-4">Role</th>
+                            <th class="py-3 pr-4">Joined</th>
+                            <th class="py-3 pr-4">Last login</th>
+                            <th class="py-3 text-right">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="divide-y divide-slate-100">
+
+                        {% for member in userinfo %}
+
+                        <tr class="hover:bg-slate-50"
+                            data-search="{{ member.username }} {{ member.name }} {{ member.email }}"
+                            x-show="$el.dataset.search.toLowerCase().includes(q.toLowerCase())">
+
+                            <td class="py-3 pr-4">
+
+                                <div class="flex items-center gap-3">
+
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-slate-700 text-white flex items-center justify-center font-bold text-xs">
+                                        {{ member.username|slice:":1"|upper }}
+                                    </span>
+
+                                    <div class="min-w-0">
+
+                                        <p class="font-semibold text-slate-800 truncate">{{ member.name|default:member.username }}</p>
+
+                                        <p class="text-xs text-slate-500 truncate">{{ member.email }}</p>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td class="py-3 pr-4">
+
+                                {% if member.is_superuser %}
+                                <span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-bold uppercase">Admin</span>
+                                {% else %}
+                                <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-bold uppercase">Member</span>
+                                {% endif %}
+
+                            </td>
+
+                            <td class="py-3 pr-4 text-slate-600 whitespace-nowrap">{{ member.date_joined|date:"M d, Y" }}</td>
+
+                            <td class="py-3 pr-4 text-slate-500 text-xs whitespace-nowrap">{{ member.last_login|date:"M d, Y H:i"|default:"Never" }}</td>
+
+                            <td class="py-3 text-right whitespace-nowrap">
+
+                                <a href="{% url 'update_user' member.pk %}"
+                                   class="inline-block px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold hover:bg-slate-200 transition">
+                                    Edit
+                                </a>
+
+                                <a href="{% url 'delete_profile' member.pk %}"
+                                   class="inline-block ml-2 px-3 py-1.5 rounded-lg bg-rose-100 text-rose-700 text-xs font-semibold hover:bg-rose-200 transition">
+                                    Remove
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="5" class="py-8 text-center text-slate-500">No members registered.</td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- ============ CONTENT ============ -->
+
+            <div x-show="tab === 'content'" x-transition x-cloak class="mt-6">
+
+                <!-- Posts -->
+
+                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">Blog posts</h3>
+
+                <div class="mt-3 overflow-x-auto">
+
+                    <table class="min-w-full text-sm">
+
+                        <thead class="text-left text-xs uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                            <tr>
+                                <th class="py-3 pr-4">Title</th>
+                                <th class="py-3 pr-4">Status</th>
+                                <th class="py-3 pr-4">Created</th>
+                                <th class="py-3 text-right">Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="divide-y divide-slate-100">
+
+                            {% for post in posts_list %}
+
+                            <tr class="hover:bg-slate-50"
+                                data-search="{{ post.title }} {{ post.status }}"
+                                x-show="$el.dataset.search.toLowerCase().includes(q.toLowerCase())">
+
+                                <td class="py-3 pr-4 font-semibold text-slate-800">{{ post.title }}</td>
+
+                                <td class="py-3 pr-4">
+
+                                    <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase
+                                        {% if post.status == 'published' %}bg-green-100 text-green-700
+                                        {% elif post.status == 'drafted' %}bg-slate-100 text-slate-600
+                                        {% else %}bg-blue-100 text-blue-700{% endif %}">
+                                        {{ post.status|default:"live" }}
+                                    </span>
+
+                                </td>
+
+                                <td class="py-3 pr-4 text-slate-500 text-xs whitespace-nowrap">{{ post.created_at|date:"M d, Y" }}</td>
+
+                                <td class="py-3 text-right whitespace-nowrap">
+
+                                    <a href="{% url 'update_blog' post.pk %}"
+                                       class="inline-block px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold hover:bg-slate-200 transition">
+                                        Edit
+                                    </a>
+
+                                    <a href="{% url 'delete_blog' post.pk %}"
+                                       class="inline-block ml-2 px-3 py-1.5 rounded-lg bg-rose-100 text-rose-700 text-xs font-semibold hover:bg-rose-200 transition">
+                                        Delete
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                            {% empty %}
+
+                            <tr>
+                                <td colspan="4" class="py-8 text-center text-slate-500">No posts yet.</td>
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <!-- Projects + Portfolio -->
+
+                <div class="mt-10 grid lg:grid-cols-2 gap-8">
+
+                    <div>
+
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">Projects</h3>
+
+                        <div class="mt-3 overflow-x-auto">
+
+                            <table class="min-w-full text-sm">
+
+                                <thead class="text-left text-xs uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                                    <tr>
+                                        <th class="py-3 pr-4">Title</th>
+                                        <th class="py-3 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody class="divide-y divide-slate-100">
+
+                                    {% for project in projects_list %}
+
+                                    <tr class="hover:bg-slate-50"
+                                        data-search="{{ project.title }} {{ project.technologies_used }}"
+                                        x-show="$el.dataset.search.toLowerCase().includes(q.toLowerCase())">
+
+                                        <td class="py-3 pr-4">
+                                            <p class="font-semibold text-slate-800">{{ project.title }}</p>
+                                            <p class="text-xs text-slate-500">{{ project.technologies_used|truncatechars:40 }}</p>
+                                        </td>
+
+                                        <td class="py-3 text-right whitespace-nowrap">
+
+                                            <a href="{% url 'edit_project' project.pk %}"
+                                               class="inline-block px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold hover:bg-slate-200 transition">
+                                                Edit
+                                            </a>
+
+                                            <a href="{% url 'delete_project' project.pk %}"
+                                               class="inline-block ml-2 px-3 py-1.5 rounded-lg bg-rose-100 text-rose-700 text-xs font-semibold hover:bg-rose-200 transition">
+                                                Delete
+                                            </a>
+
+                                        </td>
+
+                                    </tr>
+
+                                    {% empty %}
+
+                                    <tr>
+                                        <td colspan="2" class="py-8 text-center text-slate-500">No projects yet.</td>
+                                    </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">Portfolio items</h3>
+
+                        <div class="mt-3 overflow-x-auto">
+
+                            <table class="min-w-full text-sm">
+
+                                <thead class="text-left text-xs uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                                    <tr>
+                                        <th class="py-3 pr-4">Title</th>
+                                        <th class="py-3 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody class="divide-y divide-slate-100">
+
+                                    {% for item in portfolio_list %}
+
+                                    <tr class="hover:bg-slate-50"
+                                        data-search="{{ item.title }} {{ item.category }}"
+                                        x-show="$el.dataset.search.toLowerCase().includes(q.toLowerCase())">
+
+                                        <td class="py-3 pr-4">
+                                            <p class="font-semibold text-slate-800">{{ item.title }}</p>
+                                            <p class="text-xs text-slate-500 capitalize">{{ item.category }}</p>
+                                        </td>
+
+                                        <td class="py-3 text-right whitespace-nowrap">
+
+                                            <a href="{% url 'update_portfolio' item.pk %}"
+                                               class="inline-block px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold hover:bg-slate-200 transition">
+                                                Edit
+                                            </a>
+
+                                            <a href="{% url 'delete_portfolio' item.pk %}"
+                                               class="inline-block ml-2 px-3 py-1.5 rounded-lg bg-rose-100 text-rose-700 text-xs font-semibold hover:bg-rose-200 transition">
+                                                Delete
+                                            </a>
+
+                                        </td>
+
+                                    </tr>
+
+                                    {% empty %}
+
+                                    <tr>
+                                        <td colspan="2" class="py-8 text-center text-slate-500">No portfolio items.</td>
+                                    </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Media -->
+
+                <h3 class="mt-10 text-sm font-bold uppercase tracking-wider text-slate-500">Gallery media</h3>
+
+                <div class="mt-3 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
+
+                    {% for item in media_list %}
+
+                    <div class="group relative overflow-hidden rounded-xl bg-slate-100 aspect-square">
+
+                        {% if item.image %}
+
+                        <img src="{{ item.image.url }}"
+                             alt="{{ item.title }}"
+                             class="w-full h-full object-cover">
+
+                        {% endif %}
+
+                        <div class="absolute inset-x-0 bottom-0 bg-slate-900/80 px-2 py-1.5 flex items-center justify-between gap-1">
+
+                            <span class="text-white text-[11px] truncate">{{ item.title }}</span>
+
+                            <div class="flex gap-1 flex-none">
+
+                                <a href="{% url 'update_image' item.pk %}"
+                                   class="px-1.5 py-0.5 rounded bg-white/90 text-slate-800 text-[10px] font-bold">
+                                    E
+                                </a>
+
+                                <a href="{% url 'delete_image' item.pk %}"
+                                   class="px-1.5 py-0.5 rounded bg-rose-500 text-white text-[10px] font-bold">
+                                    D
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {% empty %}
+
+                    <p class="col-span-full text-center text-slate-500 py-8">No media uploaded.</p>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            <!-- ============ EVENTS ============ -->
+
+            <div x-show="tab === 'events'" x-transition x-cloak class="mt-6 overflow-x-auto">
+
+                <table class="min-w-full text-sm">
+
+                    <thead class="text-left text-xs uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                        <tr>
+                            <th class="py-3 pr-4">Event</th>
+                            <th class="py-3 pr-4">Schedule</th>
+                            <th class="py-3 pr-4">Location</th>
+                            <th class="py-3 pr-4">State</th>
+                            <th class="py-3 text-right">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="divide-y divide-slate-100">
+
+                        {% for item in eventinfo %}
+
+                        <tr class="hover:bg-slate-50"
+                            data-search="{{ item.title }} {{ item.description }}"
+                            x-show="$el.dataset.search.toLowerCase().includes(q.toLowerCase())">
+
+                            <td class="py-3 pr-4">
+
+                                <p class="font-semibold text-slate-800">{{ item.title }}</p>
+
+                                <p class="text-xs text-slate-500">{{ item.description|truncatewords:10 }}</p>
+
+                            </td>
+
+                            <td class="py-3 pr-4 text-slate-600 text-xs whitespace-nowrap">
+                                {{ item.start_date|date:"M d, Y H:i"|default:"Not scheduled" }}
+                            </td>
+
+                            <td class="py-3 pr-4 text-slate-600 text-xs">
+                                {{ item.location.name|default:"TBA" }}
+                            </td>
+
+                            <td class="py-3 pr-4">
+
+                                {% if item.is_upcoming %}
+                                <span class="px-2.5 py-1 rounded-full bg-teal-100 text-teal-700 text-xs font-bold uppercase">Upcoming</span>
+                                {% else %}
+                                <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-bold uppercase">Past</span>
+                                {% endif %}
+
+                            </td>
+
+                            <td class="py-3 text-right whitespace-nowrap">
+
+                                <a href="{% url 'event_detail' item.pk %}"
+                                   class="inline-block px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold hover:bg-slate-200 transition">
+                                    View
+                                </a>
+
+                                <a href="{% url 'admin_event_view' item.pk %}"
+                                   class="inline-block px-3 py-1.5 rounded-lg bg-indigo-100 text-indigo-700 text-xs font-semibold hover:bg-indigo-200 transition">
+                                    Respond
+                                </a>
+
+                                <a href="{% url 'update_event' item.pk %}"
+                                   class="inline-block ml-2 px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 text-xs font-semibold hover:bg-blue-200 transition">
+                                    Edit
+                                </a>
+
+                                <a href="{% url 'delete_event' item.pk %}"
+                                   class="inline-block ml-2 px-3 py-1.5 rounded-lg bg-rose-100 text-rose-700 text-xs font-semibold hover:bg-rose-200 transition">
+                                    Delete
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="5" class="py-8 text-center text-slate-500">No events scheduled.</td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- ============ SUPPORT & TASKS ============ -->
+
+            <div x-show="tab === 'operations'" x-transition x-cloak class="mt-6 grid lg:grid-cols-2 gap-8">
+
+                <!-- Support -->
+
+                <div>
+
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">Support tickets</h3>
+
+                    <div class="mt-3 overflow-x-auto">
+
+                        <table class="min-w-full text-sm">
+
+                            <thead class="text-left text-xs uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                                <tr>
+                                    <th class="py-3 pr-4">Ticket</th>
+                                    <th class="py-3 pr-4">Priority</th>
+                                    <th class="py-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody class="divide-y divide-slate-100">
+
+                                {% for ticket in support_list %}
+
+                                <tr class="hover:bg-slate-50"
+                                    data-search="{{ ticket.title }} {{ ticket.description }} {{ ticket.status }} {{ ticket.priority }}"
+                                    x-show="$el.dataset.search.toLowerCase().includes(q.toLowerCase())">
+
+                                    <td class="py-3 pr-4">
+                                        <p class="font-semibold text-slate-800">{{ ticket.title }}</p>
+                                        <p class="text-xs text-slate-500">{{ ticket.description|truncatewords:8 }}</p>
+                                    </td>
+
+                                    <td class="py-3 pr-4">
+
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase
+                                            {% if ticket.priority == 'urgent' %}bg-red-100 text-red-700
+                                            {% elif ticket.priority == 'high' %}bg-orange-100 text-orange-700
+                                            {% elif ticket.priority == 'medium' %}bg-yellow-100 text-yellow-700
+                                            {% else %}bg-slate-100 text-slate-600{% endif %}">
+                                            {{ ticket.priority }}
+                                        </span>
+
+                                        <span class="block mt-1 text-[11px] text-slate-500">{{ ticket.status }}</span>
+
+                                    </td>
+
+                                    <td class="py-3 text-right whitespace-nowrap">
+
+                                        <a href="{% url 'support_detail' ticket.pk %}"
+                                           class="inline-block px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold hover:bg-slate-200 transition">
+                                            View
+                                        </a>
+
+                                        <a href="{% url 'support_update' ticket.pk %}"
+                                           class="inline-block ml-2 px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 text-xs font-semibold hover:bg-blue-200 transition">
+                                            Edit
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                                {% empty %}
+
+                                <tr>
+                                    <td colspan="3" class="py-8 text-center text-slate-500">No support tickets.</td>
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+                <!-- Tasks -->
+
+                <div>
+
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">Tasks</h3>
+
+                    <div class="mt-3 overflow-x-auto">
+
+                        <table class="min-w-full text-sm">
+
+                            <thead class="text-left text-xs uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                                <tr>
+                                    <th class="py-3 pr-4">Task</th>
+                                    <th class="py-3 pr-4">Progress</th>
+                                    <th class="py-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody class="divide-y divide-slate-100">
+
+                                {% for task in tasks_list %}
+
+                                <tr class="hover:bg-slate-50"
+                                    data-search="{{ task.title }} {{ task.description }} {{ task.priority }}"
+                                    x-show="$el.dataset.search.toLowerCase().includes(q.toLowerCase())">
+
+                                    <td class="py-3 pr-4">
+                                        <p class="font-semibold text-slate-800">{{ task.title }}</p>
+                                        <p class="text-xs text-slate-500">
+                                            Due {{ task.due_date|date:"M d, Y" }}
+                                            {% if task.completed %}
+                                            &middot; <span class="text-green-600 font-semibold">Done</span>
+                                            {% elif task.is_overdue %}
+                                            &middot; <span class="text-rose-600 font-semibold">Overdue</span>
+                                            {% endif %}
+                                        </p>
+                                    </td>
+
+                                    <td class="py-3 pr-4 w-32">
+
+                                        <div class="w-full bg-slate-200 rounded-full h-2">
+                                            <div class="bg-indigo-500 h-2 rounded-full" style="width: {{ task.progress_percentage }}%"></div>
+                                        </div>
+
+                                        <p class="text-[11px] text-slate-500 mt-1">{{ task.progress_percentage }}%</p>
+
+                                    </td>
+
+                                    <td class="py-3 text-right whitespace-nowrap">
+
+                                        <a href="{% url 'task_details' task.pk %}"
+                                           class="inline-block px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold hover:bg-slate-200 transition">
+                                            View
+                                        </a>
+
+                                        <a href="{% url 'update_task' task.pk %}"
+                                           class="inline-block ml-2 px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 text-xs font-semibold hover:bg-blue-200 transition">
+                                            Edit
+                                        </a>
+
+                                        <a href="{% url 'delete_task' task.pk %}"
+                                           class="inline-block ml-2 px-3 py-1.5 rounded-lg bg-rose-100 text-rose-700 text-xs font-semibold hover:bg-rose-200 transition">
+                                            Delete
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                                {% empty %}
+
+                                <tr>
+                                    <td colspan="3" class="py-8 text-center text-slate-500">No tasks yet.</td>
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- ============ APPLICATIONS ============ -->
+
+            <div x-show="tab === 'applications'" x-transition x-cloak class="mt-6 overflow-x-auto">
+
+                <table class="min-w-full text-sm">
+
+                    <thead class="text-left text-xs uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                        <tr>
+                            <th class="py-3 pr-4">Applicant</th>
+                            <th class="py-3 pr-4">Position</th>
+                            <th class="py-3 pr-4">Status</th>
+                            <th class="py-3 pr-4">Applied</th>
+                            <th class="py-3 text-right">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="divide-y divide-slate-100">
+
+                        {% for application in jobapplicants %}
+
+                        <tr class="hover:bg-slate-50"
+                            data-search="{{ application.applicant_name }} {{ application.job.title }} {{ application.status }}"
+                            x-show="$el.dataset.search.toLowerCase().includes(q.toLowerCase())">
+
+                            <td class="py-3 pr-4 font-semibold text-slate-800">
+                                {{ application.applicant_name|default:application.applicant }}
+                            </td>
+
+                            <td class="py-3 pr-4 text-slate-600">{{ application.job.title }}</td>
+
+                            <td class="py-3 pr-4">
+                                <span class="px-2.5 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-bold uppercase">
+                                    {{ application.get_status_display }}
+                                </span>
+                            </td>
+
+                            <td class="py-3 pr-4 text-xs text-slate-500 whitespace-nowrap">
+                                {{ application.applied_at|date:"M d, Y" }}
+                            </td>
+
+                            <td class="py-3 text-right whitespace-nowrap">
+
+                                <a href="{% url 'jobdetails' application.pk %}"
+                                   class="inline-block px-3 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition">
+                                    Review
+                                </a>
+
+                                <a href="{% url 'update_job' application.job.pk %}"
+                                   class="inline-block ml-2 px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold hover:bg-slate-200 transition">
+                                    Edit job
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="5" class="py-8 text-center text-slate-500">No applications received.</td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- ============ NOTIFICATIONS ============ -->
+
+            <div x-show="tab === 'notifications'" x-transition x-cloak class="mt-6 overflow-x-auto">
+
+                <table class="min-w-full text-sm">
+
+                    <thead class="text-left text-xs uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                        <tr>
+                            <th class="py-3 pr-4">Notification</th>
+                            <th class="py-3 pr-4">State</th>
+                            <th class="py-3 pr-4">Created</th>
+                            <th class="py-3 text-right">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="divide-y divide-slate-100">
+
+                        {% for note in notification_list %}
+
+                        <tr class="hover:bg-slate-50 {% if not note.read %}bg-indigo-50/40{% endif %}"
+                            data-search="{{ note.title }} {{ note.description }}"
+                            x-show="$el.dataset.search.toLowerCase().includes(q.toLowerCase())">
+
+                            <td class="py-3 pr-4">
+                                <p class="font-semibold text-slate-800">{{ note.title }}</p>
+                                <p class="text-xs text-slate-500">{{ note.description|truncatewords:12 }}</p>
+                            </td>
+
+                            <td class="py-3 pr-4">
+                                {% if note.read %}
+                                <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-bold uppercase">Read</span>
+                                {% else %}
+                                <span class="px-2.5 py-1 rounded-full bg-red-100 text-red-700 text-xs font-bold uppercase">New</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="py-3 pr-4 text-xs text-slate-500 whitespace-nowrap">{{ note.created_at|date:"M d, Y H:i" }}</td>
+
+                            <td class="py-3 text-right whitespace-nowrap">
+
+                                <a href="{% url 'update_notification' note.pk %}"
+                                   class="inline-block px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold hover:bg-slate-200 transition">
+                                    Edit
+                                </a>
+
+                                <a href="{% url 'delete_notifications' note.pk %}"
+                                   class="inline-block ml-2 px-3 py-1.5 rounded-lg bg-rose-100 text-rose-700 text-xs font-semibold hover:bg-rose-200 transition">
+                                    Delete
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="4" class="py-8 text-center text-slate-500">No notifications.</td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- ============ DIRECTORY ============ -->
+
+            <div x-show="tab === 'directory'" x-transition x-cloak class="mt-6 grid lg:grid-cols-3 gap-8">
+
+                <div>
+
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">Skills</h3>
+
+                    <ul class="mt-3 space-y-2">
+
+                        {% for skill in skill_list %}
+
+                        <li class="flex items-center justify-between gap-3 p-3 rounded-xl bg-slate-50"
+                            data-search="{{ skill.name }}"
+                            x-show="$el.dataset.search.toLowerCase().includes(q.toLowerCase())">
+                            <span class="text-sm font-semibold text-slate-700">{{ skill.name }}</span>
+                            <span class="text-xs font-bold text-blue-600">{{ skill.proficiency }}%</span>
+                        </li>
+
+                        {% empty %}
+
+                        <li class="text-sm text-slate-500">No skills recorded.</li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                    <a href="{% url 'skill_create' %}"
+                       class="mt-4 inline-block px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-semibold hover:bg-slate-700 transition">
+                        Add skill
+                    </a>
+
+                </div>
+
+                <div>
+
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">Certifications</h3>
+
+                    <ul class="mt-3 space-y-2">
+
+                        {% for cert in certification_list %}
+
+                        <li class="p-3 rounded-xl bg-slate-50"
+                            data-search="{{ cert.title }} {{ cert.issuing_organization }}"
+                            x-show="$el.dataset.search.toLowerCase().includes(q.toLowerCase())">
+                            <p class="text-sm font-semibold text-slate-700">{{ cert.title }}</p>
+                            <p class="text-xs text-slate-500">{{ cert.issuing_organization }} &middot; {{ cert.date_issued|date:"M Y" }}</p>
+                        </li>
+
+                        {% empty %}
+
+                        <li class="text-sm text-slate-500">No certifications.</li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                    <a href="{% url 'certification_add' %}"
+                       class="mt-4 inline-block px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-semibold hover:bg-slate-700 transition">
+                        Add certification
+                    </a>
+
+                </div>
+
+                <div>
+
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">Family</h3>
+
+                    <ul class="mt-3 space-y-2">
+
+                        {% for sibling in sibling_list %}
+
+                        <li class="p-3 rounded-xl bg-slate-50"
+                            data-search="{{ sibling.name }} {{ sibling.occupation }}"
+                            x-show="$el.dataset.search.toLowerCase().includes(q.toLowerCase())">
+                            <p class="text-sm font-semibold text-slate-700">{{ sibling.name }}</p>
+                            <p class="text-xs text-slate-500">{{ sibling.occupation|default:"—" }} &middot; age {{ sibling.age }}</p>
+                        </li>
+
+                        {% empty %}
+
+                        <li class="text-sm text-slate-500">No family members.</li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                    <a href="{% url 'add_family' %}"
+                       class="mt-4 inline-block px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-semibold hover:bg-slate-700 transition">
+                        Add family member
+                    </a>
+
+                </div>
+
+                <div>
+
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">Testimonials</h3>
+
+                    <ul class="mt-3 space-y-2">
+
+                        {% for item in testimonial_list %}
+
+                        <li class="p-3 rounded-xl bg-slate-50"
+                            data-search="{{ item.name }} {{ item.designation }}"
+                            x-show="$el.dataset.search.toLowerCase().includes(q.toLowerCase())">
+                            <p class="text-sm font-semibold text-slate-700">{{ item.name }}</p>
+                            <p class="text-xs text-slate-500">{{ item.designation|default:"—" }}</p>
+                        </li>
+
+                        {% empty %}
+
+                        <li class="text-sm text-slate-500">No testimonials.</li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                    <a href="{% url 'add_testimonial' %}"
+                       class="mt-4 inline-block px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-semibold hover:bg-slate-700 transition">
+                        Add testimonial
+                    </a>
+
+                </div>
+
+                <div>
+
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">FAQ</h3>
+
+                    <ul class="mt-3 space-y-2">
+
+                        {% for item in faq_list %}
+
+                        <li class="p-3 rounded-xl bg-slate-50"
+                            data-search="{{ item.question }} {{ item.answer }}"
+                            x-show="$el.dataset.search.toLowerCase().includes(q.toLowerCase())">
+                            <p class="text-sm font-semibold text-slate-700">{{ item.question }}</p>
+                            <p class="text-xs text-slate-500 mt-1">{{ item.answer|truncatewords:14 }}</p>
+                        </li>
+
+                        {% empty %}
+
+                        <li class="text-sm text-slate-500">No questions added yet.</li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                    <a href="{% url 'add_faq' %}"
+                       class="mt-4 inline-block px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-semibold hover:bg-slate-700 transition">
+                        Add question
+                    </a>
+
+                </div>
+
+                <div>
+
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">Community</h3>
+
+                    <div class="mt-3 grid grid-cols-2 gap-3">
+
+                        <div class="p-4 rounded-xl bg-slate-50 text-center">
+                            <p class="text-2xl font-black text-slate-800">{{ volunteer_list|length }}</p>
+                            <p class="text-xs text-slate-500 mt-1">Volunteers</p>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-slate-50 text-center">
+                            <p class="text-2xl font-black text-slate-800">{{ subscriber_list|length }}</p>
+                            <p class="text-xs text-slate-500 mt-1">Subscribers</p>
+                        </div>
+
+                    </div>
+
+                    <ul class="mt-3 space-y-2">
+
+                        {% for volunteer in volunteer_list %}
+
+                        <li class="p-3 rounded-xl bg-slate-50"
+                            data-search="{{ volunteer.full_name }} {{ volunteer.email }}"
+                            x-show="$el.dataset.search.toLowerCase().includes(q.toLowerCase())">
+                            <p class="text-sm font-semibold text-slate-700">{{ volunteer.full_name }}</p>
+                            <p class="text-xs text-slate-500">{{ volunteer.email }}</p>
+                        </li>
+
+                        {% empty %}
+
+                        <li class="text-sm text-slate-500">No volunteers yet.</li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= ACTIVITY + TOOLS ================= -->
+
+        <section class="mt-6 grid lg:grid-cols-3 gap-5">
+
+            <!-- Audit trail -->
+
+            <div class="lg:col-span-2 bg-white rounded-2xl shadow-md p-6 sm:p-8">
+
+                <div class="flex items-center justify-between">
+
+                    <h2 class="text-lg font-bold text-slate-800">Activity log</h2>
+
+                    <a href="{% url 'activity_list' %}" class="text-sm text-blue-600 font-semibold hover:underline">View all</a>
+
+                </div>
+
+                <ol class="mt-6 space-y-4 max-h-[420px] overflow-y-auto pr-2">
+
+                    {% for activity in activity_list %}
+
+                    <li class="flex gap-4">
+
+                        <span class="w-9 h-9 shrink-0 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                            <i class="fa-solid fa-bolt"></i>
+                        </span>
+
+                        <div class="min-w-0 border-b border-slate-100 pb-3">
+
+                            <p class="font-semibold text-slate-800 text-sm">{{ activity.title }}</p>
+
+                            <p class="text-xs text-slate-500">{{ activity.description|truncatewords:16 }}</p>
+
+                            <p class="text-[11px] text-slate-400 mt-1">
+                                {{ activity.created_at|timesince }} ago &middot;
+                                {{ activity.user.name|default:activity.user.username }}
+                            </p>
+
+                        </div>
+
+                    </li>
+
+                    {% empty %}
+
+                    <li class="text-sm text-slate-500 text-center py-8">No activity recorded.</li>
+
+                    {% endfor %}
+
+                </ol>
+
+            </div>
+
+            <!-- Tools -->
+
+            <div class="space-y-5">
+
+                <div class="bg-white rounded-2xl shadow-md p-6">
+
+                    <h2 class="text-lg font-bold text-slate-800">Reports &amp; tools</h2>
+
+                    <div class="mt-4 space-y-3">
+
+                        <a href="{% url 'fellomarley_pdf' %}"
+                           class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
+                            <span class="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center">
+                                <i class="fa-solid fa-file-pdf"></i>
+                            </span>
+                            <span class="text-sm font-semibold text-slate-800">Full platform report</span>
+                        </a>
+
+                        <a href="{% url 'download_report' %}"
+                           class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
+                            <span class="w-10 h-10 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center">
+                                <i class="fa-solid fa-users"></i>
+                            </span>
+                            <span class="text-sm font-semibold text-slate-800">Family report</span>
+                        </a>
+
+                        <a href="{% url 'analytics' %}"
+                           class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
+                            <span class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </span>
+                            <span class="text-sm font-semibold text-slate-800">Analytics workspace</span>
+                        </a>
+
+                        <a href="{% url 'messaging' %}"
+                           class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
+                            <span class="w-10 h-10 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center">
+                                <i class="fa-solid fa-comment-dots"></i>
+                            </span>
+                            <span class="text-sm font-semibold text-slate-800">Messaging centre</span>
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-md p-6">
+
+                    <h2 class="text-lg font-bold text-slate-800">Quick actions</h2>
+
+                    <div class="mt-4 grid grid-cols-2 gap-3">
+
+                        <a href="{% url 'add_blog' %}" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-50 hover:bg-blue-50 hover:text-blue-700 transition">
+                            <i class="fa-solid fa-pen text-xl"></i>
+                            <span class="text-xs font-semibold">Post</span>
+                        </a>
+
+                        <a href="{% url 'add_project' %}" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-50 hover:bg-blue-50 hover:text-blue-700 transition">
+                            <i class="fa-solid fa-folder-plus text-xl"></i>
+                            <span class="text-xs font-semibold">Project</span>
+                        </a>
+
+                        <a href="{% url 'add_portfolio' %}" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-50 hover:bg-blue-50 hover:text-blue-700 transition">
+                            <i class="fa-solid fa-briefcase text-xl"></i>
+                            <span class="text-xs font-semibold">Portfolio</span>
+                        </a>
+
+                        <a href="{% url 'add_image' %}" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-50 hover:bg-blue-50 hover:text-blue-700 transition">
+                            <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
+                            <span class="text-xs font-semibold">Media</span>
+                        </a>
+
+                        <a href="{% url 'add_event' %}" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-50 hover:bg-blue-50 hover:text-blue-700 transition">
+                            <i class="fa-solid fa-calendar-plus text-xl"></i>
+                            <span class="text-xs font-semibold">Event</span>
+                        </a>
+
+                        <a href="{% url 'add_task' %}" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-50 hover:bg-blue-50 hover:text-blue-700 transition">
+                            <i class="fa-solid fa-list-check text-xl"></i>
+                            <span class="text-xs font-semibold">Task</span>
+                        </a>
+
+                        <a href="{% url 'support_create' %}" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-50 hover:bg-blue-50 hover:text-blue-700 transition">
+                            <i class="fa-solid fa-headset text-xl"></i>
+                            <span class="text-xs font-semibold">Ticket</span>
+                        </a>
+
+                        <a href="{% url 'post_job' %}" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-50 hover:bg-blue-50 hover:text-blue-700 transition">
+                            <i class="fa-solid fa-briefcase text-xl"></i>
+                            <span class="text-xs font-semibold">Job</span>
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    {% include "footer.html" %}
+
 </div>
 
-        {% include "sidebar.html" %}
+<script>
 
+(function () {
 
-<div class="flex flex-col sm:ml-64 h-screen">
+const read = function (id) {
+    const node = document.getElementById(id);
+    if (!node) return { labels: [], data: [] };
+    try {
+        return JSON.parse(node.textContent);
+    } catch (error) {
+        return { labels: [], data: [] };
+    }
+};
 
-    <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6">
-    <!-- Contact Information Section -->
-    <div>
-        <h2 class="text-center text-3xl font-extrabold text-gray-800 dark:text-white mb-6">📞 Contact Information</h2>
-        <div class="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-300">
-                    <tr>
-                        <th class="px-6 py-4">Name</th>
-                        <th class="px-6 py-4">Email</th>
-                        <th class="px-6 py-4 text-center">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for contact in contactinfo %}
-                        <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ contact.name }}</td>
-                            <td class="px-6 py-4">{{ contact.email }}</td>
-                            <td class="px-6 py-4 flex justify-center">
-                                <a href="{% url 'contact_details' contact.id %}"
-                                   class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-lg transition">
-                                   View Details
-                                </a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+const series = function (payload, key) {
+    return Array.isArray(payload[key]) ? payload[key] : [];
+};
 
-    <!-- Events Information Section -->
-    <div>
-        <h2 class="text-center text-3xl font-extrabold text-gray-800 dark:text-white mb-6">🎉 Events Information</h2>
-        <div class="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-300">
-                    <tr>
-                        <th class="px-6 py-4">Title</th>
-                        <th class="px-6 py-4">Date</th>
-                        <th class="px-6 py-4 text-center">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for z in eventinfo %}
-                        <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ z.title }}</td>
-                            <td class="px-6 py-4">{{ z.date }}</td>
-                            <td class="px-6 py-4 flex justify-center">
-                                <a href="{% url 'event_detail' z.id %}"
-                                   class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-lg transition">
-                                   View Details
-                                </a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+const growth = read("chart-admin-growth");
+const members = read("chart-admin-members");
+const inventory = read("chart-admin-inventory");
+const support = read("chart-admin-support");
+const applications = read("chart-admin-applications");
+const categories = read("chart-admin-categories");
+const tasks = read("chart-admin-tasks");
 
-    <!-- Job Applicants Section -->
-    <div>
-        <h2 class="text-center text-3xl font-extrabold text-gray-800 dark:text-white mb-6">👷 Job Applicants</h2>
-        <div class="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-300">
-                    <tr>
-                        <th class="px-6 py-4">Job Title</th>
-                        <th class="px-6 py-4">Applicant Name</th>
-                        <th class="px-6 py-4 text-center">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for job in jobapplicants %}
-                        <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ job.job }}</td>
-                            <td class="px-6 py-4">{{ job.applicant_name }}</td>
-                            <td class="px-6 py-4 flex justify-center">
-                                <a href="{% url 'jobdetails' pk=job.pk %}"
-                                   class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg transition">
-                                   View Details
-                                </a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</main>
-</div>
+const palette = ["#2563eb", "#0d9488", "#8b5cf6", "#f59e0b", "#f43f5e", "#06b6d4", "#64748b"];
 
-{% include "footer.html" %}
+if (window.Chart) {
+    Chart.defaults.font.family = "ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif";
+    Chart.defaults.font.size = 12;
+    Chart.defaults.color = "#64748b";
+    Chart.defaults.plugins.legend.labels.usePointStyle = true;
+    Chart.defaults.plugins.legend.labels.boxWidth = 8;
+    Chart.defaults.plugins.tooltip.backgroundColor = "#0f172a";
+    Chart.defaults.plugins.tooltip.padding = 12;
+    Chart.defaults.plugins.tooltip.cornerRadius = 10;
+    Chart.defaults.maintainAspectRatio = false;
+}
+
+const axis = function () {
+    return { grid: { color: "#e2e8f0" }, border: { display: false } };
+};
+
+const build = function (id, config) {
+    const canvas = document.getElementById(id);
+    if (!canvas || !window.Chart) return;
+    new Chart(canvas.getContext("2d"), config);
+};
+
+build("adminGrowthChart", {
+    type: "line",
+    data: {
+        labels: growth.labels || [],
+        datasets: [
+            { label: "Posts", data: series(growth, "posts"), borderColor: "#8b5cf6", backgroundColor: "#8b5cf6", tension: 0.35, pointRadius: 3 },
+            { label: "Portfolio", data: series(growth, "portfolio"), borderColor: "#0d9488", backgroundColor: "#0d9488", tension: 0.35, pointRadius: 3 },
+            { label: "Media", data: series(growth, "media"), borderColor: "#f59e0b", backgroundColor: "#f59e0b", tension: 0.35, pointRadius: 3 },
+            { label: "Messages", data: series(growth, "messages"), borderColor: "#f43f5e", backgroundColor: "#f43f5e", tension: 0.35, pointRadius: 3 }
+        ]
+    },
+    options: {
+        responsive: true,
+        interaction: { mode: "index", intersect: false },
+        scales: { x: axis(), y: { ...axis(), beginAtZero: true, ticks: { precision: 0 } } }
+    }
+});
+
+build("adminInventoryChart", {
+    type: "doughnut",
+    data: {
+        labels: inventory.labels || [],
+        datasets: [{ data: series(inventory, "data"), backgroundColor: palette, borderWidth: 0, hoverOffset: 8 }]
+    },
+    options: {
+        responsive: true,
+        cutout: "62%",
+        plugins: { legend: { position: "bottom" } }
+    }
+});
+
+build("adminMembersChart", {
+    type: "bar",
+    data: {
+        labels: members.labels || [],
+        datasets: [{ label: "New members", data: series(members, "data"), backgroundColor: "#2563eb", borderRadius: 8, maxBarThickness: 34 }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { x: axis(), y: { ...axis(), beginAtZero: true, ticks: { precision: 0 } } }
+    }
+});
+
+build("adminSupportChart", {
+    type: "polarArea",
+    data: {
+        labels: support.labels || [],
+        datasets: [{ data: series(support, "data"), backgroundColor: palette, borderWidth: 0 }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { position: "bottom" } },
+        scales: { r: { ticks: { precision: 0 }, grid: { color: "#e2e8f0" } } }
+    }
+});
+
+build("adminApplicationsChart", {
+    type: "bar",
+    data: {
+        labels: applications.labels || [],
+        datasets: [{ label: "Applications", data: series(applications, "data"), backgroundColor: "#0d9488", borderRadius: 8, maxBarThickness: 40 }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { x: axis(), y: { ...axis(), beginAtZero: true, ticks: { precision: 0 } } }
+    }
+});
+
+build("adminTasksChart", {
+    type: "bar",
+    data: {
+        labels: tasks.labels || [],
+        datasets: [
+            { label: "Open", data: series(tasks, "open"), backgroundColor: "#f59e0b", borderRadius: 6, maxBarThickness: 32 },
+            { label: "Completed", data: series(tasks, "done"), backgroundColor: "#0d9488", borderRadius: 6, maxBarThickness: 32 }
+        ]
+    },
+    options: {
+        responsive: true,
+        scales: { x: { stacked: true, ...axis() }, y: { stacked: true, ...axis(), beginAtZero: true, ticks: { precision: 0 } } }
+    }
+});
+
+build("adminCategoriesChart", {
+    type: "bar",
+    data: {
+        labels: categories.labels || [],
+        datasets: [{ label: "Events", data: series(categories, "data"), backgroundColor: "#f43f5e", borderRadius: 8, maxBarThickness: 46 }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { x: axis(), y: { ...axis(), beginAtZero: true, ticks: { precision: 0 } } }
+    }
+});
+
+})();
+
+</script>
+
 {% endblock content %}

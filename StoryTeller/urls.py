@@ -1,23 +1,157 @@
-from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
+from django.contrib.sitemaps.views import sitemap
+from django.urls import path
 
-from .views import ResetPasswordView, add_picture, delete_job, delete_testimonial,update_job,ContactusPage, update_testimonial,update_user,delete_profile, activity_detail, add_faq, already_applied, apply_for_job, donate, faq_list, job_application_success, job_list, jobdetails, post_job, search, user,volunteer_list, volunteer_signup,  activity_list, add_activity, add_blog, add_image, add_notification, add_project, add_task, add_testimonial, blog, blog_details, certification_add, certification_delete, certification_detail, certification_list, certification_update, contact_detail, contact_details, delete_activity, delete_blog, delete_event, delete_image, delete_notifications, delete_portfolio, delete_project, delete_task, download_report, edit_project,education_level, education_journey, event_detail, event_details, generate_full_pdf, messaging, portfolio_details, project_detail, projects_list, send_event_response, send_response, skill_delete, skill_detail, skill_form, skill_list, skills_view, subscribe_newsletter, support_create, support_delete, support_detail, support_update, task_details, testimonials_list, update_activity, update_blog, update_education, update_event, update_image, update_notification, update_portfolio, update_task, user_detail, user_details, analytics,notifications, add_event, add_portfolio, dashboard,add_family,  event_category_detail, event_category_list, event_location_detail, event_location_list, me,index, sibling_detail, siblings_list,signup,loginpage,AdminsDashboard,logoutuser,Portfolio,eventsItem,gallery_view,about, support, tasks, update_member
+from .seo import SITEMAPS, robots_txt
+from .views import (
+    AdminsDashboard,
+    ContactusPage,
+    Portfolio,
+    ResetPasswordView,
+    about,
+    activity_detail,
+    activity_list,
+    add_activity,
+    add_blog,
+    add_donation,
+    add_event,
+    add_family,
+    add_faq,
+    add_image,
+    add_notification,
+    add_picture,
+    add_portfolio,
+    add_project,
+    add_task,
+    add_testimonial,
+    admin_event_view,
+    already_applied,
+    analytics,
+    apply_for_job,
+    blog,
+    blog_details,
+    certification_add,
+    certification_delete,
+    certification_detail,
+    certification_list,
+    certification_update,
+    contact_details,
+    dashboard,
+    delete_activity,
+    delete_blog,
+    delete_donation,
+    delete_event,
+    delete_image,
+    delete_job,
+    delete_notifications,
+    delete_portfolio,
+    delete_profile,
+    delete_project,
+    delete_task,
+    delete_testimonial,
+    delete_volunteer,
+    donate,
+    donation_detail,
+    donations,
+    download_report,
+    edit_project,
+    education_journey,
+    education_level,
+    event_category_detail,
+    event_category_list,
+    event_detail,
+    event_details,
+    event_location_detail,
+    event_location_list,
+    eventsItem,
+    faq_list,
+    gallery_view,
+    generate_full_pdf,
+    index,
+    job_application_list,
+    job_application_success,
+    job_list,
+    job_posting,
+    jobdetails,
+    loginpage,
+    logoutuser,
+    mark_notification_read,
+    mark_notifications_read,
+    me,
+    messaging,
+    newsletter_subscribe,
+    notifications,
+    portfolio_details,
+    post_job,
+    project_detail,
+    projects_list,
+    public_contact,
+    respond_to_application,
+    search,
+    send_event_response,
+    send_response,
+    sibling_detail,
+    siblings_list,
+    signup,
+    skill_delete,
+    skill_detail,
+    skill_form,
+    skills_view,
+    subscribe_newsletter,
+    support,
+    support_create,
+    support_delete,
+    support_detail,
+    support_update,
+    task_details,
+    tasks,
+    testimonials_list,
+    toggle_donation_receipt,
+    toggle_task,
+    update_activity,
+    update_application_status,
+    update_blog,
+    update_donation,
+    update_education,
+    update_event,
+    update_image,
+    update_job,
+    update_member,
+    update_notification,
+    update_portfolio,
+    update_task,
+    update_testimonial,
+    update_user,
+    update_volunteer,
+    update_volunteer_status,
+    user,
+    user_detail,
+    user_details,
+    volunteer_detail,
+    volunteer_list,
+    volunteer_signup,
+)
+
 urlpatterns = [
     path('',me,name='me' ),
+    path('robots.txt', robots_txt, name='robots'),
+    path('sitemap.xml', sitemap, {'sitemaps': SITEMAPS}, name='sitemap'),
     path('index/',index,name='index' ),
-    
+    path('contact-submit/', public_contact, name='public_contact'),
+    path('newsletter-subscribe/', newsletter_subscribe, name='newsletter_subscribe'),
+
     path('search/',search,name='search' ),
 
     path("signup/",signup, name="signup"),
     path("login/",loginpage, name="login"),
     path('password-reset/', ResetPasswordView.as_view(), name='password_reset'),
-    path('password-reset-confirm/<uidb64>/<token>/',auth_views.PasswordResetConfirmView.as_view(template_name='users/password_reset_confirm.html'), name='password_reset_confirm'),
-    path('password-reset-complete/',auth_views.PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'), name='password_reset_complete'),
+    path('password-reset-confirm/<uidb64>/<token>/',auth_views.PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html'), name='password_reset_confirm'),
+    path('password-reset-complete/',auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'), name='password_reset_complete'),
     path("logoutuser/",logoutuser, name="logoutuser"),
-    path("update_user/<str:pk>/",update_user, name="update_user"),
-    path("delete_profile/<str:pk>/",delete_profile, name="delete_profile"),
+    path("update_user/<int:pk>/",update_user, name="update_user"),
+    path("delete_profile/<int:pk>/",delete_profile, name="delete_profile"),
     path('myuser/',user,name='myuser'),
 
 
@@ -28,7 +162,7 @@ urlpatterns = [
     path('delete_blog/<int:pk>/delete/', delete_blog, name='delete_blog'),
     path('blog_details/<int:pk>', blog_details, name='blog_details'),
 
-    
+
 
 
     path("portfolio/",Portfolio, name="portfolio"),
@@ -37,7 +171,7 @@ urlpatterns = [
     path('portfolio/delete/<int:pk>/', delete_portfolio, name='delete_portfolio'),
     path('portfolio_details/<int:pk>/', portfolio_details, name='portfolio_details'),
 
-    
+
 
 
     path("contact_us/",ContactusPage, name="contactus"),
@@ -50,14 +184,14 @@ urlpatterns = [
     path('locations/<int:location_id>/', event_location_detail, name='event_location_detail'),
     path('event/update/<int:pk>/', update_event, name='update_event'),
     path('event/delete/<int:pk>/', delete_event, name='delete_event'),
-    path('event_details/<int:pk>/', event_details, name='event_detail'),
+    path('event_details/<int:pk>/', event_details, name='event_details'),
 
 
 
     path("about/", about, name="about"),
 
     path("gallery/", gallery_view, name="gallery"),
-    path("add_picture/<str:sibling_id>/", add_picture, name="add_picture"),
+    path("add_picture/<int:sibling_id>/", add_picture, name="add_picture"),
     path('gallery/add/', add_image, name='add_image'),
     path('update_image/<int:image_id>/', update_image, name='update_image'),
     path('delete_image/<int:pk>/', delete_image, name='delete_image'),
@@ -65,18 +199,19 @@ urlpatterns = [
 
     path("admins/", AdminsDashboard, name="admins"),
     path('event/<int:event_id>/', event_detail, name='event_detail'),
+    path('admins/event/<int:event_id>/', admin_event_view, name='admin_event_view'),
+    path('admins/event/response/<int:event_id>/', send_event_response, name='send_event_response'),
     path('contact/<int:contact_id>/', contact_details, name='contact_details'),
 
 
-    path('contact/<int:pk>/', contact_detail, name='contact_detail'),
     path('user/<int:pk>/', user_detail, name='user_detail'),
-    
+
     path('siblings/', siblings_list, name='siblings_list'),
     path('add_family/', add_family, name='add_family'),
     path('update-member/update/<int:member_id>/', update_member, name='update_member'),
     path('siblings/<int:sibling_id>/', sibling_detail, name='sibling_detail'),
 
-    
+
     path('dashboard/', dashboard, name='dashboard'),
 
 
@@ -86,6 +221,7 @@ urlpatterns = [
     path('add_task/', add_task, name='add_task'),
     path('update/<int:pk>/', update_task, name='update_task'),
     path('delete/<int:pk>/', delete_task, name='delete_task'),
+    path('task/toggle/<int:pk>/', toggle_task, name='toggle_task'),
 
 
 
@@ -97,6 +233,8 @@ urlpatterns = [
 
     # Notifications URL
     path('notifications/', notifications, name='notifications'),
+    path('notifications/mark-all-read/', mark_notifications_read, name='mark_notifications_read'),
+    path('notifications/mark-read/<int:pk>/', mark_notification_read, name='mark_notification_read'),
     path('add_notification/', add_notification, name='add_notification'),
     path('notifications/update/<int:pk>/', update_notification, name='update_notification'),
     path('notifications/delete/<int:pk>/', delete_notifications, name='delete_notifications'),
@@ -144,7 +282,6 @@ urlpatterns = [
     path('support/<int:pk>/edit/', support_update, name='support_update'),
     path('support/<int:pk>/delete/', support_delete, name='support_delete'),
 
-    path('skills/', skill_list, name='skill_list'),
     path('skills/<int:pk>/', skill_detail, name='skill_detail'),
     path('skills/new/', skill_form, name='skill_create'),
     path('skills/edit/<int:pk>/', skill_form, name='skill_edit'),
@@ -153,32 +290,45 @@ urlpatterns = [
 
 
     path("send-response/<int:contact_id>/", send_response, name="send_response"),
-    path("admin/event/response/<int:event_id>/", send_event_response, name="send_event_response"),
 
      path('testimonials/', testimonials_list, name='testimonials_list'),
     path('testimonials/add/', add_testimonial, name='add_testimonial'),
-    path('update_testimonial/<str:pk>/update/', update_testimonial, name='update_testimonial'),
-    path('delete_testimonial/<str:pk>/delete/', delete_testimonial, name='delete_testimonial'),
+    path('update_testimonial/<int:pk>/update/', update_testimonial, name='update_testimonial'),
+    path('delete_testimonial/<int:pk>/delete/', delete_testimonial, name='delete_testimonial'),
 
 
 
 
     path('volunteers/', volunteer_list, name='volunteer_list'),
     path('volunteers/signup/', volunteer_signup, name='volunteer_signup'),
+    path('volunteers/<int:pk>/', volunteer_detail, name='volunteer_detail'),
+    path('volunteers/<int:pk>/edit/', update_volunteer, name='update_volunteer'),
+    path('volunteers/<int:pk>/delete/', delete_volunteer, name='delete_volunteer'),
+    path('volunteers/<int:pk>/status/', update_volunteer_status, name='update_volunteer_status'),
 
     path('jobs/', job_list, name='job_list'),
+    path('jobs/posting/<int:pk>/', job_posting, name='job_posting'),
+    path('jobs/applications/', job_application_list, name='job_application_list'),
+    path('jobs/applications/<int:pk>/status/', update_application_status, name='update_application_status'),
+    path('jobs/applications/<int:pk>/respond/', respond_to_application, name='respond_to_application'),
     path('jobdetails/<int:pk>/', jobdetails, name='jobdetails'),
     path('jobs/post/', post_job, name='post_job'),
     path('job/<int:job_id>/apply/', apply_for_job, name='apply_for_job'),
-    path('job/application/success/', job_application_success, name='job_application_success'), 
+    path('job/application/success/', job_application_success, name='job_application_success'),
     path('job/<int:job_id>/already_applied/', already_applied, name='already_applied'),  # Already applied URL
-    path('update_job/<str:pk>/', update_job, name='update_job'),
-    path('delete_job/<str:pk>/', delete_job, name='delete_job'),
+    path('update_job/<int:pk>/', update_job, name='update_job'),
+    path('delete_job/<int:pk>/', delete_job, name='delete_job'),
 
 
 
     path('donate/', donate, name='donate'),
-    
+    path('donations/', donations, name='donations'),
+    path('add_donation/', add_donation, name='add_donation'),
+    path('donations/<int:pk>/', donation_detail, name='donation_detail'),
+    path('donations/update/<int:pk>/', update_donation, name='update_donation'),
+    path('donations/delete/<int:pk>/', delete_donation, name='delete_donation'),
+    path('donations/<int:pk>/receipt/', toggle_donation_receipt, name='toggle_donation_receipt'),
+
     path('faq/', faq_list, name='faq_list'),
     path('add_faq/', add_faq, name='add_faq'),
 
@@ -194,4 +344,4 @@ if settings.DEBUG:
 
 
 
-   
+

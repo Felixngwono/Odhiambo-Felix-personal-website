@@ -1,20 +1,331 @@
 {% extends "header.html" %}
+
+{% block title %}{{ skill.name }} | Skills | FelloMarley Foundation{% endblock %}
+
 {% block content %}
-        {% include "sidebar.html" %}
 
+{% include "sidebar.html" %}
 
-<div class="flex flex-col sm:ml-64 h-screen">
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
 
-    <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6"><div class="container mx-auto p-6">
-    <h2 class="text-3xl font-bold">{{ skill.name }}</h2>
-    <p class="text-gray-700">Proficiency: {{ skill.proficiency }}%</p>
-    <a href="{% url 'skill_list' %}" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Back to List</a>
-    <a href="{% url 'skill_edit' skill.pk %}" class="bg-yellow-500 text-white px-4 py-2 rounded-lg">Edit</a>
-    <a href="{% url 'skill_delete' skill.pk %}" class="bg-red-500 text-white px-4 py-2 rounded-lg">Delete</a>
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
+
+        <!-- ================= FLASH ================= -->
+
+        {% if messages %}
+
+        <div class="mb-6 space-y-3">
+
+            {% for message in messages %}
+
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+        <!-- ================= HERO ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-900 to-blue-900 text-white shadow-2xl p-6 sm:p-10">
+
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:60px 60px;"></div>
+
+            <div class="absolute -top-24 -right-16 w-96 h-96 bg-indigo-400 rounded-full blur-3xl opacity-20"></div>
+
+            <div class="relative flex items-start gap-6 flex-wrap">
+
+                <span class="w-20 h-20 shrink-0 rounded-3xl bg-white/10 border border-white/20 flex items-center justify-center">
+                    {% if skill.icon %}
+                    <i class="{{ skill.icon }} text-3xl"></i>
+                    {% else %}
+                    <i class="fa-solid fa-bolt text-3xl"></i>
+                    {% endif %}
+                </span>
+
+                <div class="min-w-0 flex-1">
+
+                    <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                        <i class="fa-solid fa-lightbulb"></i> {{ skill.category_label }}
+                    </p>
+
+                    <h1 class="mt-3 text-3xl sm:text-5xl font-black leading-tight break-words">
+                        {{ skill.name }}
+                    </h1>
+
+                    <div class="mt-4 flex items-center gap-2 flex-wrap text-xs font-semibold">
+                        <span class="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15">
+                            {{ skill.level }}
+                        </span>
+                        {% if skill.years_experience %}
+                        <span class="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15">
+                            <i class="fa-regular fa-calendar mr-1.5"></i>
+                            {{ skill.years_experience }} year{{ skill.years_experience|pluralize }} of practice
+                        </span>
+                        {% endif %}
+                        {% if skill.created_at %}
+                        <span class="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15">
+                            <i class="fa-regular fa-plus mr-1.5"></i>
+                            Added {{ skill.created_at|date:"M Y" }}
+                        </span>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+                <div class="flex items-center gap-3 flex-wrap">
+                    {% if request.user.is_superuser %}
+
+                    <a href="{% url 'skill_edit' skill.pk %}"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white font-bold text-slate-900 hover:bg-slate-100 transition">
+                        <i class="fa-solid fa-pen"></i> Edit
+                    </a>
+                    <a href="{% url 'skill_delete' skill.pk %}"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-rose-50 text-rose-600 font-bold hover:bg-rose-100 transition">
+                        <i class="fa-solid fa-trash"></i> Delete
+                    </a>
+                    {% endif %}
+
+                    <a href="{% url 'skills' %}"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                        <i class="fa-solid fa-arrow-left"></i> All skills
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= BODY ================= -->
+
+        <div class="mt-6 grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+            <div class="xl:col-span-2 space-y-6">
+
+                <!-- Proficiency -->
+
+                <section class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <div class="flex items-center justify-between gap-4 flex-wrap">
+
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900">Proficiency</h2>
+                            <p class="text-sm text-slate-500 mt-1">How confident the team is with this skill today.</p>
+                        </div>
+
+                        <p class="text-5xl font-black text-slate-900">
+                            {{ skill.proficiency }}<span class="text-2xl text-slate-400">%</span>
+                        </p>
+
+                    </div>
+
+                    <div class="mt-6 h-4 rounded-full bg-slate-100 overflow-hidden">
+                        <div class="h-full rounded-full bg-gradient-to-r from-indigo-500 via-blue-500 to-emerald-400 transition-all duration-700"
+                             style="width: {{ skill.proficiency }}%"></div>
+                    </div>
+
+                    <div class="mt-4 flex items-center justify-between text-xs font-bold text-slate-400">
+                        <span>Beginner</span>
+                        <span>Intermediate</span>
+                        <span>Proficient</span>
+                        <span>Advanced</span>
+                        <span>Expert</span>
+                    </div>
+
+                </section>
+
+                <!-- Description -->
+
+                <section class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <h2 class="text-lg font-bold text-slate-900">About this skill</h2>
+
+                    <p class="mt-3 text-sm text-slate-600 leading-relaxed">
+                        {% if skill.description %}
+                            {{ skill.description|linebreaks }}
+                        {% else %}
+                            No description has been written for this skill yet. Add one so the rest of the
+                            team knows what it covers and where it has been applied.
+                        {% endif %}
+                    </p>
+
+                    {% if not skill.description %}
+                    <a href="{% url 'skill_edit' skill.pk %}"
+                       class="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-500 transition">
+                        <i class="fa-solid fa-pen"></i> Write the description
+                    </a>
+                    {% endif %}
+
+                </section>
+
+                <!-- Related -->
+
+                {% if related_skills %}
+
+                <section class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <h2 class="text-lg font-bold text-slate-900">Related skills</h2>
+                    <p class="text-sm text-slate-500 mt-1">Capabilities that sit next to this one.</p>
+
+                    <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                        {% for item in related_skills %}
+
+                        <a href="{% url 'skill_detail' item.pk %}"
+                           class="group rounded-2xl border border-slate-100 p-4 hover:border-indigo-200 hover:shadow-lg transition">
+
+                            <div class="flex items-center gap-3">
+
+                                <span class="w-10 h-10 shrink-0 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                                    {% if item.icon %}
+                                    <i class="{{ item.icon }} text-sm"></i>
+                                    {% else %}
+                                    <i class="fa-solid fa-bolt text-sm"></i>
+                                    {% endif %}
+                                </span>
+
+                                <div class="min-w-0 flex-1">
+                                    <p class="font-bold text-slate-800 truncate group-hover:text-indigo-600 transition">{{ item.name }}</p>
+                                    <p class="text-[11px] text-slate-400">
+                                        {{ item.category_label }} &middot; {{ item.level }}
+                                    </p>
+                                </div>
+
+                                <span class="text-xs font-black text-slate-600 shrink-0">{{ item.proficiency }}%</span>
+
+                            </div>
+
+                            <div class="mt-3 h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                                <div class="h-full rounded-full bg-indigo-500" style="width: {{ item.proficiency }}%"></div>
+                            </div>
+
+                        </a>
+
+                        {% endfor %}
+
+                    </div>
+
+                </section>
+
+                {% endif %}
+
+            </div>
+
+            <!-- ================= RAIL ================= -->
+
+            <aside class="space-y-5">
+
+                <!-- Facts -->
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Details</h2>
+
+                    <div class="mt-4 space-y-3 text-sm">
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-500">Category</span>
+                            <span class="font-black text-slate-800">{{ skill.category_label }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-500">Level</span>
+                            <span class="font-black text-slate-800">{{ skill.level }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-500">Experience</span>
+                            <span class="font-black text-slate-800">{{ skill.years_experience }} yr{{ skill.years_experience|pluralize }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-500">Skills tracked</span>
+                            <span class="font-black text-slate-800">{{ skill_stats.total }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-500">Team average</span>
+                            <span class="font-black text-slate-800">{{ skill_stats.average }}%</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Compare with the average -->
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Against the team</h2>
+
+                    <div class="mt-5 space-y-4">
+
+                        <div>
+                            <div class="flex items-center justify-between text-xs font-bold">
+                                <span class="text-slate-500">This skill</span>
+                                <span class="text-slate-800">{{ skill.proficiency }}%</span>
+                            </div>
+                            <div class="mt-1.5 h-2 rounded-full bg-slate-100 overflow-hidden">
+                                <div class="h-full rounded-full bg-indigo-500" style="width: {{ skill.proficiency }}%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between text-xs font-bold">
+                                <span class="text-slate-500">Team average</span>
+                                <span class="text-slate-800">{{ skill_stats.average }}%</span>
+                            </div>
+                            <div class="mt-1.5 h-2 rounded-full bg-slate-100 overflow-hidden">
+                                <div class="h-full rounded-full bg-slate-400" style="width: {{ skill_stats.average }}%"></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                {% if request.user.is_superuser %}
+
+                <!-- Actions -->
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Manage</h2>
+
+                    <div class="mt-4 space-y-2">
+
+                        <a href="{% url 'skill_edit' skill.pk %}"
+                           class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-500 transition">
+                            <i class="fa-solid fa-pen"></i> Edit skill
+                        </a>
+
+                        <a href="{% url 'skill_create' %}"
+                           class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-100 text-slate-700 text-sm font-bold hover:bg-slate-200 transition">
+                            <i class="fa-solid fa-plus"></i> Add another
+                        </a>
+
+                        <a href="{% url 'skill_delete' skill.pk %}"
+                           class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-rose-50 text-rose-600 text-sm font-bold hover:bg-rose-100 transition">
+                            <i class="fa-solid fa-trash"></i> Delete skill
+                        </a>
+
+                    </div>
+
+                </div>
+                {% endif %}
+
+            </aside>
+
+        </div>
+
+    </main>
+
+    {% include "footer.html" %}
+
 </div>
-</div>
-</main>
-</div>
-{% include "footer.html" %}
+
 {% endblock %}

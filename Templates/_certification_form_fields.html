@@ -1,0 +1,115 @@
+{% load widget_tweaks %}
+
+<!-- ================= FORM FIELDS (shared by add + update) ================= -->
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+    <!-- Title -->
+    <div class="sm:col-span-2">
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.title.id_for_label }}">Certificate title</label>
+        {% render_field form.title class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900" %}
+        {% if form.title.errors %}
+        <p class="mt-1.5 text-xs font-semibold text-rose-600">{{ form.title.errors|join:", " }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Issuing organization -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.issuing_organization.id_for_label }}">Issuing body</label>
+        {% render_field form.issuing_organization class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900" %}
+        {% if form.issuing_organization.errors %}
+        <p class="mt-1.5 text-xs font-semibold text-rose-600">{{ form.issuing_organization.errors|join:", " }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Level -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.level.id_for_label }}">Level</label>
+        {% render_field form.level class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900" %}
+    </div>
+
+    <!-- Date issued -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.date_issued.id_for_label }}">Date issued</label>
+        {% render_field form.date_issued class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900" %}
+    </div>
+
+    <!-- Expiry date -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.expiry_date.id_for_label }}">Expiry date</label>
+        {% render_field form.expiry_date class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900" %}
+        <p class="mt-1.5 text-xs text-slate-400">Leave empty when it never expires.</p>
+    </div>
+
+    <!-- Credential id -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.credential_id.id_for_label }}">Credential ID</label>
+        {% render_field form.credential_id class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900" %}
+    </div>
+
+    <!-- Credential url -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.credential_url.id_for_label }}">Verification link</label>
+        {% render_field form.credential_url class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900" placeholder="https://..." %}
+    </div>
+
+    <!-- Skills -->
+    <div class="sm:col-span-2">
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.skills.id_for_label }}">Skills</label>
+        {% render_field form.skills class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900" %}
+        <p class="mt-1.5 text-xs text-slate-400">Comma separated, e.g. Cloud, Data Analysis.</p>
+    </div>
+
+    <!-- Description -->
+    <div class="sm:col-span-2">
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.description.id_for_label }}">Description</label>
+        {% render_field form.description class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 leading-relaxed" rows="4" %}
+    </div>
+
+    <!-- PDF -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.certificate_pdf.id_for_label }}">Certificate PDF</label>
+        {% render_field form.certificate_pdf class="w-full mt-1.5 p-3 border border-slate-200 rounded-xl bg-slate-50 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %}
+    </div>
+
+    <!-- Image -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.certificate_image.id_for_label }}">Certificate image</label>
+        {% render_field form.certificate_image class="w-full mt-1.5 p-3 border border-slate-200 rounded-xl bg-slate-50 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %}
+    </div>
+
+</div>
+
+<!-- Current files -->
+
+{% if certification %}
+<div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+    {% if certification.certificate_pdf %}
+    <div class="rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
+        <p class="text-xs font-black uppercase tracking-widest text-slate-400">Current PDF</p>
+        <a href="{{ certification.certificate_pdf.url }}" download
+           class="mt-2 inline-flex items-center gap-2 text-sm font-bold text-blue-700 hover:text-blue-800">
+            <i class="fa-solid fa-file-pdf"></i> Download the file
+        </a>
+    </div>
+    {% endif %}
+
+    {% if certification.certificate_image %}
+    <div class="rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
+        <p class="text-xs font-black uppercase tracking-widest text-slate-400">Current image</p>
+        <img src="{{ certification.certificate_image.url }}" alt="{{ certification.title }}"
+             class="mt-2 w-20 h-20 rounded-xl object-cover border border-slate-200">
+    </div>
+    {% endif %}
+
+</div>
+{% endif %}
+
+<!-- Errors -->
+
+{% if form.non_field_errors %}
+<div class="mt-5 rounded-2xl bg-rose-50 border border-rose-200 px-4 py-3 text-sm font-semibold text-rose-700">
+    {{ form.non_field_errors|join:", " }}
+</div>
+{% endif %}

@@ -1,187 +1,402 @@
 {% load static %}
-<link href="{% static 'images/logo.png' %}" rel="icon" />
-<title>FelloMarley Foundation</title>
+<link href="{% static 'images/logo.PNG' %}" rel="icon" />
+<title>{% block title %}{{ site_name }}{% endblock %}</title>
+<meta name="description" content="{% block meta_description %}{{ site_description }}{% endblock %}">
+<meta name="robots" content="{{ meta_robots }}">
+<link rel="canonical" href="{{ request.build_absolute_uri }}">
+<meta property="og:site_name" content="{{ site_name }}">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{% block og_title %}{{ owner_name }} | {{ site_name }}{% endblock %}">
+<meta property="og:description" content="{% block og_description %}{{ site_description }}{% endblock %}">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+{% if owner_avatar %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ owner_avatar.url }}">{% endif %}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{% block twitter_title %}{{ owner_name }} | {{ site_name }}{% endblock %}">
+<meta name="twitter:description" content="{% block twitter_description %}{{ site_description }}{% endblock %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://cdn.tailwindcss.com"></script>
 
 <!-- HEADER -->
-<nav class="fixed top-0 left-0 right-0 sm:left-64 bg-gray-700 text-white z-50 shadow-md">
-  <div class="max-w-7xl mx-auto px-4 lg:px-8">
-    <div class="flex h-16 items-center justify-between">
+<nav class="fixed top-0 left-0 right-0 sm:left-64 bg-gray-800 text-white z-50 shadow-md">
 
-      <!-- Mobile Sidebar Button -->
-      <button id="sidebarToggle"
-              class="p-2 text-white bg-gray-800 sm:hidden rounded-md">
-        ☰
-      </button>
+    <div class="w-full px-4 lg:px-6">
 
-      <!-- Logo -->
-      <div class="flex items-center space-x-3">
-        <img src="{% static 'images/logo.png' %}" class="h-8" alt="Logo">
-        <span class="text-lg font-semibold text-green-400">FelloMarley Foundation</span>
-      </div>
+        <div class="flex h-16 items-center justify-between gap-4">
 
-      <!-- Desktop Menu -->
-      <div class="hidden sm:flex items-center space-x-6 text-sm">
+            <!-- Logo -->
+            <a href="{% url 'index' %}" class="flex items-center space-x-3 shrink-0">
 
-        <a href="{% url 'index' %}" class="hover:text-green-400">
-          <i class="fa-solid fa-house mr-1"></i> Home
-        </a>
+                <img src="{% static 'images/logo.PNG' %}" class="h-9 w-9 object-cover rounded-full" alt="Logo">
 
-        <a href="{% url 'about' %}" class="hover:text-green-400">
-          <i class="fas fa-info-circle mr-1"></i> About
-        </a>
+                <span class="hidden sm:inline text-lg font-semibold text-green-400">
+                    FelloMarley Foundation
+                </span>
 
-        <a href="{% url 'blog' %}" class="hover:text-green-400">
-          <i class="fa-solid fa-newspaper mr-1"></i> Blog
-        </a>
+            </a>
 
-        <a href="{% url 'portfolio' %}" class="hover:text-green-400">
-          <i class="fa-solid fa-briefcase mr-1"></i> Portfolio
-        </a>
+            <!-- Desktop Menu -->
+            <div class="hidden lg:flex items-center gap-6 text-sm">
 
-        <a href="{% url 'events' %}" class="hover:text-green-400">
-          <i class="fa-solid fa-calendar-day mr-1"></i> Events
-        </a>
+                <a href="{% url 'index' %}" class="hover:text-green-400">
+                    <i class="fa-solid fa-house mr-1"></i> Home
+                </a>
 
-        <!-- Testimonials -->
-        <a href="{% url 'testimonials_list' %}" class="hover:text-green-400">
-          <i class="fa-solid fa-comments mr-1"></i> Testimonials
-        </a>
+                <a href="{% url 'about' %}" class="hover:text-green-400">
+                    <i class="fas fa-info-circle mr-1"></i> About
+                </a>
 
-        {% if request.user.is_superuser %}
-          <a href="{% url 'admins' %}" class="hover:text-yellow-400">
-            <i class="fa-solid fa-user-shield mr-1"></i> Admin's Dashboard
-          </a>
-        {% else %}
-          <a href="#" class="hover:text-green-400">
-            <i class="fa-solid fa-user mr-1"></i> User's Dashboard
-          </a>
-        {% endif %}
-         <div id="profileMenu"
-             class="hidden absolute right-0 mt-2 w-48 bg-white text-gray-700 rounded shadow-lg">
-          <a href="{% url 'update_user' user.pk %}" class="block px-4 py-2 hover:bg-gray-100">Update Profile</a>
-          <a href="{% url 'delete_profile' user.pk %}" class="block px-4 py-2 hover:bg-gray-100">Delete Profile</a>
-          <a href="{% url 'logoutuser' %}" class="block px-4 py-2 hover:bg-gray-100">
-            <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
-          </a>
+                <a href="{% url 'blog' %}" class="hover:text-green-400">
+                    <i class="fa-solid fa-newspaper mr-1"></i> Blog
+                </a>
+
+                <a href="{% url 'portfolio' %}" class="hover:text-green-400">
+                    <i class="fa-solid fa-briefcase mr-1"></i> Portfolio
+                </a>
+
+                <a href="{% url 'events' %}" class="hover:text-green-400">
+                    <i class="fa-solid fa-calendar-day mr-1"></i> Events
+                </a>
+
+                <a href="{% url 'testimonials_list' %}" class="hover:text-green-400">
+                    <i class="fa-solid fa-comments mr-1"></i> Testimonials
+                </a>
+
+                {% if request.user.is_superuser %}
+
+                <a href="{% url 'admins' %}" class="hover:text-yellow-400">
+                    <i class="fa-solid fa-user-shield mr-1"></i> Admin
+                </a>
+
+                {% endif %}
+
+            </div>
+
+            <!-- Right cluster -->
+            <div class="flex items-center gap-3">
+
+                <!-- Search -->
+                <form method="GET" action="{% url 'search' %}" class="hidden md:flex items-center">
+
+                    {% csrf_token %}
+
+                    <input type="search" name="searched"
+                           class="w-36 lg:w-56 px-3 py-2 rounded-l-lg border border-gray-700 bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                           placeholder="Search..." aria-label="Search">
+
+                    <button type="submit"
+                            class="px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-r-lg transition">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+
+                </form>
+
+                <!-- Public site -->
+                <a href="{% url 'me' %}"
+                   title="View public site"
+                   class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-gray-700 hover:bg-green-600 transition">
+                    <i class="fa-solid fa-globe"></i>
+                </a>
+
+                <!-- Notifications -->
+
+                {% if request.user.is_authenticated %}
+
+                <div class="relative" id="notificationBell">
+
+                    <button type="button" onclick="toggleNotificationPanel(event)"
+                            title="Notifications"
+                            aria-label="Notifications" aria-haspopup="true" aria-expanded="false"
+                            class="relative inline-flex items-center justify-center w-9 h-9 rounded-lg bg-gray-700 hover:bg-green-600 transition">
+
+                        <i class="fa-solid fa-bell"></i>
+
+                        {% if notifications_unread %}
+
+                        <span id="notificationBadge"
+                              class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
+                            {{ notifications_unread }}
+                        </span>
+
+                        {% endif %}
+
+                    </button>
+
+                    <!-- Panel -->
+
+                    <div id="notificationPanel"
+                         class="hidden absolute right-0 mt-3 w-96 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50">
+
+                        <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-slate-100 bg-slate-50">
+                            <div>
+                                <p class="text-sm font-black text-slate-900">Notifications</p>
+                                <p class="text-xs text-slate-500">
+                                    {% if notifications_unread %}
+                                        {{ notifications_unread }} unread
+                                    {% else %}
+                                        You are all caught up
+                                    {% endif %}
+                                </p>
+                            </div>
+
+                            {% if notifications_unread %}
+                            <form method="POST" action="{% url 'mark_notifications_read' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                <button type="submit"
+                                        class="text-[11px] font-bold text-indigo-600 hover:text-indigo-700 transition">
+                                    Mark all read
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+
+                        <div class="max-h-96 overflow-y-auto divide-y divide-slate-100">
+
+                            {% for item in recent_notifications %}
+
+                            <a href="{% url 'mark_notification_read' item.pk %}"
+                               class="flex items-start gap-3 px-5 py-4 hover:bg-slate-50 transition {% if not item.read %}bg-indigo-50/40{% endif %}">
+
+                                <span class="w-8 h-8 shrink-0 rounded-lg flex items-center justify-center
+                                    {% if item.kind_slug == 'task' %}bg-blue-100 text-blue-600
+                                    {% elif item.kind_slug == 'event' %}bg-violet-100 text-violet-600
+                                    {% elif item.kind_slug == 'blog' %}bg-emerald-100 text-emerald-600
+                                    {% elif item.kind_slug == 'message' %}bg-amber-100 text-amber-600
+                                    {% elif item.kind_slug == 'support' %}bg-rose-100 text-rose-600
+                                    {% else %}bg-slate-100 text-slate-500{% endif %}">
+                                    <i class="fa-solid
+                                        {% if item.kind_slug == 'task' %}fa-list-check
+                                        {% elif item.kind_slug == 'event' %}fa-calendar-day
+                                        {% elif item.kind_slug == 'blog' %}fa-feather-pointed
+                                        {% elif item.kind_slug == 'message' %}fa-envelope
+                                        {% elif item.kind_slug == 'support' %}fa-life-ring
+                                        {% else %}fa-circle-info{% endif %} text-xs"></i>
+                                </span>
+
+                                <span class="min-w-0 flex-1">
+                                    <span class="flex items-center gap-2">
+                                        <span class="text-sm font-bold text-slate-800 truncate">{{ item.title }}</span>
+                                        {% if not item.read %}
+                                        <span class="w-2 h-2 rounded-full bg-indigo-500 shrink-0"></span>
+                                        {% endif %}
+                                    </span>
+                                    <span class="block text-xs text-slate-500 mt-0.5 line-clamp-2">{{ item.description|truncatechars:110 }}</span>
+                                    <span class="block text-[11px] text-slate-400 mt-1">{{ item.created_at|timesince }} ago</span>
+                                </span>
+
+                            </a>
+
+                            {% empty %}
+
+                            <div class="px-5 py-10 text-center">
+                                <span class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+                                    <i class="fa-solid fa-bell-slash"></i>
+                                </span>
+                                <p class="mt-3 text-sm font-bold text-slate-700">No notifications</p>
+                                <p class="mt-1 text-xs text-slate-400">New alerts will show up here.</p>
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                        <a href="{% url 'notifications' %}"
+                           class="block px-5 py-3.5 text-center text-xs font-black uppercase tracking-wider text-indigo-600 hover:bg-slate-50 transition border-t border-slate-100">
+                            View all notifications
+                        </a>
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+                <!-- Profile -->
+                <div class="relative">
+
+                    {% if request.user.is_authenticated %}
+
+                    <button id="profileDropdown" type="button"
+                            class="flex items-center gap-2 hover:text-green-400 focus:outline-none">
+
+                        <img src="{{ avatar_url }}"
+                             alt="{{ request.user.name|default:request.user.username }}"
+                             class="h-9 w-9 rounded-full object-cover border-2 border-green-400">
+
+                        <span class="hidden sm:block text-sm max-w-[120px] truncate">
+                            {{ request.user.name|default:request.user.username }}
+                        </span>
+
+                        <i class="fa-solid fa-chevron-down text-xs"></i>
+
+                    </button>
+
+                    <div id="profileMenu"
+                         class="hidden absolute right-0 mt-2 w-56 bg-white text-gray-700 rounded-lg shadow-xl overflow-hidden z-50">
+
+                        <div class="px-4 py-3 border-b border-gray-200">
+                            <p class="font-semibold truncate">{{ request.user.name|default:request.user.username }}</p>
+                            <p class="text-xs text-gray-500 truncate">{{ request.user.email }}</p>
+                        </div>
+
+                        <a href="{% url 'update_user' request.user.pk %}" class="block px-4 py-2 hover:bg-gray-100">
+                            <i class="fa-solid fa-user-pen mr-2 text-gray-500"></i> Update Profile
+                        </a>
+
+                        <a href="{% url 'myuser' %}" class="block px-4 py-2 hover:bg-gray-100">
+                            <i class="fa-solid fa-users mr-2 text-gray-500"></i> Members
+                        </a>
+
+                        <a href="{% url 'analytics' %}" class="block px-4 py-2 hover:bg-gray-100">
+                            <i class="fa-solid fa-chart-line mr-2 text-gray-500"></i> Analytics
+                        </a>
+
+                        <button type="button" onclick="openLogoutModal()"
+                                class="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600">
+                            <i class="fa-solid fa-right-from-bracket mr-2"></i> Logout
+                        </button>
+
+                    </div>
+
+                    {% else %}
+
+                    <a href="{% url 'login' %}"
+                       class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white text-sm font-semibold transition">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span class="hidden sm:inline">Login</span>
+                    </a>
+
+                    {% endif %}
+
+                </div>
+
+                <!-- Sidebar toggle (mobile) -->
+                <button id="sidebarToggle" type="button"
+                        aria-label="Toggle navigation"
+                        class="lg:hidden text-2xl leading-none px-2 py-1 rounded hover:bg-gray-700 transition">
+                    ☰
+                </button>
+
+            </div>
+
         </div>
 
-      </div>
-
-    
-
-      <!-- Profile -->
-      <div class="relative ml-4">
-        <button id="profileDropdown" class="flex items-center space-x-2 hover:text-green-400">
-          <i class="fa-solid fa-user-circle text-xl"></i>
-          <span class="hidden sm:block">{{ request.user }}</span>
-        </button>
-
-        <!-- Dropdown -->
-       
-      </div>
-
     </div>
-  </div>
-
-  <!-- Mobile menu -->
-  <div class="sm:hidden" id="mobile-menu">
-    <div class="px-2 pt-2 pb-3 space-y-1">
-      <a href="{% url 'index' %}" class="block py-2 px-3 text-green-500 hover:bg-gray-700 rounded">Home</a>
-      <a href="{% url 'about' %}" class="block py-2 px-3 text-green-500 hover:bg-gray-700 rounded">About</a>
-      <a href="{% url 'blog' %}" class="block py-2 px-3 text-green-500 hover:bg-gray-700 rounded">Blog</a>
-      <a href="{% url 'portfolio' %}" class="block py-2 px-3 text-green-500 hover:bg-gray-700 rounded">Portfolio</a>
-      <a href="{% url 'events' %}" class="block py-2 px-3 text-green-500 hover:bg-gray-700 rounded">Events</a>
-      <a href="{% url 'testimonials_list' %}" class="block py-2 px-3 text-green-500 hover:bg-gray-700 rounded">Testimonials</a>
-      {% if request.user.is_superuser %}
-        <a href="{% url 'admins' %}" class="block py-2 px-3 text-yellow-400 hover:bg-gray-700 rounded">Admin Dashboard</a>
-      {% else %}
-        <a href="#" class="block py-2 px-3 text-green-500 hover:bg-gray-700 rounded"> User Dashboard</a>
-      {% endif %}
-      <!-- Logout Button -->
-<div class="mt-auto">
-  <button id="logoutBtn"
-          class="flex items-center justify-center p-3 rounded-lg hover:bg-red-600 transition w-full text-sm font-semibold">
-    <i class="fa-solid fa-right-from-bracket mr-2"></i> Logout
-  </button>
-
-
-<!-- Logout Confirmation Modal -->
-<div id="logoutModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-sm w-full p-6 text-center">
-    <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Confirm Logout</h2>
-    <p class="text-gray-600 dark:text-gray-300 mb-6">Are you sure you want to logout?</p>
-    <div class="flex justify-center space-x-4">
-      <button id="cancelLogout"
-              class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition">
-        Cancel
-      </button>
-      <a href="{% url 'logoutuser' %}"
-         class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
-        Logout
-      </a>
-    </div>
-  </div>
-</div>
-</div>
-    </div>
-  </div>
-
-<!-- Modal Script -->
-<script>
-  const logoutBtn = document.getElementById("logoutBtn");
-  const logoutModal = document.getElementById("logoutModal");
-  const cancelBtn = document.getElementById("cancelLogout");
-
-  // Show modal on button click
-  logoutBtn.addEventListener("click", () => {
-    logoutModal.classList.remove("hidden");
-    logoutModal.classList.add("flex");
-  });
-
-  // Hide modal on cancel
-  cancelBtn.addEventListener("click", () => {
-    logoutModal.classList.add("hidden");
-    logoutModal.classList.remove("flex");
-  });
-
-  // Hide modal if clicking outside the modal content
-  logoutModal.addEventListener("click", (e) => {
-    if (e.target === logoutModal) {
-      logoutModal.classList.add("hidden");
-      logoutModal.classList.remove("flex");
-    }
-  });
-</script>
-     <!-- Mobile Search -->
-<div class="sm:hidden px-3 py-2">
-  <form method="GET" action="{% url 'search' %}" class="flex items-center w-full">
-    {% csrf_token %}
-    <input type="search" name="searched"
-           class="w-full px-3 py-2 rounded-l-lg border border-gray-300 focus:ring-green-500 focus:border-green-500 text-gray-900 placeholder-gray-400"
-           placeholder="Search..." aria-label="Search">
-    <button type="submit"
-            class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-r-lg font-semibold transition">
-      <i class="fa-solid fa-magnifying-glass"></i>
-    </button>
-  </form>
-</div>
-    </div>
-  </div>
 
 </nav>
 
+<!-- Logout Confirmation Modal -->
+<div id="logoutModal"
+     class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-[60]">
+
+    <div class="bg-white rounded-lg shadow-lg max-w-sm w-full p-6 text-center">
+
+        <h2 class="text-xl font-semibold text-gray-800">Confirm Logout</h2>
+
+        <p class="text-gray-600 mt-2">Are you sure you want to logout?</p>
+
+        <div class="flex justify-center space-x-4 mt-6">
+
+            <button type="button" id="cancelLogout"
+                    class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-lg transition">
+                Cancel
+            </button>
+
+            <a href="{% url 'logoutuser' %}"
+               class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
 <script>
-document.getElementById("sidebarToggle").addEventListener("click", function() {
-  document.getElementById("default-sidebar").classList.toggle("-translate-x-full");
+
+document.addEventListener("DOMContentLoaded", function () {
+
+// Logout modal
+const logoutModal = document.getElementById("logoutModal");
+const cancelLogout = document.getElementById("cancelLogout");
+
+window.openLogoutModal = function () {
+    if (!logoutModal) return;
+    logoutModal.classList.remove("hidden");
+    logoutModal.classList.add("flex");
+};
+
+window.closeLogoutModal = function () {
+    if (!logoutModal) return;
+    logoutModal.classList.add("hidden");
+    logoutModal.classList.remove("flex");
+};
+
+if (cancelLogout) {
+    cancelLogout.addEventListener("click", window.closeLogoutModal);
+}
+
+if (logoutModal) {
+    logoutModal.addEventListener("click", function (e) {
+        if (e.target === logoutModal) {
+            window.closeLogoutModal();
+        }
+    });
+}
+
+// Profile dropdown
+const profileDropdown = document.getElementById("profileDropdown");
+const profileMenu = document.getElementById("profileMenu");
+
+if (profileDropdown && profileMenu) {
+    profileDropdown.addEventListener("click", function (e) {
+        e.stopPropagation();
+        profileMenu.classList.toggle("hidden");
+    });
+
+    document.addEventListener("click", function (e) {
+        if (!profileMenu.contains(e.target)) {
+            profileMenu.classList.add("hidden");
+        }
+    });
+}
+
+// Notification bell panel
+const notificationPanel = document.getElementById("notificationPanel");
+const notificationBell = document.getElementById("notificationBell");
+
+window.toggleNotificationPanel = function (e) {
+    if (e) e.stopPropagation();
+    if (!notificationPanel) return;
+    const hidden = notificationPanel.classList.toggle("hidden");
+    if (notificationBell) {
+        notificationBell.querySelector("button").setAttribute("aria-expanded", hidden ? "false" : "true");
+    }
+};
+
+if (notificationPanel && notificationBell) {
+    notificationBell.addEventListener("click", function (e) {
+        if (e.target.closest("form") || e.target.closest("a")) return;
+        e.stopPropagation();
+    });
+
+    document.addEventListener("click", function (e) {
+        if (!notificationBell.contains(e.target)) {
+            notificationPanel.classList.add("hidden");
+        }
+    });
+
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+            notificationPanel.classList.add("hidden");
+        }
+    });
+}
+
 });
 
-document.getElementById("profileDropdown").addEventListener("click", function() {
-  document.getElementById("profileMenu").classList.toggle("hidden");
-});
 </script>
 
 {% block content %}
 {% endblock %}
-</div>

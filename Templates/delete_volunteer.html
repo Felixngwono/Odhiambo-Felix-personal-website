@@ -1,0 +1,84 @@
+{% extends "header.html" %}
+{% load static %}
+
+{% block title %}Remove volunteer | FelloMarley Foundation{% endblock %}
+
+{% block content %}
+
+{% include "sidebar.html" %}
+
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
+
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
+
+        <!-- ================= FLASH ================= -->
+
+        {% if messages %}
+
+        <div class="mb-6 space-y-3">
+
+            {% for message in messages %}
+
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+        <section class="max-w-2xl mx-auto mt-10 bg-white rounded-3xl shadow-md p-6 sm:p-10 text-center">
+
+            <span class="w-16 h-16 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
+                <i class="fa-solid fa-user-minus text-2xl"></i>
+            </span>
+
+            <h1 class="mt-6 text-2xl sm:text-3xl font-black text-slate-800">Remove this volunteer?</h1>
+
+            <p class="mt-3 text-sm text-slate-500 leading-relaxed">
+                <span class="font-black text-slate-800">{{ volunteer.full_name }}</span> will be taken
+                off the roster and out of the hours, area and status totals. Their application
+                history goes with them. This cannot be undone.
+            </p>
+
+            <div class="mt-6 rounded-2xl bg-slate-50 px-5 py-4 text-left text-sm text-slate-600">
+                <div class="flex items-center justify-between gap-3">
+                    <span class="text-slate-400">Area</span>
+                    <span class="font-bold text-slate-800">{{ volunteer.area_label }}</span>
+                </div>
+                <div class="flex items-center justify-between gap-3 mt-2">
+                    <span class="text-slate-400">Status</span>
+                    <span class="font-bold text-slate-800">{{ volunteer.status_label }}</span>
+                </div>
+                <div class="flex items-center justify-between gap-3 mt-2">
+                    <span class="text-slate-400">Joined</span>
+                    <span class="font-bold text-slate-800">{{ volunteer.joined_at|date:"d M Y" }}</span>
+                </div>
+            </div>
+
+            <form method="POST" class="mt-8 flex items-center justify-center gap-3 flex-wrap">
+                {% csrf_token %}
+
+                <button type="submit"
+                        class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-rose-600 text-white font-bold hover:bg-rose-500 transition shadow-md">
+                    <i class="fa-solid fa-trash text-xs"></i> Yes, remove them
+                </button>
+
+                <a href="{% url 'volunteer_detail' volunteer.pk %}"
+                   class="px-6 py-3 rounded-xl bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 transition">
+                    Keep the volunteer
+                </a>
+
+            </form>
+
+        </section>
+
+    </main>
+
+    {% include "footer.html" %}
+
+</div>
+
+{% endblock %}

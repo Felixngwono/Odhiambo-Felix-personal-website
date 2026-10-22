@@ -1,240 +1,776 @@
-{% include "header.html" %}
-{% load static %}
+{% extends "header.html" %}
+
+{% block title %}Analytics | FelloMarley Foundation{% endblock %}
+
 {% block content %}
-        {% include "sidebar.html" %}
 
-    <title>Analytics</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 
-<body class="bg-gray-100">
+{% include "sidebar.html" %}
 
-<div class="flex flex-col sm:ml-64 h-screen">
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
 
-    <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6">        <div>
-            <h1 class="text-4xl font-bold text-center mb-6">Analytics Overview</h1>
-            <p class="text-lg text-center mb-6">Analyze your performance, user engagement, and other key metrics here.</p>
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
 
-            <!-- Analytics Grid (compact graphs) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- ================= FLASH ================= -->
 
-                <!-- User Metrics -->
-                <div class="bg-white p-4 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4">User Metrics</h2>
-                    <p class="text-lg mb-4">Total Users: {{ total_users }}</p>
-                    <h3 class="text-lg font-semibold mb-4">Gender Distribution</h3>
-                    <canvas id="genderChart" class="w-full h-48"></canvas>
+        {% if messages %}
+
+        <div class="mb-6 space-y-3">
+
+            {% for message in messages %}
+
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+        <!-- ================= HERO ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-900 to-blue-900 text-white shadow-2xl p-6 sm:p-10">
+
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:60px 60px;"></div>
+
+            <div class="absolute -top-24 -right-16 w-96 h-96 bg-indigo-400 rounded-full blur-3xl opacity-20"></div>
+
+            <div class="relative grid lg:grid-cols-3 gap-8 items-center">
+
+                <div class="lg:col-span-2">
+
+                    <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                        <i class="fa-solid fa-chart-line"></i> Insights
+                    </p>
+
+                    <h1 class="mt-4 text-3xl sm:text-5xl font-black leading-tight">
+                        The numbers<br class="hidden sm:block"> behind the work.
+                    </h1>
+
+                    <p class="mt-4 text-slate-300 max-w-2xl leading-relaxed">
+                        Live figures pulled from the database — membership, publishing rhythm,
+                        event reach, support load and applicant flow, all measured against the
+                        {% if analytics_labels %}{{ analytics_labels|length }}-month window from
+                        {{ analytics_labels.0 }} to {{ analytics_labels|last }}{% else %}current period{% endif %}.
+                    </p>
+
+                    <div class="mt-7 flex flex-wrap gap-3">
+
+                        <a href="#charts"
+                           class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white font-bold text-slate-900 hover:bg-slate-100 transition">
+                            <i class="fa-solid fa-arrow-down"></i> Jump to the charts
+                        </a>
+
+                        <a href="{% url 'download_report' %}"
+                           class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                            <i class="fa-solid fa-file-arrow-down"></i> Export the report
+                        </a>
+
+                        {% if request.user.is_superuser %}
+                        <a href="{% url 'admins' %}"
+                           class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                            <i class="fa-solid fa-user-shield"></i> Admin console
+                        </a>
+                        {% endif %}
+
+                    </div>
+
                 </div>
 
-                <!-- Events Analytics by Category -->
-                <div class="bg-white p-4 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4">Event Category Analytics</h2>
-                    <h3 class="text-lg font-semibold mb-4">Events by Category</h3>
-                    <canvas id="eventsByCategoryChart" class="w-full h-48"></canvas>
+                <!-- Hero stats -->
+
+                <div class="grid grid-cols-2 gap-3">
+
+                    <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                        <p class="text-3xl font-black">{{ total_users }}</p>
+                        <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">Members</p>
+                    </div>
+
+                    <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                        <p class="text-3xl font-black">{{ new_users }}</p>
+                        <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">New in 30d</p>
+                    </div>
+
+                    <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                        <p class="text-3xl font-black">{{ active_users }}</p>
+                        <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">Active in 30d</p>
+                    </div>
+
+                    <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                        <p class="text-3xl font-black">{{ staff_users }}</p>
+                        <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">Privileged</p>
+                    </div>
+
                 </div>
 
-                <!-- Events Analytics by Location -->
-                <div class="bg-white p-4 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4">Event Location Analytics</h2>
-                    <h3 class="text-lg font-semibold mb-4">Events by Location</h3>
-                    <canvas id="eventsByLocationChart" class="w-full h-48"></canvas>
-                </div>
+            </div>
 
-                <!-- Comparative Chart: Gender vs Event Category -->
-                <div class="bg-white p-4 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4">Comparative Analytics</h2>
-                    <h3 class="text-lg font-semibold mb-4">Gender vs Event Categories</h3>
-                    <canvas id="comparativeChart" class="w-full h-48"></canvas>
-                </div>
+        </section>
 
-                <!-- Blog Post Analytics -->
-                <div class="bg-white p-4 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4">Blog Post Analytics</h2>
-                    <h3 class="text-lg font-semibold mb-4">Posts Over Time</h3>
-                    <canvas id="blogPostsOverTimeChart" class="w-full h-48"></canvas>
-                </div>
+        <!-- ================= KPI STRIP ================= -->
 
-                <!-- Portfolio Item Analytics -->
-                <div class="bg-white p-4 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4">Portfolio Item Analytics</h2>
-                    <h3 class="text-lg font-semibold mb-4">Portfolio Items Over Time</h3>
-                    <canvas id="portfolioItemsOverTimeChart" class="w-full h-48"></canvas>
-                </div>
+        <section class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
-                <!-- Education Level Analytics -->
-                <div class="bg-white p-4 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4">Education Level Analytics</h2>
-                    <h3 class="text-lg font-semibold mb-4">Education Levels</h3>
-                    <canvas id="educationLevelChart" class="w-full h-48"></canvas>
+            {% for card in analytics_headline %}
+
+            <div class="bg-white rounded-2xl shadow-md p-5 border border-slate-100 hover:shadow-xl transition">
+                <div class="flex items-start justify-between gap-3">
+
+                    <div class="min-w-0">
+
+                        <p class="text-xs font-bold uppercase tracking-wider text-slate-400">{{ card.label }}</p>
+
+                        <p class="mt-1.5 text-3xl font-black text-slate-900">{{ card.value }}</p>
+
+                        <p class="mt-1 text-xs text-slate-500 truncate">{{ card.detail }}</p>
+
+                    </div>
+
+                    <span class="w-11 h-11 shrink-0 rounded-xl flex items-center justify-center
+                        {% if card.tone == 'blue' %}bg-blue-100 text-blue-600
+                        {% elif card.tone == 'emerald' %}bg-emerald-100 text-emerald-600
+                        {% elif card.tone == 'violet' %}bg-violet-100 text-violet-600
+                        {% elif card.tone == 'amber' %}bg-amber-100 text-amber-600
+                        {% elif card.tone == 'rose' %}bg-rose-100 text-rose-600
+                        {% elif card.tone == 'cyan' %}bg-cyan-100 text-cyan-600
+                        {% elif card.tone == 'indigo' %}bg-indigo-100 text-indigo-600
+                        {% else %}bg-teal-100 text-teal-600{% endif %}">
+                        <i class="fa-solid {{ card.icon }}"></i>
+                    </span>
+
                 </div>
             </div>
-        </div>
-    </div>
-</main>
-    <!-- Chart.js Script -->
-    <script>
-        // Gender Distribution Chart (Pie Chart)
-        var genderChartData = {
-            labels: [{% for gender in gender_distribution %}"{{ gender.gender }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
-            datasets: [{
-                label: 'Gender Distribution',
-                data: [{% for gender in gender_distribution %}{{ gender.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
-                backgroundColor: ['#3490dc', '#f97316', '#6b7280'],
-            }]
-        };
-        new Chart(document.getElementById("genderChart"), {
-            type: 'pie',
-            data: genderChartData
-        });
 
-        // Events by Category (Bar Chart)
-        var eventsByCategoryChartData = {
-            labels: [{% for event in events_by_category %}"{{ event.category__name }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
-            datasets: [{
-                label: 'Events by Category',
-                data: [{% for event in events_by_category %}{{ event.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
-                backgroundColor: '#4CAF50',
-            }]
-        };
-        new Chart(document.getElementById("eventsByCategoryChart"), {
-            type: 'bar',
-            data: eventsByCategoryChartData,
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
+            {% endfor %}
 
-        // Events by Location (Bar Chart)
-        var eventsByLocationChartData = {
-            labels: [{% for event in events_by_location %}"{{ event.location__name }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
-            datasets: [{
-                label: 'Events by Location',
-                data: [{% for event in events_by_location %}{{ event.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
-                backgroundColor: '#ff6347',
-            }]
-        };
-        new Chart(document.getElementById("eventsByLocationChart"), {
-            type: 'bar',
-            data: eventsByLocationChartData,
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
+        </section>
 
-        // Comparative Chart: Gender vs Event Categories (Stacked Bar Chart)
-        var comparativeChartData = {
-            labels: [{% for category in events_by_category %}"{{ category.category__name }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
-            datasets: [{
-                label: 'Male',
-                data: [{% for category in events_by_category %}{{ category.male_count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
-                backgroundColor: '#3490dc',
-            },
-            {
-                label: 'Female',
-                data: [{% for category in events_by_category %}{{ category.female_count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
-                backgroundColor: '#f97316',
-            }]
-        };
-        new Chart(document.getElementById("comparativeChart"), {
-            type: 'bar',
-            data: comparativeChartData,
-            options: {
-                responsive: true,
-                scales: {
-                    x: {
-                        beginAtZero: true
-                    },
-                    y: {
-                        stacked: true
-                    }
-                }
-            }
-        });
+        <!-- ================= CHARTS ================= -->
 
-        // Blog Posts Over Time (Line Chart)
-        var blogPostsOverTimeChartData = {
-            labels: [{% for post in blog_posts_over_time %}"{{ post.month }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
-            datasets: [{
-                label: 'Blog Posts Over Time',
-                data: [{% for post in blog_posts_over_time %}{{ post.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
-                backgroundColor: '#42A5F5',
-                borderColor: '#42A5F5',
-                fill: false,
-                tension: 0.1
-            }]
-        };
-        new Chart(document.getElementById("blogPostsOverTimeChart"), {
-            type: 'line',
-            data: blogPostsOverTimeChartData,
-            options: {
-                responsive: true,
-                scales: {
-                    x: {
-                        beginAtZero: true
-                    },
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
+        <section id="charts" class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-5">
 
-        // Portfolio Items Over Time (Line Chart)
-        var portfolioItemsOverTimeChartData = {
-            labels: [{% for item in portfolio_items_over_time %}"{{ item.month }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
-            datasets: [{
-                label: 'Portfolio Items Over Time',
-                data: [{% for item in portfolio_items_over_time %}{{ item.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
-                backgroundColor: '#8e44ad',
-                borderColor: '#8e44ad',
-                fill: false,
-                tension: 0.1
-            }]
-        };
-        new Chart(document.getElementById("portfolioItemsOverTimeChart"), {
-            type: 'line',
-            data: portfolioItemsOverTimeChartData,
-            options: {
-                responsive: true,
-                scales: {
-                    x: {
-                        beginAtZero: true
-                    },
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
+            <!-- Growth -->
 
-        // Education Levels (Pie Chart)
-       // Education Levels (Pie Chart)
-var educationLevelChartData = {
-    labels: [{% for level in education_levels %}"{{ level.level }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
-    datasets: [{
-        label: 'Education Levels',
-        data: [{% for level in education_levels %}{{ level.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
-        backgroundColor: 'green',
-    }]
+            <div class="lg:col-span-2 bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                <div class="flex items-center justify-between gap-4 flex-wrap">
+
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">Growth over time</h2>
+                        <p class="text-sm text-slate-500 mt-1">
+                            Members, posts, portfolio pieces, inquiries and events month by month.
+                        </p>
+                    </div>
+
+                    <span class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold">
+                        {{ analytics_labels|length }} month window
+                    </span>
+
+                </div>
+
+                <div class="mt-6 h-80"><canvas id="analyticsGrowthChart"></canvas></div>
+
+            </div>
+
+            <!-- Gender -->
+
+            <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+                <h2 class="text-lg font-bold text-slate-900">Member gender split</h2>
+                <p class="text-sm text-slate-500 mt-1">How the community identifies.</p>
+                <div class="mt-6 h-72"><canvas id="analyticsGenderChart"></canvas></div>
+            </div>
+
+            <!-- Post status -->
+
+            <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+                <h2 class="text-lg font-bold text-slate-900">Publishing pipeline</h2>
+                <p class="text-sm text-slate-500 mt-1">Posts by editorial status.</p>
+                <div class="mt-6 h-72"><canvas id="analyticsPostStatusChart"></canvas></div>
+            </div>
+
+            <!-- Events by category -->
+
+            <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+                <h2 class="text-lg font-bold text-slate-900">Events by category</h2>
+                <p class="text-sm text-slate-500 mt-1">Which programmes ran most often.</p>
+                <div class="mt-6 h-72"><canvas id="analyticsEventsCategoryChart"></canvas></div>
+            </div>
+
+            <!-- Events by location -->
+
+            <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+                <h2 class="text-lg font-bold text-slate-900">Events by venue</h2>
+                <p class="text-sm text-slate-500 mt-1">Where the sessions were delivered.</p>
+                <div class="mt-6 h-72"><canvas id="analyticsEventsLocationChart"></canvas></div>
+            </div>
+
+            <!-- Comparative -->
+
+            <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+                <h2 class="text-lg font-bold text-slate-900">Host gender by category</h2>
+                <p class="text-sm text-slate-500 mt-1">Who hosted what.</p>
+                <div class="mt-6 h-72"><canvas id="analyticsComparativeChart"></canvas></div>
+            </div>
+
+            <!-- Tasks -->
+
+            <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+                <h2 class="text-lg font-bold text-slate-900">Task completion</h2>
+                <p class="text-sm text-slate-500 mt-1">Open versus completed, by priority.</p>
+                <div class="mt-6 h-72"><canvas id="analyticsTasksChart"></canvas></div>
+            </div>
+
+            <!-- Support -->
+
+            <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+                <h2 class="text-lg font-bold text-slate-900">Support load</h2>
+                <p class="text-sm text-slate-500 mt-1">Tickets by status.</p>
+                <div class="mt-6 h-72"><canvas id="analyticsSupportChart"></canvas></div>
+            </div>
+
+            <!-- Applications -->
+
+            <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+                <h2 class="text-lg font-bold text-slate-900">Applicant pipeline</h2>
+                <p class="text-sm text-slate-500 mt-1">Applications by stage.</p>
+                <div class="mt-6 h-72"><canvas id="analyticsApplicationsChart"></canvas></div>
+            </div>
+
+            <!-- Portfolio categories -->
+
+            <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+                <h2 class="text-lg font-bold text-slate-900">Portfolio disciplines</h2>
+                <p class="text-sm text-slate-500 mt-1">How the portfolio splits by category.</p>
+                <div class="mt-6 h-72"><canvas id="analyticsPortfolioCategoryChart"></canvas></div>
+            </div>
+
+            <!-- Education -->
+
+            <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+                <h2 class="text-lg font-bold text-slate-900">Education levels</h2>
+                <p class="text-sm text-slate-500 mt-1">Qualifications recorded.</p>
+                <div class="mt-6 h-72"><canvas id="analyticsEducationChart"></canvas></div>
+            </div>
+
+            <!-- Posts over time -->
+
+            <div class="lg:col-span-2 bg-white rounded-3xl shadow-md p-6 sm:p-8">
+                <h2 class="text-lg font-bold text-slate-900">Publishing rhythm</h2>
+                <p class="text-sm text-slate-500 mt-1">Posts and portfolio pieces released each month.</p>
+                <div class="mt-6 h-72"><canvas id="analyticsPostsOverTimeChart"></canvas></div>
+            </div>
+
+        </section>
+
+        <!-- ================= TABLES ================= -->
+
+        <section class="mt-6 grid lg:grid-cols-2 gap-5">
+
+            <!-- Recent posts -->
+
+            <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                <div class="flex items-center justify-between gap-4 flex-wrap">
+
+                    <h2 class="text-lg font-bold text-slate-900">Latest posts</h2>
+
+                    <a href="{% url 'blog' %}"
+                       class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold hover:bg-slate-200 transition">
+                        All posts <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+
+                </div>
+
+                <div class="mt-5 space-y-3">
+
+                    {% for post in recent_posts %}
+
+                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                        <span class="w-10 h-10 shrink-0 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
+                            <i class="fa-solid fa-newspaper"></i>
+                        </span>
+                        <div class="min-w-0 flex-1">
+                            <p class="font-bold text-slate-800 truncate">{{ post.title }}</p>
+                            <p class="text-xs text-slate-500 mt-0.5">
+                                {% if post.author %}
+                                    {{ post.author.name|default:post.author.username }}
+                                {% else %}
+                                    FelloMarley Foundation
+                                {% endif %}
+                                &middot; {{ post.created_at|date:"M d, Y" }}
+                            </p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider shrink-0
+                            {% if post.status == 'published' %}bg-emerald-100 text-emerald-700
+                            {% else %}bg-slate-200 text-slate-600{% endif %}">
+                            {{ post.status|default:"unspecified" }}
+                        </span>
+                    </div>
+
+                    {% empty %}
+
+                    <p class="text-center text-sm text-slate-400 py-8">No posts published yet.</p>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            <!-- Recent events -->
+
+            <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                <div class="flex items-center justify-between gap-4 flex-wrap">
+
+                    <h2 class="text-lg font-bold text-slate-900">Latest events</h2>
+
+                    <a href="{% url 'events' %}"
+                       class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold hover:bg-slate-200 transition">
+                        All events <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+
+                </div>
+
+                <div class="mt-5 space-y-3">
+
+                    {% for event in recent_events %}
+
+                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+
+                        <span class="w-10 h-10 shrink-0 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center">
+                            <i class="fa-solid fa-calendar-day"></i>
+                        </span>
+
+                        <div class="min-w-0 flex-1">
+                            <p class="font-bold text-slate-800 truncate">{{ event.title }}</p>
+                            <p class="text-xs text-slate-500 mt-0.5">
+                                {{ event.start_date|date:"M d, Y"|default:"Unscheduled" }}
+                                {% if event.location %}&middot; {{ event.location.name }}{% endif %}
+                            </p>
+                        </div>
+
+                        {% if event.category %}
+                        <span class="px-2.5 py-1 rounded-lg bg-violet-100 text-violet-700 text-[10px] font-bold uppercase tracking-wider shrink-0">
+                            {{ event.category.name }}
+                        </span>
+                        {% endif %}
+
+                    </div>
+
+                    {% empty %}
+
+                    <p class="text-center text-sm text-slate-400 py-8">No events scheduled yet.</p>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            <!-- Breakdown table -->
+
+            <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                <h2 class="text-lg font-bold text-slate-900">Breakdown by category</h2>
+                <p class="text-sm text-slate-500 mt-1">Events and the venues that hosted them.</p>
+
+                <div class="mt-5 overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="text-left text-xs uppercase tracking-wider text-slate-400 border-b border-slate-100">
+                                <th class="py-3 pr-4">Category</th>
+                                <th class="py-3 pr-4">Events</th>
+                                <th class="py-3 pr-4">Male hosts</th>
+                                <th class="py-3 pr-4">Female hosts</th>
+                                <th class="py-3 text-right">Share</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+
+                            {% for row in events_by_category %}
+
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3 pr-4 font-semibold text-slate-800">{{ row.category__name }}</td>
+                                <td class="py-3 pr-4 text-slate-600">{{ row.count }}</td>
+                                <td class="py-3 pr-4 text-slate-600">{{ row.male_count }}</td>
+                                <td class="py-3 pr-4 text-slate-600">{{ row.female_count }}</td>
+                                <td class="py-3 text-right">
+                                    <span class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 text-xs font-bold">
+                                        {{ row.count }}
+                                    </span>
+                                </td>
+                            </tr>
+
+                            {% empty %}
+
+                            <tr>
+                                <td colspan="5" class="py-6 text-center text-slate-400">No events to report on yet.</td>
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <!-- Support + education breakdown -->
+
+            <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                <h2 class="text-lg font-bold text-slate-900">Operations breakdown</h2>
+                <p class="text-sm text-slate-500 mt-1">Support, applications and qualifications.</p>
+
+                <div class="mt-5 space-y-6">
+
+                    <div>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Support by status</h3>
+                        <div class="mt-3 space-y-2">
+
+                            {% for row in support_by_status %}
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-slate-600">{{ row.label }}</span>
+                                <span class="font-black text-slate-800">{{ row.count }}</span>
+                            </div>
+                            {% empty %}
+                            <p class="text-sm text-slate-400">No tickets raised.</p>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-5">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Applications by stage</h3>
+                        <div class="mt-3 space-y-2">
+
+                            {% for row in application_by_status %}
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-slate-600">{{ row.label }}</span>
+                                <span class="font-black text-slate-800">{{ row.count }}</span>
+                            </div>
+                            {% empty %}
+                            <p class="text-sm text-slate-400">No applications yet.</p>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-5">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Education levels</h3>
+                        <div class="mt-3 space-y-2">
+
+                            {% for row in education_levels %}
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-slate-600">{{ row.level }}</span>
+                                <span class="font-black text-slate-800">{{ row.count }}</span>
+                            </div>
+                            {% empty %}
+                            <p class="text-sm text-slate-400">No qualifications recorded.</p>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    {% include "footer.html" %}
+
+</div>
+
+<!-- ================= CHART DATA ================= -->
+
+{{ chart_growth|json_script:"analytics-growth" }}
+{{ chart_gender|json_script:"analytics-gender" }}
+{{ chart_post_status|json_script:"analytics-post-status" }}
+{{ chart_events_category|json_script:"analytics-events-category" }}
+{{ chart_events_location|json_script:"analytics-events-location" }}
+{{ chart_comparative|json_script:"analytics-comparative" }}
+{{ chart_tasks|json_script:"analytics-tasks" }}
+{{ chart_support|json_script:"analytics-support" }}
+{{ chart_applications|json_script:"analytics-applications" }}
+{{ chart_portfolio_category|json_script:"analytics-portfolio-category" }}
+{{ chart_education|json_script:"analytics-education" }}
+{{ chart_posts_over_time|json_script:"analytics-posts-over-time" }}
+
+<script>
+
+(function () {
+
+const read = function (id) {
+    const node = document.getElementById(id);
+    if (!node) return { labels: [], data: [] };
+    try {
+        return JSON.parse(node.textContent);
+    } catch (error) {
+        return { labels: [], data: [] };
+    }
 };
-new Chart(document.getElementById("educationLevelChart"), {
-    type: 'pie',
-    data: educationLevelChartData
+
+const series = function (payload, key) {
+    return Array.isArray(payload[key]) ? payload[key] : [];
+};
+
+if (!window.Chart) return;
+
+const palette = ["#2563eb", "#0d9488", "#8b5cf6", "#f59e0b", "#f43f5e", "#06b6d4", "#64748b", "#22c55e"];
+
+Chart.defaults.font.family = "ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif";
+Chart.defaults.font.size = 12;
+Chart.defaults.color = "#64748b";
+Chart.defaults.plugins.legend.labels.usePointStyle = true;
+Chart.defaults.plugins.legend.labels.boxWidth = 8;
+Chart.defaults.plugins.legend.labels.padding = 14;
+Chart.defaults.plugins.tooltip.backgroundColor = "#0f172a";
+Chart.defaults.plugins.tooltip.padding = 12;
+Chart.defaults.plugins.tooltip.cornerRadius = 10;
+Chart.defaults.maintainAspectRatio = false;
+
+const axis = function () {
+    return { grid: { color: "#e2e8f0" }, border: { display: false } };
+};
+
+const build = function (id, config) {
+    const canvas = document.getElementById(id);
+    if (!canvas) return;
+    new Chart(canvas.getContext("2d"), config);
+};
+
+const growth = read("analytics-growth");
+const gender = read("analytics-gender");
+const postStatus = read("analytics-post-status");
+const eventsCategory = read("analytics-events-category");
+const eventsLocation = read("analytics-events-location");
+const comparative = read("analytics-comparative");
+const tasks = read("analytics-tasks");
+const support = read("analytics-support");
+const applications = read("analytics-applications");
+const portfolioCategory = read("analytics-portfolio-category");
+const education = read("analytics-education");
+const postsOverTime = read("analytics-posts-over-time");
+
+/* ---------- Growth ---------- */
+
+build("analyticsGrowthChart", {
+    type: "line",
+    data: {
+        labels: growth.labels || [],
+        datasets: [
+            { label: "Members", data: series(growth, "members"), borderColor: "#2563eb", backgroundColor: "#2563eb", tension: 0.35, pointRadius: 3 },
+            { label: "Posts", data: series(growth, "posts"), borderColor: "#8b5cf6", backgroundColor: "#8b5cf6", tension: 0.35, pointRadius: 3 },
+            { label: "Portfolio", data: series(growth, "portfolio"), borderColor: "#0d9488", backgroundColor: "#0d9488", tension: 0.35, pointRadius: 3 },
+            { label: "Inquiries", data: series(growth, "messages"), borderColor: "#f43f5e", backgroundColor: "#f43f5e", tension: 0.35, pointRadius: 3 },
+            { label: "Events", data: series(growth, "events"), borderColor: "#f59e0b", backgroundColor: "#f59e0b", tension: 0.35, pointRadius: 3 }
+        ]
+    },
+    options: {
+        responsive: true,
+        interaction: { mode: "index", intersect: false },
+        plugins: { legend: { position: "bottom" } },
+        scales: {
+            x: { ...axis(), ticks: { autoSkip: true, maxRotation: 0 } },
+            y: { ...axis(), beginAtZero: true, ticks: { precision: 0 } }
+        }
+    }
 });
 
-    </script>
-</body>
-</html>
-{% include "footer.html" %}
+/* ---------- Gender ---------- */
+
+build("analyticsGenderChart", {
+    type: "doughnut",
+    data: {
+        labels: gender.labels || [],
+        datasets: [{ data: series(gender, "data"), backgroundColor: palette, borderWidth: 0, hoverOffset: 8 }]
+    },
+    options: {
+        responsive: true,
+        cutout: "62%",
+        plugins: { legend: { position: "bottom" } }
+    }
+});
+
+/* ---------- Post status ---------- */
+
+build("analyticsPostStatusChart", {
+    type: "doughnut",
+    data: {
+        labels: postStatus.labels || [],
+        datasets: [{ data: series(postStatus, "data"), backgroundColor: palette, borderWidth: 0, hoverOffset: 8 }]
+    },
+    options: {
+        responsive: true,
+        cutout: "62%",
+        plugins: { legend: { position: "bottom" } }
+    }
+});
+
+/* ---------- Events by category ---------- */
+
+build("analyticsEventsCategoryChart", {
+    type: "bar",
+    data: {
+        labels: eventsCategory.labels || [],
+        datasets: [{ label: "Events", data: series(eventsCategory, "data"), backgroundColor: "#2563eb", borderRadius: 8, maxBarThickness: 46 }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { x: axis(), y: { ...axis(), beginAtZero: true, ticks: { precision: 0 } } }
+    }
+});
+
+/* ---------- Events by location ---------- */
+
+build("analyticsEventsLocationChart", {
+    type: "bar",
+    data: {
+        labels: eventsLocation.labels || [],
+        datasets: [{ label: "Events", data: series(eventsLocation, "data"), backgroundColor: "#0d9488", borderRadius: 8, maxBarThickness: 46 }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { x: axis(), y: { ...axis(), beginAtZero: true, ticks: { precision: 0 } } }
+    }
+});
+
+/* ---------- Comparative ---------- */
+
+build("analyticsComparativeChart", {
+    type: "bar",
+    data: {
+        labels: comparative.labels || [],
+        datasets: [
+            { label: "Male hosts", data: series(comparative, "male"), backgroundColor: "#2563eb", borderRadius: 6, maxBarThickness: 40 },
+            { label: "Female hosts", data: series(comparative, "female"), backgroundColor: "#f43f5e", borderRadius: 6, maxBarThickness: 40 }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { position: "bottom" } },
+        scales: {
+            x: { stacked: true, ...axis() },
+            y: { stacked: true, ...axis(), beginAtZero: true, ticks: { precision: 0 } }
+        }
+    }
+});
+
+/* ---------- Tasks ---------- */
+
+build("analyticsTasksChart", {
+    type: "bar",
+    data: {
+        labels: tasks.labels || [],
+        datasets: [
+            { label: "Open", data: series(tasks, "open"), backgroundColor: "#f59e0b", borderRadius: 6, maxBarThickness: 40 },
+            { label: "Completed", data: series(tasks, "done"), backgroundColor: "#0d9488", borderRadius: 6, maxBarThickness: 40 }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { position: "bottom" } },
+        scales: {
+            x: { stacked: true, ...axis() },
+            y: { stacked: true, ...axis(), beginAtZero: true, ticks: { precision: 0 } }
+        }
+    }
+});
+
+/* ---------- Support ---------- */
+
+build("analyticsSupportChart", {
+    type: "bar",
+    data: {
+        labels: support.labels || [],
+        datasets: [{ label: "Tickets", data: series(support, "data"), backgroundColor: "#06b6d4", borderRadius: 8, maxBarThickness: 46 }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { x: axis(), y: { ...axis(), beginAtZero: true, ticks: { precision: 0 } } }
+    }
+});
+
+/* ---------- Applications ---------- */
+
+build("analyticsApplicationsChart", {
+    type: "bar",
+    data: {
+        labels: applications.labels || [],
+        datasets: [{ label: "Applications", data: series(applications, "data"), backgroundColor: "#8b5cf6", borderRadius: 8, maxBarThickness: 46 }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { x: axis(), y: { ...axis(), beginAtZero: true, ticks: { precision: 0 } } }
+    }
+});
+
+/* ---------- Portfolio categories ---------- */
+
+build("analyticsPortfolioCategoryChart", {
+    type: "polarArea",
+    data: {
+        labels: portfolioCategory.labels || [],
+        datasets: [{ data: series(portfolioCategory, "data"), backgroundColor: palette, borderWidth: 0 }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { position: "bottom" } },
+        scales: { r: { ticks: { precision: 0 }, grid: { color: "#e2e8f0" } } }
+    }
+});
+
+/* ---------- Education ---------- */
+
+build("analyticsEducationChart", {
+    type: "bar",
+    data: {
+        labels: education.labels || [],
+        datasets: [{ label: "Qualifications", data: series(education, "data"), backgroundColor: "#22c55e", borderRadius: 8, maxBarThickness: 46 }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { x: axis(), y: { ...axis(), beginAtZero: true, ticks: { precision: 0 } } }
+    }
+});
+
+/* ---------- Posts over time ---------- */
+
+build("analyticsPostsOverTimeChart", {
+    type: "line",
+    data: {
+        labels: postsOverTime.labels || [],
+        datasets: [
+            { label: "Posts", data: series(postsOverTime, "data"), borderColor: "#8b5cf6", backgroundColor: "rgba(139, 92, 246, 0.12)", fill: true, tension: 0.35, pointRadius: 3 },
+            { label: "Portfolio", data: series(growth, "portfolio"), borderColor: "#0d9488", backgroundColor: "rgba(13, 148, 136, 0.12)", fill: true, tension: 0.35, pointRadius: 3 }
+        ]
+    },
+    options: {
+        responsive: true,
+        interaction: { mode: "index", intersect: false },
+        plugins: { legend: { position: "bottom" } },
+        scales: {
+            x: { ...axis(), ticks: { autoSkip: true, maxRotation: 0 } },
+            y: { ...axis(), beginAtZero: true, ticks: { precision: 0 } }
+        }
+    }
+});
+
+})();
+
+</script>
+
 {% endblock %}

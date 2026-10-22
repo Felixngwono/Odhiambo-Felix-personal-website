@@ -1,63 +1,142 @@
 {% extends "header.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Edit media | FelloMarley Foundation{% endblock %}
 
 {% block content %}
-        {% include "sidebar.html" %}
 
+{% include "sidebar.html" %}
 
-<div class="flex flex-col sm:ml-64 h-screen">
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
 
-    <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6">
-        <div class=" text-green-500 p-4 mb-6  w-1/2 text-center">
-  {% for message in messages %}
-      <p id="messages" class="font-semibold text-lg">{{ message }}</p>
-  {% endfor %}
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
+
+        <!-- ================= FLASH ================= -->
+
+        {% if messages %}
+
+        <div class="mb-6 space-y-3">
+
+            {% for message in messages %}
+
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+        <!-- ================= HERO ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white shadow-2xl p-6 sm:p-10">
+
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:60px 60px;"></div>
+
+            <div class="absolute -top-24 -right-16 w-96 h-96 bg-blue-400 rounded-full blur-3xl opacity-20"></div>
+
+            <div class="relative flex items-start justify-between gap-6 flex-wrap">
+
+                <div class="min-w-0">
+
+                    <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                        <i class="fa-solid fa-pen"></i> Editing
+                    </p>
+
+                    <h1 class="mt-4 text-3xl sm:text-4xl font-black leading-tight break-words">{{ image.title }}</h1>
+
+                    <p class="mt-2 text-slate-300 text-sm">
+                        {{ image.media_type|capfirst }} &middot; added {{ image.created_at|date:"d M Y" }}
+                    </p>
+
+                </div>
+
+                <a href="{% url 'gallery' %}"
+                   class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                    <i class="fa-solid fa-arrow-left"></i> Back to the gallery
+                </a>
+
+            </div>
+
+        </section>
+
+        <!-- ================= FORM ================= -->
+
+        <section class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <div class="lg:col-span-2">
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                        {% csrf_token %}
+
+                        {% include "_gallery_form_fields.html" %}
+
+                        <div class="pt-6 border-t border-slate-100 flex items-center gap-3 flex-wrap">
+
+                            <button type="submit"
+                                    class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-500 transition shadow-md">
+                                <i class="fa-solid fa-check"></i> Save changes
+                            </button>
+
+                            <a href="{% url 'gallery' %}"
+                               class="px-6 py-3 rounded-xl bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 transition">
+                                Cancel
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            <aside class="space-y-5">
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Current file</h2>
+
+                    {% if image.image %}
+                    <img src="{{ image.image.url }}" alt="{{ image.title }}"
+                         class="mt-4 w-full rounded-2xl border border-slate-100 object-cover">
+                    {% elif image.video %}
+                    <video src="{{ image.video.url }}" controls class="mt-4 w-full rounded-2xl border border-slate-100"></video>
+                    {% else %}
+                    <p class="mt-4 text-sm text-slate-400">No file has been uploaded yet.</p>
+                    {% endif %}
+
+                    <p class="mt-3 text-xs text-slate-500 leading-relaxed">
+                        Uploading a new file replaces the current one. Leave the field empty to keep it.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Danger zone</h2>
+
+                    <p class="mt-3 text-sm text-slate-500">
+                        Deleting the entry removes the file from the gallery and the server.
+                    </p>
+
+                    <a href="{% url 'delete_image' image.pk %}"
+                       class="mt-4 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-rose-50 text-rose-700 font-bold hover:bg-rose-100 transition">
+                        <i class="fa-solid fa-trash text-xs"></i> Delete this media
+                    </a>
+                </div>
+
+            </aside>
+
+        </section>
+
+    </main>
+
+    {% include "footer.html" %}
+
 </div>
 
-<section class="bg-gray-100 py-16">
-    <div class="container mx-auto px-6 lg:px-8">
-      <div class="text-center mb-8">
-        <h2 class="text-3xl font-bold text-gray-800">Update Image</h2>
-        <p class="mt-2 text-gray-600">Edit the details of the selected image.</p>
-      </div>
-
-      <!-- Update Image Form -->
-      <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        
-        <div class="mb-4">
-          <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
-          <input type="text" id="title" name="title" value="{{ form.title.value }}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-        </div>
-        
-        <div class="mb-4">
-          <label for="caption" class="block text-sm font-medium text-gray-700">Caption</label>
-          <textarea id="caption" name="caption" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">{{ form.caption.value }}</textarea>
-        </div>
-        
-        <div class="mb-4">
-          <label for="image" class="block text-sm font-medium text-gray-700">Image</label>
-          <input type="file" id="image" name="image" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-        </div>
-
-        <div class="text-center mt-8">
-          <button type="submit" class="inline-block bg-green-600 text-white px-6 py-2 rounded hover:bg-blue-700">
-            Update Image
-          </button>
-        </div>
-      </form>
-      
-      <div class="text-center mt-8">
-        <a href="{% url 'gallery' %}" class="text-white-600 bg-green-600">Back to Gallery</a>
-      </div>
-    </div>
-  </div>
-</section>
-<div id="loading" class="mt-8 hidden text-center">
-  <p class="text-gray-700 font-semibold">Uploading...</p>
-  <div class="loader"></div>
-</div>
-</main>
-</div>
-{% include "footer.html" %}
-{% endblock content %}
+{% endblock %}

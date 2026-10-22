@@ -1,4 +1,31 @@
-media/certificate_images/*.pdf
-media/certificate_images/*.pdf
+# Python
 __pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
 
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+/media/
+/staticfiles/
+local_settings.py
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+secrets.json
+
+# Tooling
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.idea/
+.vscode/
+.DS_Store

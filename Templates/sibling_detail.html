@@ -1,73 +1,343 @@
 {% extends "header.html" %}
+
+{% block title %}{{ sibling.name }} | FelloMarley Foundation{% endblock %}
+
 {% block content %}
-        {% include "sidebar.html" %}
 
-<div>
-    {% for message in messages %}
-        <p id="messages" class="font-semibold text-lg">{{ message }}</p>
-    {% endfor %}
-</div>
+{% include "sidebar.html" %}
 
-<div class="flex flex-col sm:ml-64 h-screen">
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
 
-    <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6">
-    <div class="w-full h-full max-w-full bg-green-100 p-8 ">
-        <div class="text-center">
-            {% if sibling.profile_picture %}
-            <a href="{{ sibling.profile_picture.url }}">
-                <img src="{{ sibling.profile_picture.url }}" alt="{{ sibling.name }}" class="w-48 h-48 rounded-full mx-auto">
-            </a>
-            {% endif %}
-            <h2 class="text-3xl font-bold text-gray-800 mt-4">{{ sibling.name }}</h2>
-            <p class="text-gray-600 mt-2">Born on: {{ sibling.birthdate }}</p>
-            <p class="text-gray-600 mt-2">Age: {{ sibling.age }}</p> <!-- Using the dynamic age property -->
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
 
-            {% if sibling.occupation %}
-            <p class="text-gray-600 mt-1"><strong>Occupation:</strong> {{ sibling.occupation }}</p>
-            {% endif %}
-        </div>
-       <div class="mt-6">
-            <h3 class="text-xl font-semibold text-gray-800">short description {{ sibling.name }}</h3>
-            <p class="text-gray-600 mt-2">{{ sibling.short_description }}</p>
-        </div>            
-        <div class="mt-6">
-            <h3 class="text-xl font-semibold text-gray-800">About {{ sibling.name }}</h3>
-            <p class="text-gray-600 mt-2">{{ sibling.full_description }}</p>
-        </div>
-        <div class="mt-6">
-            <h3 class="text-xl font-semibold text-gray-800">My Images</h3>
-            <div class="flex  space-x-4 py-4">
-                {% for image in images %}
-             <div class="flex-none w-50">
-    <a href="{{ image.image.url }}" target="_blank">
-        <img src="{{ image.image.url }}" alt="Image for {{ sibling.name }}" class="w-full h-48 object-cover rounded-lg shadow-md transition-all duration-300 transform hover:scale-105">
-    </a>
+        <!-- ================= FLASH ================= -->
 
-                    {% if image.description %}
-                        <p class="text-gray-600 mt-2">{{ image.description }}</p>
-                    {% endif %}
-                </div>
-                {% endfor %}
+        {% if messages %}
+
+        <div class="mb-6 space-y-3">
+
+            {% for message in messages %}
+
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
             </div>
-            <br>
+
+            {% endfor %}
+
         </div>
-        <div class="mt-6 flex justify-center space-x-4">
-            <a href="{% url 'siblings_list' %}" 
-               class="text-white bg-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-blue-500 transition duration-300 shadow-md">
-               🔙 Back to Family
+
+        {% endif %}
+
+        <!-- ================= BREADCRUMB ================= -->
+
+        <nav class="flex items-center gap-2 text-sm text-slate-500 mb-5">
+            <a href="{% url 'siblings_list' %}" class="hover:text-amber-600 font-medium transition">
+                Family
             </a>
-            <a href="{% url 'update_member' sibling.id %}" 
-            class="text-white bg-yellow-600 px-6 py-3 rounded-lg font-medium hover:bg-yellow-500 transition duration-300 shadow-md">
-            ✏️ Update Member
-         </a>
-         <a href="{% url 'add_picture' sibling.id %}" class="text-white bg-green-600 px-6 py-3 rounded-lg font-medium hover:bg-blue-500 transition duration-300 shadow-md">
-                Add Image
-            </a>
-        </div>
-    </div>
+            <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
+            <span class="text-slate-700 font-semibold truncate">{{ sibling.name }}</span>
+        </nav>
+
+        <!-- ================= PROFILE HERO ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-amber-900 to-orange-800 text-white shadow-2xl">
+
+            {% if sibling.profile_picture %}
+            <img src="{{ sibling.profile_picture.url }}"
+                 alt="{{ sibling.name }}"
+                 class="absolute inset-0 w-full h-full object-cover opacity-25">
+            {% endif %}
+
+            <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/85 to-transparent"></div>
+
+            <div class="relative p-6 sm:p-10">
+
+                <div class="flex flex-col sm:flex-row items-center sm:items-start gap-7">
+
+                    <!-- Portrait -->
+
+                    <div class="shrink-0">
+
+                        {% if sibling.profile_picture %}
+                        <a href="{{ sibling.profile_picture.url }}" target="_blank">
+                            <img src="{{ sibling.profile_picture.url }}"
+                                 alt="{{ sibling.name }}"
+                                 class="w-32 h-32 sm:w-40 sm:h-40 rounded-full object-cover ring-4 ring-white/20 shadow-2xl">
+                        </a>
+                        {% else %}
+                        <span class="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-amber-600 text-white flex items-center justify-center text-4xl font-black ring-4 ring-white/20 shadow-2xl">
+                            {{ sibling.initials }}
+                        </span>
+                        {% endif %}
+
+                    </div>
+
+                    <!-- Identity -->
+
+                    <div class="text-center sm:text-left">
+
+                        <p class="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-amber-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                            <i class="fa-solid fa-people-group"></i> Family member
+                        </p>
+
+                        <h1 class="mt-3 text-3xl sm:text-4xl font-black">{{ sibling.name }}</h1>
+
+                        <p class="mt-2 text-amber-100 font-semibold">
+                            {{ sibling.occupation|default:"Occupation not listed" }}
+                        </p>
+
+                        <div class="mt-5 flex flex-wrap justify-center sm:justify-start gap-x-6 gap-y-2 text-sm text-slate-300">
+
+                            {% if sibling.age_display %}
+                            <span class="flex items-center gap-2">
+                                <i class="fa-solid fa-cake-candles text-amber-400"></i>
+                                {{ sibling.age_display }} years old
+                            </span>
+                            {% endif %}
+
+                            {% if sibling.birthdate %}
+                            <span class="flex items-center gap-2">
+                                <i class="fa-regular fa-calendar text-amber-400"></i>
+                                Born {{ sibling.birthdate|date:"F d, Y" }}
+                            </span>
+                            {% endif %}
+
+                            <span class="flex items-center gap-2">
+                                <i class="fa-solid fa-images text-amber-400"></i>
+                                {{ sibling.image_count }} photo{{ sibling.image_count|pluralize }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= BODY ================= -->
+
+        <section class="mt-6 grid lg:grid-cols-3 gap-5">
+
+            <!-- Main column -->
+
+            <div class="lg:col-span-2 space-y-5">
+
+                <!-- Short description -->
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <p class="text-[11px] font-bold uppercase tracking-widest text-amber-600">In short</p>
+
+                    <p class="mt-3 text-lg leading-relaxed text-slate-700 font-medium">
+                        {{ sibling.short_description|default:"No summary has been written for this profile yet." }}
+                    </p>
+
+                </div>
+
+                <!-- Full story -->
+
+                {% if sibling.full_description %}
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <h2 class="text-xl font-bold text-slate-900">The longer version</h2>
+
+                    <div class="mt-4 space-y-4 text-slate-600 leading-relaxed">
+                        {{ sibling.full_description|linebreaks }}
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+                <!-- Gallery -->
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <div class="flex items-center justify-between gap-4 flex-wrap">
+
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900">Gallery</h2>
+                            <p class="text-sm text-slate-500 mt-1">Photos and moments kept from {{ sibling.name }}'s page.</p>
+                        </div>
+
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold">
+                            {{ images|length }} image{{ images|length|pluralize }}
+                        </span>
+
+                    </div>
+
+                    {% if images %}
+
+                    <div class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                        {% for image in images %}
+
+                        <figure class="group">
+                            <a href="{{ image.image.url }}" target="_blank" class="block overflow-hidden rounded-2xl">
+                                <img src="{{ image.image.url }}"
+                                     alt="{{ image.description|default:sibling.name }}"
+                                     class="w-full h-44 object-cover group-hover:scale-105 transition duration-500">
+                            </a>
+                            {% if image.description %}
+                            <figcaption class="mt-2 text-xs text-slate-500 leading-relaxed">
+                                {{ image.description }}
+                            </figcaption>
+                            {% endif %}
+                        </figure>
+
+                        {% endfor %}
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="mt-6 text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                        <i class="fa-solid fa-image text-4xl text-slate-300 mb-3"></i>
+                        <p class="text-sm font-semibold text-slate-500">No photos added yet</p>
+                        {% if request.user.is_superuser %}
+                        <a href="{% url 'add_picture' sibling.id %}"
+                           class="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-600 text-white text-xs font-bold hover:bg-amber-700 transition">
+                            <i class="fa-solid fa-plus"></i> Add the first photo
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+                <!-- Video -->
+
+                {% if sibling.video %}
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+                    <h2 class="text-xl font-bold text-slate-900">Video</h2>
+                    <video controls class="w-full mt-4 rounded-2xl bg-slate-900">
+                        <source src="{{ sibling.video.url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            <!-- Sidebar -->
+
+            <aside class="space-y-5">
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-7">
+
+                    <h2 class="text-lg font-bold text-slate-900">At a glance</h2>
+
+                    <dl class="mt-5 space-y-4 text-sm">
+
+                        <div class="flex items-center justify-between">
+                            <dt class="text-slate-500">Name</dt>
+                            <dd class="font-bold text-slate-800">{{ sibling.name }}</dd>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <dt class="text-slate-500">Profession</dt>
+                            <dd class="font-bold text-slate-800 text-right truncate">{{ sibling.occupation|default:"—" }}</dd>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <dt class="text-slate-500">Age</dt>
+                            <dd class="font-bold text-slate-800">{{ sibling.age_display|default:"Not recorded" }}</dd>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <dt class="text-slate-500">Born</dt>
+                            <dd class="font-bold text-slate-800">{{ sibling.birthdate|date:"M d, Y"|default:"—" }}</dd>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <dt class="text-slate-500">Photos</dt>
+                            <dd class="font-bold text-slate-800">{{ sibling.image_count }}</dd>
+                        </div>
+
+                    </dl>
+
+                    <!-- Admin actions -->
+
+                    {% if request.user.is_superuser %}
+
+                    <div class="mt-6 pt-5 border-t border-slate-100 flex flex-wrap gap-2">
+
+                        <a href="{% url 'update_member' sibling.id %}"
+                           class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-600 text-white text-xs font-bold hover:bg-amber-700 transition">
+                            <i class="fa-solid fa-pen"></i> Edit profile
+                        </a>
+
+                        <a href="{% url 'add_picture' sibling.id %}"
+                           class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold hover:bg-slate-200 transition">
+                            <i class="fa-solid fa-image"></i> Add photo
+                        </a>
+
+                    </div>
+
+                    {% endif %}
+
+                    <a href="{% url 'siblings_list' %}"
+                       class="mt-3 inline-flex w-full items-center justify-center gap-2 px-4 py-3 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-700 transition">
+                        <i class="fa-solid fa-arrow-left"></i> Back to family
+                    </a>
+
+                </div>
+
+                <!-- Related -->
+
+                {% if related_siblings %}
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-7">
+
+                    <h2 class="text-lg font-bold text-slate-900">Others in the family</h2>
+
+                    <div class="mt-5 space-y-4">
+
+                        {% for member in related_siblings %}
+
+                        <a href="{% url 'sibling_detail' member.id %}"
+                           class="group flex items-center gap-3 p-3 rounded-2xl hover:bg-slate-50 transition">
+
+                            {% if member.profile_picture %}
+                            <img src="{{ member.profile_picture.url }}"
+                                 alt="{{ member.name }}"
+                                 class="w-11 h-11 rounded-full object-cover shrink-0">
+                            {% else %}
+                            <span class="w-11 h-11 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-xs font-black shrink-0">
+                                {{ member.initials }}
+                            </span>
+                            {% endif %}
+
+                            <span class="min-w-0">
+                                <span class="block font-semibold text-slate-800 text-sm group-hover:text-amber-700 transition truncate">{{ member.name }}</span>
+                                <span class="block text-xs text-slate-500 truncate">{{ member.occupation|default:"—" }}</span>
+                            </span>
+
+                        </a>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+            </aside>
+
+        </section>
+
+    </main>
+
+    {% include "footer.html" %}
+
 </div>
-</main>
-</div>
-{% include "footer.html" %}
+
 {% endblock %}

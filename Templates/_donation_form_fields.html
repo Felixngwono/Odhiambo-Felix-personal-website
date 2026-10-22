@@ -1,0 +1,117 @@
+{% load widget_tweaks %}
+
+<!-- ================= FORM FIELDS (shared by add + update) ================= -->
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+    <!-- Name -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.name.id_for_label }}">Donor name</label>
+        {% render_field form.name class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900" %}
+        {% if form.name.errors %}
+        <p class="mt-1.5 text-xs font-semibold text-rose-600">{{ form.name.errors|join:", " }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Email -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.email.id_for_label }}">Email</label>
+        {% render_field form.email class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900" %}
+        {% if form.email.errors %}
+        <p class="mt-1.5 text-xs font-semibold text-rose-600">{{ form.email.errors|join:", " }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Amount -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.amount.id_for_label }}">Amount (USD)</label>
+        {% render_field form.amount class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900" %}
+        {% if form.amount.errors %}
+        <p class="mt-1.5 text-xs font-semibold text-rose-600">{{ form.amount.errors|join:", " }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Method -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.payment_method.id_for_label }}">Payment method</label>
+        {% render_field form.payment_method class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900" %}
+    </div>
+
+    <!-- Purpose -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.purpose.id_for_label }}">Cause</label>
+        {% render_field form.purpose class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900" %}
+    </div>
+
+    <!-- Status -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.status.id_for_label }}">Status</label>
+        {% render_field form.status class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900" %}
+        <p class="mt-1.5 text-xs text-slate-400">Only completed gifts count towards the totals.</p>
+    </div>
+
+    <!-- Account -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.donor.id_for_label }}">Linked account</label>
+        {% render_field form.donor class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900" %}
+        <p class="mt-1.5 text-xs text-slate-400">Optional — link the gift to a member of the site.</p>
+    </div>
+
+    <!-- Transaction id -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.transaction_id.id_for_label }}">Transaction id</label>
+        {% render_field form.transaction_id class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900" %}
+        <p class="mt-1.5 text-xs text-slate-400">M-PESA code, PayPal reference or bank reference.</p>
+    </div>
+
+    <!-- Donation date -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.donated_on.id_for_label }}">Donation date</label>
+        {% render_field form.donated_on class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900" %}
+        <p class="mt-1.5 text-xs text-slate-400">Leave empty to use the date it was recorded.</p>
+    </div>
+
+    <!-- Message -->
+    <div class="sm:col-span-2">
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.message.id_for_label }}">Donor message</label>
+        {% render_field form.message class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 leading-relaxed" rows="4" %}
+    </div>
+
+    <!-- Notes -->
+    <div class="sm:col-span-2">
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.notes.id_for_label }}">Internal note</label>
+        {% render_field form.notes class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 leading-relaxed" rows="3" %}
+        <p class="mt-1.5 text-xs text-slate-400">Only visible to administrators, never on the public page.</p>
+    </div>
+
+    <!-- Anonymous -->
+    <div class="sm:col-span-2">
+        <label class="flex items-start gap-3 cursor-pointer">
+            {% render_field form.anonymous class="mt-1 h-5 w-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" %}
+            <span>
+                <span class="block text-sm font-bold text-slate-700">Keep the name private</span>
+                <span class="block text-xs text-slate-400">The gift is listed as an anonymous donor on the public page.</span>
+            </span>
+        </label>
+    </div>
+
+    <!-- Receipt -->
+    <div class="sm:col-span-2">
+        <label class="flex items-start gap-3 cursor-pointer">
+            {% render_field form.receipt_sent class="mt-1 h-5 w-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" %}
+            <span>
+                <span class="block text-sm font-bold text-slate-700">Receipt already sent</span>
+                <span class="block text-xs text-slate-400">Tick this once the receipt has gone out to the donor.</span>
+            </span>
+        </label>
+    </div>
+
+</div>
+
+<!-- Errors -->
+
+{% if form.non_field_errors %}
+<div class="mt-5 rounded-2xl bg-rose-50 border border-rose-200 px-4 py-3 text-sm font-semibold text-rose-700">
+    {{ form.non_field_errors|join:", " }}
+</div>
+{% endif %}

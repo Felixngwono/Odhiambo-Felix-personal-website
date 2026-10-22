@@ -1,102 +1,794 @@
 {% extends "header.html" %}
-{% load static %}
+{% load humanize %}
+
+{% block title %}Blog | FelloMarley Foundation{% endblock %}
+
 {% block content %}
-        {% include "sidebar.html" %}
 
+{% if request.user.is_authenticated %}
+{% include "sidebar.html" %}
+{% endif %}
 
-<div class="flex flex-col sm:ml-64 h-screen">
+<div class="flex flex-col {% if request.user.is_authenticated %}sm:ml-64{% endif %} min-h-screen bg-slate-100">
 
-    <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6">
-  <!-- Success messages -->
-  {% for message in messages %}
-  <div class="w-full text-center py-4 bg-green-100 text-green-700 font-medium">
-    {{ message }}
-  </div>
-  {% endfor %}
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
 
-  <!-- Blog Intro Section -->
-  <div >
-    <h2 class="text-4xl text-center sm:text-5xl font-extrabold text-gray-800 mb-4">📚 My Blog Space</h2>
-    <p class=" text-center ">
-      Welcome to my blog! Here I share personal stories, technical tutorials, creative insights, and much more. 
-      Whether you're here to learn, explore, or just enjoy good reads, there's something for you. 
-    </p>
-    <hr class="my-6 border-t-2 border-gray-200 w-24 mx-auto">
-  </div>
+        <!-- ================= FLASH ================= -->
 
-  <!-- Blog Grid -->
-  <div class="container w-screen px-4 py-8">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-      {% for post in blogs %}
-      <div class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col">
-        <a href="{% url 'blog_details' post.id %}">
-          {% if post.image %}
-          <img src="{{ post.image.url }}" alt="{{ post.title }}" class="w-full h-56 object-cover">
-          {% else %}
-          <div class="w-full h-56 bg-gray-200 flex items-center justify-center text-gray-500">No Image</div>
-          {% endif %}
-        </a>
-        <div class="p-6 flex-1 flex flex-col">
-          <h3 class="text-xl font-bold text-gray-800 hover:text-blue-600 mb-2">{{ post.title }}</h3>
-          
-          {% if post.author %}
-          <p class="text-sm text-gray-500 mb-1">By <span class="font-medium">{{ post.author }}</span></p>
-          {% endif %}
-          {% if post.created_at %}
-          <p class="text-sm text-gray-400 mb-4">📅 {{ post.created_at|date:"F j, Y" }}</p>
-          {% endif %}
+        {% if messages %}
 
-          <p class="text-gray-700 text-sm flex-1">{{ post.content|truncatewords:30 }}</p>
+        <div class="mb-6 space-y-3">
 
-          <div class="mt-4">
-            <a href="{% url 'blog_details' post.id %}" class="inline-block text-sm font-medium text-blue-600 hover:underline">
-              🔍 Read More
-            </a>
-          </div>
+            {% for message in messages %}
+
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
+            </div>
+
+            {% endfor %}
+
         </div>
 
-        <!-- Admin Buttons -->
-        {% if request.user.is_superuser %}
-        <div class="flex justify-between px-6 pb-4">
-          <a href="{% url 'update_blog' post.pk %}" class="text-sm text-white bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-500">✏️ Update</a>
-          <a href="{% url 'delete_blog' post.pk %}" class="text-sm text-white bg-red-600 px-4 py-2 rounded-lg hover:bg-red-500">🗑️ Delete</a>
-        </div>
         {% endif %}
-      </div>
-      {% empty %}
-      <p class="col-span-3 text-center text-gray-500">No blogs available at the moment. Please check back soon!</p>
-      {% endfor %}
-    </div>
 
-    <!-- Pagination (if using Django pagination in views) -->
-    {% if blogs.has_other_pages %}
-    <div class="mt-10 flex justify-center space-x-2">
-      {% if blogs.has_previous %}
-      <a href="?page={{ blogs.previous_page_number }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">⬅️ Prev</a>
-      {% endif %}
+        <!-- ================= HERO ================= -->
 
-      <span class="px-4 py-2 text-gray-700 font-semibold">Page {{ blogs.number }} of {{ blogs.paginator.num_pages }}</span>
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-900 to-blue-900 text-white shadow-2xl p-6 sm:p-10">
 
-      {% if blogs.has_next %}
-      <a href="?page={{ blogs.next_page_number }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Next ➡️</a>
-      {% endif %}
-    </div>
-    {% endif %}
-  </div>
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:60px 60px;"></div>
 
-  <!-- Add Blog Button -->
-  {% if request.user.is_superuser %}
-  <div class="text-center pb-12">
-    <a href="{% url 'add_blog' %}" class="inline-block bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-500">
-      ➕ Add Blog
-    </a>
-  </div>
-  {% endif %}
+            <div class="absolute -top-24 -right-16 w-96 h-96 bg-indigo-400 rounded-full blur-3xl opacity-20"></div>
 
- 
-</main>
+            <div class="relative grid lg:grid-cols-3 gap-8 items-center">
+
+                <div class="lg:col-span-2">
+
+                    <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                        <i class="fa-solid fa-feather-pointed"></i> Stories &amp; insights
+                    </p>
+
+                    <h1 class="mt-4 text-3xl sm:text-5xl font-black leading-tight">
+                        The blog<br class="hidden sm:block"> behind the mission.
+                    </h1>
+
+                    <p class="mt-4 text-slate-300 max-w-2xl leading-relaxed">
+                        Field notes, tutorials and community stories from the FelloMarley Foundation —
+                        {{ blog_stats.published }} published, {{ blog_stats.drafts }} in draft,
+                        {{ blog_stats.words|intcomma }} words written and counting.
+                    </p>
+
+                    <!-- Search -->
+
+                    <form method="GET" action="{% url 'blog' %}" class="mt-7 flex flex-col sm:flex-row gap-3 max-w-2xl">
+
+                        <div class="relative flex-1">
+
+                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+
+                            <input type="search" name="q" value="{{ blog_query }}"
+                                   placeholder="Search titles, stories, tags or authors..."
+                                   class="w-full pl-11 pr-4 py-3.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400">
+
+                        </div>
+
+                        {% if blog_category %}<input type="hidden" name="category" value="{{ blog_category }}">{% endif %}
+                        {% if blog_status %}<input type="hidden" name="status" value="{{ blog_status }}">{% endif %}
+                        <input type="hidden" name="sort" value="{{ blog_sort }}">
+
+                        <button type="submit"
+                                class="px-6 py-3.5 rounded-xl bg-white font-bold text-slate-900 hover:bg-slate-100 transition whitespace-nowrap">
+                            Search
+                        </button>
+
+                    </form>
+
+                    <!-- Hero stats -->
+
+                    <div class="mt-7 grid grid-cols-2 sm:grid-cols-4 gap-3">
+
+                        <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                            <p class="text-2xl font-black">{{ blog_stats.total }}</p>
+                            <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">Total posts</p>
+                        </div>
+
+                        <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                            <p class="text-2xl font-black">{{ blog_stats.published }}</p>
+                            <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">Published</p>
+                        </div>
+
+                        <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                            <p class="text-2xl font-black">{{ blog_stats.views|intcomma }}</p>
+                            <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">Reads</p>
+                        </div>
+
+                        <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                            <p class="text-2xl font-black">{{ blog_stats.tags }}</p>
+                            <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">Tags in use</p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Hero side card -->
+
+                <div class="rounded-3xl bg-white/10 border border-white/15 backdrop-blur p-6">
+
+                    <p class="text-xs font-bold uppercase tracking-widest text-indigo-300">At a glance</p>
+
+                    <ul class="mt-4 space-y-3 text-sm">
+
+                        <li class="flex items-center justify-between gap-3">
+                            <span class="text-slate-300">Authors</span>
+                            <span class="font-black">{{ blog_stats.authors }}</span>
+                        </li>
+
+                        <li class="flex items-center justify-between gap-3">
+                            <span class="text-slate-300">Categories</span>
+                            <span class="font-black">{{ blog_stats.categories }}</span>
+                        </li>
+
+                        <li class="flex items-center justify-between gap-3">
+                            <span class="text-slate-300">With media</span>
+                            <span class="font-black">{{ blog_stats.with_media }}</span>
+                        </li>
+
+                        <li class="flex items-center justify-between gap-3">
+                            <span class="text-slate-300">Drafts pending</span>
+                            <span class="font-black {% if blog_stats.drafts %}text-amber-300{% else %}text-emerald-300{% endif %}">
+                                {{ blog_stats.drafts }}
+                            </span>
+                        </li>
+
+                    </ul>
+
+                    {% if request.user.is_superuser %}
+
+                    <a href="{% url 'add_blog' %}"
+                       class="mt-6 w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-400 font-bold transition">
+                        <i class="fa-solid fa-feather-pointed"></i> Write a new post
+                    </a>
+
+                    {% else %}
+
+                    <a href="{% url 'me' %}"
+                       class="mt-6 w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                        <i class="fa-solid fa-arrow-left"></i> Back to the site
+                    </a>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= FILTER BAR ================= -->
+
+        <section class="mt-6 bg-white rounded-3xl shadow-md p-5 sm:p-6">
+
+            <div class="flex flex-col lg:flex-row lg:items-center gap-4 justify-between">
+
+                <!-- Category chips -->
+
+                <div class="flex items-center gap-2 flex-wrap">
+
+                    <a href="{% url 'blog' %}{% if blog_query %}?q={{ blog_query|urlencode }}{% endif %}{% if blog_status %}&status={{ blog_status }}{% endif %}"
+                       class="px-4 py-2 rounded-xl text-xs font-bold transition
+                              {% if not blog_category %}bg-slate-900 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                        All stories
+                        <span class="opacity-60">({{ blog_stats.total }})</span>
+                    </a>
+
+                    {% for cat in blog_categories %}
+
+                    <a href="?category={{ cat.slug }}{% if blog_query %}&q={{ blog_query|urlencode }}{% endif %}{% if blog_status %}&status={{ blog_status }}{% endif %}"
+                       class="px-4 py-2 rounded-xl text-xs font-bold transition
+                              {% if blog_category == cat.slug %}bg-indigo-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                        {{ cat.label }}
+                        <span class="opacity-60">({{ cat.count }})</span>
+                    </a>
+
+                    {% endfor %}
+
+                </div>
+
+                <!-- Sort + status -->
+
+                <div class="flex items-center gap-3 flex-wrap">
+
+                    {% if blog_is_editor %}
+
+                    <div class="flex items-center gap-1 bg-slate-100 rounded-xl p-1">
+
+                        <a href="?status=published{% if blog_query %}&q={{ blog_query|urlencode }}{% endif %}{% if blog_category %}&category={{ blog_category }}{% endif %}"
+                           class="px-3 py-1.5 rounded-lg text-xs font-bold transition
+                                  {% if blog_status == 'published' %}bg-white text-slate-900 shadow{% else %}text-slate-500{% endif %}">
+                            Published
+                        </a>
+
+                        <a href="?status=drafted{% if blog_query %}&q={{ blog_query|urlencode }}{% endif %}{% if blog_category %}&category={{ blog_category }}{% endif %}"
+                           class="px-3 py-1.5 rounded-lg text-xs font-bold transition
+                                  {% if blog_status == 'drafted' %}bg-white text-slate-900 shadow{% else %}text-slate-500{% endif %}">
+                            Drafts
+                        </a>
+
+                    </div>
+
+                    {% endif %}
+
+                    <form method="GET" action="{% url 'blog' %}" class="flex items-center gap-2">
+
+                        {% if blog_query %}<input type="hidden" name="q" value="{{ blog_query }}">{% endif %}
+                        {% if blog_category %}<input type="hidden" name="category" value="{{ blog_category }}">{% endif %}
+                        {% if blog_status %}<input type="hidden" name="status" value="{{ blog_status }}">{% endif %}
+
+                        <label for="blogSort" class="text-xs font-bold uppercase tracking-wider text-slate-400">Sort</label>
+
+                        <select id="blogSort" name="sort" onchange="this.form.submit()"
+                                class="px-3 py-2 rounded-xl bg-slate-100 text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            {% for value, label in blog_sort_options %}
+                            <option value="{{ value }}" {% if blog_sort == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <noscript><button type="submit" class="px-3 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold">Apply</button></noscript>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            <!-- Result summary -->
+
+            <div class="mt-5 pt-5 border-t border-slate-100 flex items-center justify-between gap-4 flex-wrap">
+
+                <p class="text-sm text-slate-500">
+                    {% if blog_query %}
+                        <span class="font-bold text-slate-800">{{ blog_posts|length }}</span>
+                        result{{ blog_posts|length|pluralize }} for
+                        <span class="font-bold text-slate-800">“{{ blog_query }}”</span>
+                    {% else %}
+                        Showing <span class="font-bold text-slate-800">{{ blog_posts|length }}</span>
+                        stor{{ blog_posts|length|pluralize:"y,ies" }}
+                    {% endif %}
+                </p>
+
+                {% if blog_filters_active %}
+                <a href="{% url 'blog' %}"
+                   class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-rose-50 text-rose-600 text-xs font-bold hover:bg-rose-100 transition">
+                    <i class="fa-solid fa-xmark"></i> Clear filters
+                </a>
+                {% endif %}
+
+            </div>
+
+        </section>
+
+        <!-- ================= CONTENT + RAIL ================= -->
+
+        <div class="mt-6 grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+            <div class="xl:col-span-2 space-y-6">
+
+                <!-- Featured post -->
+
+                {% if featured_post and not blog_filters_active %}
+
+                <article class="bg-white rounded-3xl shadow-md overflow-hidden">
+
+                    <div class="grid md:grid-cols-2">
+
+                        <a href="{% url 'blog_details' featured_post.id %}" class="relative block group">
+
+                            {% if featured_post.image %}
+                            <img src="{{ featured_post.image.url }}" alt="{{ featured_post.title }}"
+                                 class="w-full h-full min-h-[240px] object-cover group-hover:scale-105 transition-transform duration-500">
+                            {% else %}
+                            <div class="w-full h-full min-h-[240px] bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white">
+                                <i class="fa-solid fa-feather-pointed text-6xl opacity-40"></i>
+                            </div>
+                            {% endif %}
+
+                            <span class="absolute top-4 left-4 px-3 py-1.5 rounded-xl bg-white/90 text-indigo-700 text-[10px] font-black uppercase tracking-widest backdrop-blur">
+                                Featured
+                            </span>
+
+                        </a>
+
+                        <div class="p-6 sm:p-8 flex flex-col justify-center">
+
+                            <p class="text-xs font-black uppercase tracking-widest text-indigo-600">
+                                {{ featured_post.category_label }}
+                            </p>
+
+                            <h2 class="mt-2 text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
+                                <a href="{% url 'blog_details' featured_post.id %}" class="hover:text-indigo-600 transition">
+                                    {{ featured_post.title }}
+                                </a>
+                            </h2>
+
+                            <p class="mt-3 text-sm text-slate-600 leading-relaxed">{{ featured_post.excerpt }}</p>
+
+                            <div class="mt-5 flex items-center gap-3">
+
+                                {% if featured_post.author_avatar %}
+                                <img src="{{ featured_post.author_avatar }}" alt="{{ featured_post.author_name }}"
+                                     class="w-9 h-9 rounded-full object-cover">
+                                {% else %}
+                                <span class="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-black">
+                                    {{ featured_post.author_initials }}
+                                </span>
+                                {% endif %}
+
+                                <div class="min-w-0">
+                                    <p class="text-sm font-bold text-slate-800 truncate">{{ featured_post.author_name|default:"FelloMarley Foundation" }}</p>
+                                    <p class="text-xs text-slate-400">
+                                        {{ featured_post.created_at|date:"M d, Y" }}
+                                        &middot; {{ featured_post.reading_time }} min read
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <div class="mt-6 flex items-center gap-3 flex-wrap">
+
+                                <a href="{% url 'blog_details' featured_post.id %}"
+                                   class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 transition">
+                                    Read the story <i class="fa-solid fa-arrow-right text-xs"></i>
+                                </a>
+
+                                {% if blog_is_editor %}
+                                <a href="{% url 'update_blog' featured_post.pk %}"
+                                   class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 text-slate-700 text-sm font-bold hover:bg-slate-200 transition">
+                                    <i class="fa-solid fa-pen text-xs"></i> Edit
+                                </a>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+                {% endif %}
+
+                <!-- Post grid -->
+
+                {% if blogs %}
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+                    {% for post in blogs %}
+
+                    <article class="bg-white rounded-3xl shadow-md overflow-hidden flex flex-col hover:shadow-xl transition-shadow duration-300">
+
+                        <a href="{% url 'blog_details' post.id %}" class="relative block group">
+
+                            {% if post.image %}
+                            <img src="{{ post.image.url }}" alt="{{ post.title }}"
+                                 class="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500">
+                            {% else %}
+                            <div class="w-full h-52 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 flex items-center justify-center text-white">
+                                <i class="fa-solid fa-feather-pointed text-4xl opacity-30"></i>
+                            </div>
+                            {% endif %}
+
+                            <span class="absolute top-4 left-4 px-3 py-1.5 rounded-xl bg-white/90 text-slate-800 text-[10px] font-black uppercase tracking-widest backdrop-blur">
+                                {{ post.category_label }}
+                            </span>
+
+                            {% if post.status != 'published' %}
+                            <span class="absolute top-4 right-4 px-3 py-1.5 rounded-xl bg-amber-400 text-amber-950 text-[10px] font-black uppercase tracking-widest">
+                                Draft
+                            </span>
+                            {% endif %}
+
+                            {% if post.has_video %}
+                            <span class="absolute bottom-4 right-4 w-8 h-8 rounded-lg bg-slate-900/80 text-white flex items-center justify-center backdrop-blur">
+                                <i class="fa-solid fa-play text-[10px]"></i>
+                            </span>
+                            {% endif %}
+
+                        </a>
+
+                        <div class="p-5 flex-1 flex flex-col">
+
+                            <h3 class="text-lg font-bold text-slate-900 leading-snug">
+                                <a href="{% url 'blog_details' post.id %}" class="hover:text-indigo-600 transition">
+                                    {{ post.title }}
+                                </a>
+                            </h3>
+
+                            <p class="mt-2 text-sm text-slate-600 leading-relaxed flex-1">{{ post.excerpt }}</p>
+
+                            <!-- Tags -->
+
+                            {% if post.tag_list %}
+
+                            <div class="mt-4 flex items-center gap-2 flex-wrap">
+
+                                {% for tag in post.tag_list %}
+                                <a href="?q={{ tag|urlencode }}"
+                                   class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-[10px] font-bold hover:bg-slate-200 transition">
+                                    #{{ tag }}
+                                </a>
+                                {% endfor %}
+
+                            </div>
+
+                            {% endif %}
+
+                            <!-- Meta -->
+
+                            <div class="mt-5 pt-4 border-t border-slate-100 flex items-center gap-3">
+
+                                {% if post.author_avatar %}
+                                <img src="{{ post.author_avatar }}" alt="{{ post.author_name }}"
+                                     class="w-8 h-8 rounded-full object-cover">
+                                {% else %}
+                                <span class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-[10px] font-black">
+                                    {{ post.author_initials }}
+                                </span>
+                                {% endif %}
+
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-xs font-bold text-slate-800 truncate">{{ post.author_name|default:"FelloMarley Foundation" }}</p>
+                                    <p class="text-[11px] text-slate-400">
+                                        {{ post.created_at|date:"M d, Y" }} &middot; {{ post.reading_time }} min
+                                    </p>
+                                </div>
+
+                                <span class="inline-flex items-center gap-1 text-[11px] font-bold text-slate-400" title="Reads">
+                                    <i class="fa-regular fa-eye"></i> {{ post.views }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Card footer -->
+
+                        <div class="px-5 pb-5 flex items-center justify-between gap-3">
+
+                            <a href="{% url 'blog_details' post.id %}"
+                               class="inline-flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition">
+                                Read more <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </a>
+
+                            {% if blog_is_editor %}
+                            <div class="flex items-center gap-2">
+                                <a href="{% url 'update_blog' post.pk %}" title="Edit post"
+                                   class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-blue-100 hover:text-blue-600 transition">
+                                    <i class="fa-solid fa-pen text-xs"></i>
+                                </a>
+                                <a href="{% url 'delete_blog' post.pk %}" title="Delete post"
+                                   class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-rose-100 hover:text-rose-600 transition">
+                                    <i class="fa-solid fa-trash text-xs"></i>
+                                </a>
+                            </div>
+                            {% endif %}
+
+                        </div>
+
+                    </article>
+
+                    {% endfor %}
+
+                </div>
+
+                <!-- Pagination -->
+
+                {% if blogs.has_other_pages %}
+
+                <nav class="bg-white rounded-3xl shadow-md p-4 flex items-center justify-between gap-3 flex-wrap">
+
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400">
+                        Page {{ blogs.number }} of {{ blogs.paginator.num_pages }}
+                    </p>
+
+                    <div class="flex items-center gap-1.5 flex-wrap">
+
+                        {% if blogs.has_previous %}
+                        <a href="?page={{ blogs.previous_page_number }}{% if blog_query %}&q={{ blog_query|urlencode }}{% endif %}{% if blog_category %}&category={{ blog_category }}{% endif %}{% if blog_status %}&status={{ blog_status }}{% endif %}&sort={{ blog_sort }}"
+                           class="px-3.5 py-2 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold hover:bg-slate-200 transition">
+                            <i class="fa-solid fa-chevron-left text-[10px]"></i> Prev
+                        </a>
+                        {% endif %}
+
+                        {% for number in blogs.paginator.page_range %}
+                        {% if number == blogs.number %}
+                        <span class="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center text-xs font-black">{{ number }}</span>
+                        {% elif number > blogs.number|add:"-3" and number < blogs.number|add:"3" %}
+                        <a href="?page={{ number }}{% if blog_query %}&q={{ blog_query|urlencode }}{% endif %}{% if blog_category %}&category={{ blog_category }}{% endif %}{% if blog_status %}&status={{ blog_status }}{% endif %}&sort={{ blog_sort }}"
+                           class="w-9 h-9 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center text-xs font-bold hover:bg-slate-200 transition">
+                            {{ number }}
+                        </a>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if blogs.has_next %}
+                        <a href="?page={{ blogs.next_page_number }}{% if blog_query %}&q={{ blog_query|urlencode }}{% endif %}{% if blog_category %}&category={{ blog_category }}{% endif %}{% if blog_status %}&status={{ blog_status }}{% endif %}&sort={{ blog_sort }}"
+                           class="px-3.5 py-2 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold hover:bg-slate-200 transition">
+                            Next <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </a>
+                        {% endif %}
+
+                    </div>
+
+                </nav>
+
+                {% endif %}
+
+                {% else %}
+
+                <!-- Empty state -->
+
+                <div class="bg-white rounded-3xl shadow-md px-6 py-20 text-center">
+
+                    <span class="w-16 h-16 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+                        <i class="fa-solid fa-feather-pointed text-2xl"></i>
+                    </span>
+
+                    <h3 class="mt-5 text-lg font-bold text-slate-900">Nothing to read here yet</h3>
+
+                    <p class="mt-2 text-sm text-slate-500 max-w-md mx-auto">
+                        {% if blog_filters_active %}
+                            No stories match the filters you picked. Try clearing them or searching for something else.
+                        {% else %}
+                            No stories have been published to the blog yet.
+                        {% endif %}
+                    </p>
+
+                    <div class="mt-6 flex items-center justify-center gap-3 flex-wrap">
+
+                        {% if blog_filters_active %}
+                        <a href="{% url 'blog' %}"
+                           class="px-5 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 transition">
+                            Clear filters
+                        </a>
+                        {% endif %}
+
+                        {% if request.user.is_superuser %}
+                        <a href="{% url 'add_blog' %}"
+                           class="px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-500 transition">
+                            Write the first post
+                        </a>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            <!-- ================= RIGHT RAIL ================= -->
+
+            <aside class="space-y-5">
+
+                <!-- About this blog -->
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">About this blog</h2>
+
+                    <p class="mt-3 text-sm text-slate-600 leading-relaxed">
+                        A working notebook from the FelloMarley Foundation: field reports from the
+                        programmes we run, practical tutorials from our volunteers, and the voices of
+                        the people in the community who make it all worth doing.
+                    </p>
+
+                    <div class="mt-5 space-y-3 text-sm">
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-500">Published stories</span>
+                            <span class="font-black text-slate-800">{{ blog_stats.published }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-500">Words written</span>
+                            <span class="font-black text-slate-800">{{ blog_stats.words|intcomma }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-500">Total reads</span>
+                            <span class="font-black text-slate-800">{{ blog_stats.views|intcomma }}</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Categories -->
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Categories</h2>
+
+                    <div class="mt-4 space-y-3">
+
+                        {% for cat in blog_categories %}
+
+                        <a href="?category={{ cat.slug }}" class="block group">
+                            <div class="flex items-center justify-between gap-3 text-sm">
+                                <span class="font-semibold text-slate-700 group-hover:text-indigo-600 transition">{{ cat.label }}</span>
+                                <span class="text-xs font-black text-slate-400">{{ cat.count }}</span>
+                            </div>
+                            <div class="mt-1.5 h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                                <div class="h-full rounded-full bg-indigo-500" style="width: {{ cat.percent }}%"></div>
+                            </div>
+                        </a>
+
+                        {% empty %}
+
+                        <p class="text-sm text-slate-400">No categories yet.</p>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+                <!-- Popular -->
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Most read</h2>
+
+                    <div class="mt-4 space-y-4">
+
+                        {% for post in popular_posts %}
+
+                        <a href="{% url 'blog_details' post.id %}" class="flex items-start gap-3 group">
+
+                            <span class="w-7 h-7 shrink-0 rounded-lg bg-slate-900 text-white flex items-center justify-center text-[11px] font-black">
+                                {{ forloop.counter }}
+                            </span>
+
+                            <span class="min-w-0">
+                                <span class="block text-sm font-bold text-slate-800 leading-snug group-hover:text-indigo-600 transition line-clamp-2">
+                                    {{ post.title }}
+                                </span>
+                                <span class="block text-[11px] text-slate-400 mt-0.5">
+                                    {{ post.views }} read{{ post.views|pluralize }} &middot; {{ post.category_label }}
+                                </span>
+                            </span>
+
+                        </a>
+
+                        {% empty %}
+
+                        <p class="text-sm text-slate-400">Nothing has been read yet.</p>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+                <!-- Recent -->
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Recently added</h2>
+
+                    <ul class="mt-4 space-y-3">
+
+                        {% for post in recent_posts %}
+
+                        <li class="flex items-start gap-3">
+                            <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0"></span>
+                            <a href="{% url 'blog_details' post.id %}" class="min-w-0">
+                                <span class="block text-sm font-semibold text-slate-700 hover:text-indigo-600 transition line-clamp-2">
+                                    {{ post.title }}
+                                </span>
+                                <span class="block text-[11px] text-slate-400 mt-0.5">{{ post.created_at|date:"M d, Y" }}</span>
+                            </a>
+                        </li>
+
+                        {% empty %}
+
+                        <li class="text-sm text-slate-400">No posts yet.</li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+
+                <!-- Archives -->
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Archive</h2>
+
+                    <ul class="mt-4 space-y-2">
+
+                        {% for archive in blog_archives %}
+
+                        <li class="flex items-center justify-between gap-3 text-sm">
+                            <span class="text-slate-600">{{ archive.label }}</span>
+                            <span class="px-2.5 py-0.5 rounded-lg bg-slate-100 text-slate-500 text-[10px] font-black">{{ archive.count }}</span>
+                        </li>
+
+                        {% empty %}
+
+                        <li class="text-sm text-slate-400">Nothing archived yet.</li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+
+                <!-- Tags -->
+
+                {% if blog_tags %}
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Tags</h2>
+
+                    <div class="mt-4 flex items-center gap-2 flex-wrap">
+
+                        {% for tag in blog_tags %}
+                        <a href="?q={{ tag.name|urlencode }}"
+                           class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold hover:bg-indigo-600 hover:text-white transition">
+                            #{{ tag.name }}
+                            <span class="opacity-60">{{ tag.count }}</span>
+                        </a>
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+                <!-- CTA -->
+
+                <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 to-blue-700 text-white shadow-lg p-6">
+
+                    <div class="absolute -bottom-10 -right-8 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+
+                    <div class="relative">
+                        <h2 class="text-lg font-black">Have a story to share?</h2>
+
+                        <p class="mt-2 text-sm text-indigo-100 leading-relaxed">
+                            We welcome field notes, tutorials and community updates. Send it in and
+                            the editorial team will review it.
+                        </p>
+
+                        {% if request.user.is_superuser %}
+                        <a href="{% url 'add_blog' %}"
+                           class="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-indigo-700 text-sm font-bold hover:bg-indigo-50 transition">
+                            <i class="fa-solid fa-feather-pointed"></i> Start writing
+                        </a>
+                        {% else %}
+                        <a href="{% url 'public_contact' %}"
+                           class="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-indigo-700 text-sm font-bold hover:bg-indigo-50 transition">
+                            <i class="fa-solid fa-envelope"></i> Get in touch
+                        </a>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+    </main>
+
+    {% include "footer.html" %}
+
 </div>
 
-{% include "footer.html" %}
-{% endblock content %}
+{% endblock %}

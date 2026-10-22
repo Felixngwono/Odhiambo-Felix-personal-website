@@ -1,0 +1,42 @@
+{% load widget_tweaks %}
+
+<!-- ================= FORM FIELDS (shared by upload + edit) ================= -->
+
+<div class="space-y-5">
+
+    <!-- Title -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.title.id_for_label }}">Title</label>
+        {% render_field form.title class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900" placeholder="What is this called?" %}
+        {% if form.title.errors %}
+        <p class="mt-1.5 text-xs font-semibold text-rose-600">{{ form.title.errors|join:", " }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Image -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.image.id_for_label }}">Image</label>
+        {% render_field form.image class="w-full mt-1.5 p-3 border border-slate-200 rounded-xl bg-slate-50 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %}
+        <p class="mt-1.5 text-xs text-slate-400">JPG, PNG or WEBP.</p>
+    </div>
+
+    <!-- Video -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.video.id_for_label }}">Video</label>
+        {% render_field form.video class="w-full mt-1.5 p-3 border border-slate-200 rounded-xl bg-slate-50 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %}
+        <p class="mt-1.5 text-xs text-slate-400">MP4, MOV or WEBM. Leave empty for an image only.</p>
+    </div>
+
+    <!-- Caption -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.caption.id_for_label }}">Caption</label>
+        {% render_field form.caption class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 leading-relaxed" rows="4" placeholder="A sentence about the moment." %}
+    </div>
+
+</div>
+
+{% if form.non_field_errors %}
+<div class="mt-5 rounded-2xl bg-rose-50 border border-rose-200 px-4 py-3 text-sm font-semibold text-rose-700">
+    {{ form.non_field_errors|join:", " }}
+</div>
+{% endif %}

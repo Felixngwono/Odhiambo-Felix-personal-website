@@ -1,0 +1,121 @@
+{% load widget_tweaks %}
+
+<!-- ================= FORM FIELDS (shared by post + update) ================= -->
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+    <!-- Title -->
+    <div class="sm:col-span-2">
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.title.id_for_label }}">Role title</label>
+        {% render_field form.title class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900" %}
+        {% if form.title.errors %}
+        <p class="mt-1.5 text-xs font-semibold text-rose-600">{{ form.title.errors|join:", " }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Company -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.company.id_for_label }}">Company</label>
+        {% render_field form.company class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900" %}
+        {% if form.company.errors %}
+        <p class="mt-1.5 text-xs font-semibold text-rose-600">{{ form.company.errors|join:", " }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Location -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.location.id_for_label }}">Location</label>
+        {% render_field form.location class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900" %}
+    </div>
+
+    <!-- Type -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.job_type.id_for_label }}">Type</label>
+        {% render_field form.job_type class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900" %}
+    </div>
+
+    <!-- Category -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.category.id_for_label }}">Category</label>
+        {% render_field form.category class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900" %}
+    </div>
+
+    <!-- Status -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.status.id_for_label }}">Status</label>
+        {% render_field form.status class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900" %}
+    </div>
+
+    <!-- Slots -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.slots.id_for_label }}">Seats</label>
+        {% render_field form.slots class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900" %}
+    </div>
+
+    <!-- Salary -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.salary_range.id_for_label }}">Salary range</label>
+        {% render_field form.salary_range class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900" placeholder="KSh 60,000 - 90,000" %}
+    </div>
+
+    <!-- Closing date -->
+    <div>
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.due_at.id_for_label }}">Closing date</label>
+        {% render_field form.due_at class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900" %}
+    </div>
+
+    <!-- Description -->
+    <div class="sm:col-span-2">
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.description.id_for_label }}">Description</label>
+        {% render_field form.description class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 leading-relaxed" rows="6" %}
+        {% if form.description.errors %}
+        <p class="mt-1.5 text-xs font-semibold text-rose-600">{{ form.description.errors|join:", " }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Requirements -->
+    <div class="sm:col-span-2">
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.requirements.id_for_label }}">Requirements</label>
+        {% render_field form.requirements class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 leading-relaxed" rows="5" %}
+    </div>
+
+    <!-- Skills -->
+    <div class="sm:col-span-2">
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.skills.id_for_label }}">Skills</label>
+        {% render_field form.skills class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900" %}
+        <p class="mt-1.5 text-xs text-slate-400">Comma separated, e.g. Django, Figma, Facilitation.</p>
+    </div>
+
+    <!-- Benefits -->
+    <div class="sm:col-span-2">
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.benefits.id_for_label }}">Benefits</label>
+        {% render_field form.benefits class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 leading-relaxed" rows="3" %}
+    </div>
+
+    <!-- Application link -->
+    <div class="sm:col-span-2">
+        <label class="block text-sm font-bold text-slate-700" for="{{ form.application_link.id_for_label }}">External application link</label>
+        {% render_field form.application_link class="w-full mt-1.5 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900" placeholder="https://..." %}
+        <p class="mt-1.5 text-xs text-slate-400">Optional — for roles advertised somewhere else.</p>
+    </div>
+
+    <!-- Featured -->
+    <div class="sm:col-span-2">
+        <label class="flex items-start gap-3 cursor-pointer">
+            {% render_field form.is_featured class="mt-1 h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500" %}
+            <span>
+                <span class="block text-sm font-bold text-slate-700">Feature this role</span>
+                <span class="block text-xs text-slate-400">Featured roles sit at the top of the board.</span>
+            </span>
+        </label>
+    </div>
+
+</div>
+
+<!-- Errors -->
+
+{% if form.non_field_errors %}
+<div class="mt-5 rounded-2xl bg-rose-50 border border-rose-200 px-4 py-3 text-sm font-semibold text-rose-700">
+    {{ form.non_field_errors|join:", " }}
+</div>
+{% endif %}

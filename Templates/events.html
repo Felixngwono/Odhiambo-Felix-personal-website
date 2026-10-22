@@ -1,81 +1,429 @@
 {% extends "header.html" %}
-{% block content %}
 {% load static %}
-        {% include "sidebar.html" %}
 
+{% block title %}Events | FelloMarley Foundation{% endblock %}
 
-<div class="flex flex-col sm:ml-64 h-screen">
+{% block content %}
 
-    <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6">
-    <!-- Flash Messages -->
-    <div class="text-green-600 p-4 mb-6 w-1/2 text-center mx-auto">
-        {% for message in messages %}
-            <p id="messages" class="font-semibold text-lg">{{ message }}</p>
-        {% endfor %}
-    </div>
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-    <section class="bg-white shadow-md rounded-lg p-8 w-full h-full max-w-full">
-        <!-- Title -->
-        <div class="text-center mb-6">
-            <h1 class="text-4xl font-bold text-blue-700">📅 Upcoming Events</h1>
-            <p class="text-gray-600 mt-2">Check out the latest events. Click on an event for more details.</p>
-        </div>
+<style>
+    [x-cloak] { display: none !important; }
+</style>
 
-        <!-- Events Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {% for event in events %}
-            <div class="bg-gray-50 p-6 rounded-lg shadow-lg text-center transition-transform transform hover:scale-105">
-                <!-- Event Image -->
-                {% if event.image %}
-                <img src="{{ event.image.url }}" alt="{{ event.title }}" 
-                     class="w-40 h-40 rounded-full mx-auto border-4 border-blue-500 shadow-md">
-                {% else %}
-                <div class="w-40 h-40 rounded-full mx-auto bg-gray-300 flex items-center justify-center text-gray-500">
-                    No Image
-                </div>
-                {% endif %}
+{% include "sidebar.html" %}
 
-                <!-- Event Details -->
-                <h2 class="text-2xl font-semibold text-gray-800 mt-4">{{ event.title }}</h2>
-                <p class="text-gray-600 mt-2">{{ event.description|truncatewords:20 }}</p>
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
 
-                <!-- Event Actions -->
-                <div class="mt-4">
-                    <a href="{% url 'event_detail' event.id %}" 
-                       class="text-blue-600 font-medium hover:underline">🔍 View Details</a>
-                </div>
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
 
-                {% if request.user.is_superuser %}
-                <div class="mt-4 space-x-2">
-                    <a href="{% url 'update_event' event.id %}" 
-                       class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-500 transition duration-300 shadow-md">
-                        ✏️ Update 
-                    </a>
-                    <a href="{% url 'delete_event' event.id %}" 
-                       class="bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-500 transition duration-300 shadow-md">
-                        🗑️ Delete
-                    </a>
-                </div>
-                {% endif %}
+        <!-- ================= FLASH ================= -->
+
+        {% if messages %}
+
+        <div class="mb-6 space-y-3">
+
+            {% for message in messages %}
+
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
             </div>
-            {% empty %}
-            <p class="text-gray-500 text-center col-span-3">No events available at the moment.</p>
+
             {% endfor %}
+
         </div>
 
-        <!-- Add Event Button -->
-        {% if request.user.is_superuser %}
-        <div class="text-center mt-8">
-            <a href="{% url 'add_event' %}" 
-               class="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-500 transition shadow-md">
-               ➕ Add Event
-            </a>
-        </div>
         {% endif %}
-    </section>
-</main>
+
+        <!-- ================= HERO ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white shadow-2xl p-6 sm:p-10">
+
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:60px 60px;"></div>
+
+            <div class="absolute -bottom-24 -left-16 w-96 h-96 bg-cyan-400 rounded-full blur-3xl opacity-20"></div>
+
+            <div class="relative grid lg:grid-cols-3 gap-8 items-center">
+
+                <div class="lg:col-span-2">
+
+                    <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-cyan-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                        <i class="fa-solid fa-calendar-day"></i> Programme
+                    </p>
+
+                    <h1 class="mt-4 text-3xl sm:text-5xl font-black leading-tight">
+                        Where the work<br class="hidden sm:block"> meets the community.
+                    </h1>
+
+                    <p class="mt-4 text-slate-300 max-w-2xl leading-relaxed">
+                        Workshops, community drives, mentoring sessions and launches — every entry
+                        here is a moment where skills were shared and something was built together.
+                    </p>
+
+                    <div class="mt-7 flex flex-wrap gap-3">
+
+                        <a href="#schedule"
+                           class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white font-bold text-slate-900 hover:bg-slate-100 transition">
+                            <i class="fa-solid fa-arrow-down"></i> View the schedule
+                        </a>
+
+                        {% if request.user.is_superuser %}
+                        <a href="{% url 'add_event' %}"
+                           class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                            <i class="fa-solid fa-plus"></i> Schedule an event
+                        </a>
+                        {% endif %}
+
+                        <a href="{% url 'volunteer_list' %}"
+                           class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                            <i class="fa-solid fa-hands-helping"></i> Volunteer
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <!-- Hero stats -->
+
+                <div class="grid grid-cols-2 gap-3">
+
+                    <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                        <p class="text-3xl font-black">{{ event_stats.upcoming }}</p>
+                        <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">Upcoming</p>
+                    </div>
+
+                    <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                        <p class="text-3xl font-black">{{ event_stats.total }}</p>
+                        <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">All events</p>
+                    </div>
+
+                    <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                        <p class="text-3xl font-black">{{ event_stats.guests }}</p>
+                        <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">Participants</p>
+                    </div>
+
+                    <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                        <p class="text-3xl font-black">{{ event_stats.locations }}</p>
+                        <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">Venues</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= NEXT EVENT ================= -->
+
+        {% if event_stats.next_event %}
+
+        <section class="mt-6 bg-gradient-to-r from-cyan-600 to-blue-700 text-white rounded-3xl shadow-xl p-6 sm:p-8">
+
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+
+                <div class="flex items-start gap-4">
+
+                    <span class="w-14 h-14 shrink-0 rounded-2xl bg-white/15 border border-white/25 flex flex-col items-center justify-center">
+                        <span class="text-[10px] font-bold uppercase tracking-wider">{{ event_stats.next_event.start_date|date:"M" }}</span>
+                        <span class="text-2xl font-black leading-none">{{ event_stats.next_event.start_date|date:"d" }}</span>
+                    </span>
+
+                    <div>
+
+                        <p class="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-cyan-100">
+                            <i class="fa-solid fa-bolt"></i> Next up
+                        </p>
+
+                        <h2 class="mt-1.5 text-2xl font-black">{{ event_stats.next_event.title }}</h2>
+
+                        <p class="mt-1.5 text-cyan-50 text-sm">
+                            {{ event_stats.next_event.schedule_label }}
+                            &middot; {{ event_stats.next_event.location_name }}
+                            {% if event_stats.next_event.days_until is not None %}
+                            &middot; in {{ event_stats.next_event.days_until }} day{{ event_stats.next_event.days_until|pluralize }}
+                            {% endif %}
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <a href="{% url 'event_detail' event_stats.next_event.id %}"
+                   class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white text-blue-700 font-bold hover:bg-cyan-50 transition self-start">
+                    Open event <i class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
+        <!-- ================= SCHEDULE ================= -->
+
+        <section id="schedule"
+                 class="mt-6 bg-white rounded-3xl shadow-md p-6 sm:p-8"
+                 x-data="{ view: 'upcoming', q: '', count: 0 }"
+                 x-effect="count = Array.from($refs.grid.querySelectorAll('[data-card]')).filter(el => el.style.display !== 'none').length">
+
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+
+                <div>
+
+                    <h2 class="text-xl font-bold text-slate-900">Event schedule</h2>
+
+                    <p class="text-sm text-slate-500 mt-1">
+                        Switch between what is coming up and what has already happened.
+                    </p>
+
+                </div>
+
+                <div class="relative w-full lg:w-80">
+
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+
+                    <input type="search"
+                           x-model="q"
+                           placeholder="Search events, venues, hosts..."
+                           class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+
+                </div>
+
+            </div>
+
+            <!-- View toggle -->
+
+            <div class="mt-6 flex flex-wrap items-center gap-2">
+
+                <button type="button"
+                        @click="view = 'upcoming'"
+                        :class="view === 'upcoming' ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-100 text-slate-700 border-transparent hover:bg-slate-200'"
+                        class="px-4 py-2 rounded-xl text-sm font-semibold border transition">
+                    Upcoming <span class="opacity-70">({{ event_stats.upcoming }})</span>
+                </button>
+
+                <button type="button"
+                        @click="view = 'past'"
+                        :class="view === 'past' ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-100 text-slate-700 border-transparent hover:bg-slate-200'"
+                        class="px-4 py-2 rounded-xl text-sm font-semibold border transition">
+                    Past <span class="opacity-70">({{ event_stats.past }})</span>
+                </button>
+
+                <button type="button"
+                        @click="view = 'all'"
+                        :class="view === 'all' ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-100 text-slate-700 border-transparent hover:bg-slate-200'"
+                        class="px-4 py-2 rounded-xl text-sm font-semibold border transition">
+                    Everything <span class="opacity-70">({{ event_stats.total }})</span>
+                </button>
+
+            </div>
+
+            <!-- ================= EVENT GRID ================= -->
+
+            <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6" x-ref="grid">
+
+                {% for event in events %}
+
+                <article class="group flex flex-col sm:flex-row bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-blue-200 transition duration-300 overflow-hidden"
+                         data-card
+                         data-upcoming="{% if event.is_upcoming %}1{% else %}0{% endif %}"
+                         data-search="{{ event.title }} {{ event.description }} {{ event.category_slug }} {{ event.location_name }} {{ event.host_name }}"
+                         x-show="(view === 'all' || (view === 'upcoming' && $el.dataset.upcoming === '1') || (view === 'past' && $el.dataset.upcoming === '0')) && $el.dataset.search.toLowerCase().includes(q.toLowerCase())">
+
+                    <!-- Media -->
+
+                    <div class="relative sm:w-44 shrink-0 h-44 sm:h-auto bg-slate-100 overflow-hidden">
+
+                        {% if event.image %}
+                        <img src="{{ event.image.url }}"
+                             alt="{{ event.title }}"
+                             class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-slate-400 bg-gradient-to-br from-slate-100 to-slate-200">
+                            <i class="fa-solid fa-calendar-day text-4xl"></i>
+                        </div>
+                        {% endif %}
+
+                        <span class="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider {% if event.is_upcoming %}bg-emerald-500 text-white{% else %}bg-slate-800/85 text-white{% endif %}">
+                            {% if event.is_upcoming %}Upcoming{% else %}Past{% endif %}
+                        </span>
+
+                    </div>
+
+                    <!-- Body -->
+
+                    <div class="p-5 sm:p-6 flex flex-col flex-1">
+
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-blue-600">
+                            {{ event.category_slug }}
+                        </span>
+
+                        <h3 class="mt-1.5 text-lg font-bold text-slate-900 leading-snug">
+                            {{ event.title }}
+                        </h3>
+
+                        <p class="mt-2 text-sm text-slate-600 leading-relaxed line-clamp-2">
+                            {{ event.excerpt }}
+                        </p>
+
+                        <!-- Meta -->
+
+                        <div class="mt-4 space-y-1.5 text-xs text-slate-500">
+
+                            <p class="flex items-center gap-2">
+                                <i class="fa-regular fa-clock text-slate-400 w-4"></i>
+                                {{ event.schedule_label }}
+                            </p>
+
+                            <p class="flex items-center gap-2">
+                                <i class="fa-solid fa-location-dot text-slate-400 w-4"></i>
+                                {{ event.location_name }}
+                            </p>
+
+                            {% if event.host_name %}
+                            <p class="flex items-center gap-2">
+                                <i class="fa-solid fa-user text-slate-400 w-4"></i>
+                                {{ event.host_name }}
+                            </p>
+                            {% endif %}
+
+                            {% if event.guest_count %}
+                            <p class="flex items-center gap-2">
+                                <i class="fa-solid fa-ticket text-slate-400 w-4"></i>
+                                {{ event.guest_count }} participant{{ event.guest_count|pluralize }}
+                            </p>
+                            {% endif %}
+
+                        </div>
+
+                        <!-- Actions -->
+
+                        <div class="mt-5 pt-4 border-t border-slate-100 flex flex-wrap items-center gap-2 mt-auto">
+
+                            <a href="{% url 'event_detail' event.id %}"
+                               class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 transition">
+                                View details <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </a>
+
+                            {% if event.duration_label %}
+                            <span class="px-3 py-2 rounded-xl bg-slate-100 text-slate-600 text-[11px] font-semibold">
+                                <i class="fa-regular fa-clock mr-1"></i>{{ event.duration_label }}
+                            </span>
+                            {% endif %}
+
+                            {% if request.user.is_superuser %}
+
+                            <a href="{% url 'update_event' event.id %}"
+                               class="px-3 py-2.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold hover:bg-slate-200 transition"
+                               title="Edit">
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+
+                            <a href="{% url 'delete_event' event.id %}"
+                               class="px-3 py-2.5 rounded-xl bg-rose-50 text-rose-600 text-xs font-bold hover:bg-rose-100 transition"
+                               title="Delete">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+                {% empty %}
+
+                <div class="col-span-full text-center py-16">
+                    <i class="fa-regular fa-calendar-xmark text-5xl text-slate-300 mb-4"></i>
+                    <p class="text-lg font-semibold text-slate-600">No events scheduled yet</p>
+                    <p class="text-sm text-slate-400 mt-2">New programmes will be listed here as they are announced.</p>
+                </div>
+
+                {% endfor %}
+
+                <!-- No-match state -->
+
+                <div x-show="count === 0 && event_stats.total > 0"
+                     x-cloak
+                     class="col-span-full text-center py-16">
+                    <i class="fa-solid fa-filter-circle-xmark text-5xl text-slate-300 mb-4"></i>
+                    <p class="text-lg font-semibold text-slate-600">Nothing matches that view</p>
+                    <p class="text-sm text-slate-400 mt-2">Try another keyword or switch between upcoming and past events.</p>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= VENUES ================= -->
+
+        {% if event_locations %}
+
+        <section class="mt-6 grid lg:grid-cols-3 gap-5">
+
+            <div class="lg:col-span-2 bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                <h2 class="text-lg font-bold text-slate-900">Venues we have used</h2>
+                <p class="text-sm text-slate-500 mt-1">Places where sessions have been delivered.</p>
+
+                <div class="mt-6 grid sm:grid-cols-2 gap-4">
+
+                    {% for place in event_locations %}
+
+                    <div class="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                        <span class="w-11 h-11 shrink-0 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </span>
+                        <div class="min-w-0">
+                            <p class="font-bold text-slate-800 truncate">{{ place.name }}</p>
+                            <p class="text-xs text-slate-500">{{ place.count }} event{{ place.count|pluralize }}</p>
+                        </div>
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            <!-- Participation CTA -->
+
+            <div class="rounded-3xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white shadow-xl p-6 sm:p-8 flex flex-col">
+
+                <span class="w-12 h-12 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center">
+                    <i class="fa-solid fa-hands-helping text-xl"></i>
+                </span>
+
+                <h2 class="mt-4 text-xl font-black">Join the next one</h2>
+
+                <p class="mt-2 text-emerald-50 text-sm leading-relaxed">
+                    Volunteers help run every session — from setting up the room to mentoring
+                    first-time coders. No experience required.
+                </p>
+
+                <a href="{% url 'volunteer_signup' %}"
+                   class="mt-5 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white text-emerald-700 font-bold hover:bg-emerald-50 transition">
+                    <i class="fa-solid fa-hand-pointer"></i> Sign up to help
+                </a>
+
+                <a href="{% url 'events' %}"
+                   class="mt-2 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white/15 hover:bg-white/25 border border-white/25 font-semibold transition">
+                    Browse all events
+                </a>
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
+    </main>
+
+    {% include "footer.html" %}
+
 </div>
 
-{% include "footer.html" %}
 {% endblock %}

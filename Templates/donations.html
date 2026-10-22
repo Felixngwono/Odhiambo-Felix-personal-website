@@ -1,0 +1,373 @@
+{% extends "header.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Donations | FelloMarley Foundation{% endblock %}
+
+{% block content %}
+
+{% include "sidebar.html" %}
+
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
+
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
+
+        <!-- ================= FLASH ================= -->
+
+        {% if messages %}
+
+        <div class="mb-6 space-y-3">
+
+            {% for message in messages %}
+
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+        <!-- ================= HERO ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-emerald-900 to-teal-900 text-white shadow-2xl p-6 sm:p-10">
+
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:60px 60px;"></div>
+
+            <div class="absolute -top-24 -right-16 w-96 h-96 bg-emerald-400 rounded-full blur-3xl opacity-20"></div>
+
+            <div class="relative flex items-start justify-between gap-6 flex-wrap">
+
+                <div>
+
+                    <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                        <i class="fa-solid fa-hand-holding-heart"></i> Giving
+                    </p>
+
+                    <h1 class="mt-4 text-3xl sm:text-4xl font-black leading-tight">Donations</h1>
+
+                    <p class="mt-3 text-slate-300 max-w-2xl leading-relaxed">
+                        Every gift recorded against the foundation, with the cause it funded,
+                        how it was paid for and where the receipt stands.
+                    </p>
+
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3">
+
+                    <a href="{% url 'donate' %}"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                        <i class="fa-solid fa-eye"></i> Public page
+                    </a>
+
+                    <a href="{% url 'add_donation' %}"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-500 text-white font-bold hover:bg-emerald-400 transition shadow-lg">
+                        <i class="fa-solid fa-plus"></i> Record donation
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= STATS ================= -->
+
+        <section class="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+
+            <div class="bg-white rounded-3xl shadow-md p-5">
+                <span class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                    <i class="fa-solid fa-sack-dollar"></i>
+                </span>
+                <p class="mt-4 text-2xl font-black text-slate-800">${{ donation_stats.total|floatformat:0 }}</p>
+                <p class="text-xs uppercase tracking-wider text-slate-400 mt-1">Total raised</p>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-md p-5">
+                <span class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                    <i class="fa-solid fa-gift"></i>
+                </span>
+                <p class="mt-4 text-2xl font-black text-slate-800">{{ donation_stats.count }}</p>
+                <p class="text-xs uppercase tracking-wider text-slate-400 mt-1">Gifts completed</p>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-md p-5">
+                <span class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
+                    <i class="fa-solid fa-chart-simple"></i>
+                </span>
+                <p class="mt-4 text-2xl font-black text-slate-800">${{ donation_stats.average|floatformat:0 }}</p>
+                <p class="text-xs uppercase tracking-wider text-slate-400 mt-1">Average gift</p>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-md p-5">
+                <span class="w-10 h-10 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center">
+                    <i class="fa-solid fa-clock"></i>
+                </span>
+                <p class="mt-4 text-2xl font-black text-slate-800">${{ donation_stats.month|floatformat:0 }}</p>
+                <p class="text-xs uppercase tracking-wider text-slate-400 mt-1">Raised this month</p>
+            </div>
+
+        </section>
+
+        <!-- ================= FILTERS ================= -->
+
+        <section class="mt-6 bg-white rounded-3xl shadow-md p-5 sm:p-6">
+
+            <form method="GET" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
+
+                <div class="xl:col-span-2">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-400" for="donation-search">Search</label>
+                    <input type="search" name="q" id="donation-search" value="{{ donation_query }}"
+                           placeholder="Name, email, reference or note"
+                           class="w-full mt-1.5 px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-400" for="donation-method">Method</label>
+                    <select name="method" id="donation-method"
+                            class="w-full mt-1.5 px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 text-sm">
+                        <option value="">All methods</option>
+                        {% for slug, label in method_labels.items %}
+                        <option value="{{ slug }}" {% if donation_method_filter == slug %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-400" for="donation-status">Status</label>
+                    <select name="status" id="donation-status"
+                            class="w-full mt-1.5 px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 text-sm">
+                        <option value="">All statuses</option>
+                        {% for slug, label in status_labels.items %}
+                        <option value="{{ slug }}" {% if donation_status_filter == slug %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-400" for="donation-sort">Sort</label>
+                    <select name="sort" id="donation-sort"
+                            class="w-full mt-1.5 px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 text-sm">
+                        <option value="newest" {% if donation_sort == 'newest' %}selected{% endif %}>Newest first</option>
+                        <option value="oldest" {% if donation_sort == 'oldest' %}selected{% endif %}>Oldest first</option>
+                        <option value="highest" {% if donation_sort == 'highest' %}selected{% endif %}>Highest amount</option>
+                        <option value="lowest" {% if donation_sort == 'lowest' %}selected{% endif %}>Lowest amount</option>
+                        <option value="name" {% if donation_sort == 'name' %}selected{% endif %}>Donor name</option>
+                    </select>
+                </div>
+
+                <div class="sm:col-span-2 xl:col-span-5 flex items-center gap-3 flex-wrap pt-1">
+
+                    <button type="submit"
+                            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-bold hover:bg-emerald-500 transition">
+                        <i class="fa-solid fa-filter"></i> Apply filters
+                    </button>
+
+                    <a href="{% url 'donations' %}"
+                       class="px-5 py-2.5 rounded-xl bg-slate-100 text-slate-600 text-sm font-bold hover:bg-slate-200 transition">
+                        Reset
+                    </a>
+
+                    <span class="text-xs font-semibold text-slate-400">
+                        {{ donations|length }} donation{{ donations|length|pluralize }} shown
+                        {% if donation_stats.pending %}<span class="ml-2 text-amber-600">${{ donation_stats.pending|floatformat:0 }} pending</span>{% endif %}
+                    </span>
+
+                </div>
+
+            </form>
+
+        </section>
+
+        <!-- ================= TABLE ================= -->
+
+        <section class="mt-6 grid grid-cols-1 xl:grid-cols-4 gap-6">
+
+            <div class="xl:col-span-3 bg-white rounded-3xl shadow-md overflow-hidden">
+
+                <div class="overflow-x-auto">
+
+                    <table class="min-w-full text-left text-sm">
+
+                        <thead class="bg-slate-50 text-[11px] uppercase tracking-wider text-slate-500">
+                            <tr>
+                                <th class="px-5 py-4 font-black">Donor</th>
+                                <th class="px-5 py-4 font-black">Cause</th>
+                                <th class="px-5 py-4 font-black">Amount</th>
+                                <th class="px-5 py-4 font-black">Method</th>
+                                <th class="px-5 py-4 font-black">Status</th>
+                                <th class="px-5 py-4 font-black">Date</th>
+                                <th class="px-5 py-4 font-black text-right">Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="divide-y divide-slate-100">
+
+                            {% for donation in donations %}
+
+                            <tr class="hover:bg-slate-50/70 transition">
+
+                                <td class="px-5 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <span class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-black shrink-0">
+                                            {{ donation.initials }}
+                                        </span>
+                                        <span class="min-w-0">
+                                            <a href="{% url 'donation_detail' donation.pk %}"
+                                               class="block font-bold text-slate-800 hover:text-emerald-700 truncate">{{ donation.donor_display }}</a>
+                                            <span class="block text-xs text-slate-400 truncate">{{ donation.email }}</span>
+                                        </span>
+                                    </div>
+                                </td>
+
+                                <td class="px-5 py-4">
+                                    <span class="text-xs font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg">
+                                        {{ donation.purpose_label }}
+                                    </span>
+                                </td>
+
+                                <td class="px-5 py-4 font-black text-slate-800">${{ donation.amount|floatformat:2 }}</td>
+
+                                <td class="px-5 py-4 text-slate-600">{{ donation.payment_method_label }}</td>
+
+                                <td class="px-5 py-4">
+                                    {% if donation.status_slug == 'completed' %}
+                                    <span class="text-[11px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-lg">Completed</span>
+                                    {% elif donation.status_slug == 'pending' %}
+                                    <span class="text-[11px] font-black uppercase tracking-wider text-amber-700 bg-amber-100 px-2.5 py-1 rounded-lg">Pending</span>
+                                    {% elif donation.status_slug == 'refunded' %}
+                                    <span class="text-[11px] font-black uppercase tracking-wider text-slate-600 bg-slate-200 px-2.5 py-1 rounded-lg">Refunded</span>
+                                    {% else %}
+                                    <span class="text-[11px] font-black uppercase tracking-wider text-rose-700 bg-rose-100 px-2.5 py-1 rounded-lg">Failed</span>
+                                    {% endif %}
+                                </td>
+
+                                <td class="px-5 py-4 text-slate-500 text-xs">
+                                    {{ donation.date_donated|date:"d M Y" }}
+                                    <span class="block text-slate-400">{{ donation.reference }}</span>
+                                </td>
+
+                                <td class="px-5 py-4">
+                                    <div class="flex items-center justify-end gap-2">
+
+                                        <a href="{% url 'donation_detail' donation.pk %}"
+                                           title="View donation"
+                                           class="w-9 h-9 rounded-lg bg-slate-100 text-slate-600 hover:bg-emerald-100 hover:text-emerald-700 flex items-center justify-center transition">
+                                            <i class="fa-solid fa-eye text-xs"></i>
+                                        </a>
+
+                                        <a href="{% url 'update_donation' donation.pk %}"
+                                           title="Edit donation"
+                                           class="w-9 h-9 rounded-lg bg-slate-100 text-slate-600 hover:bg-indigo-100 hover:text-indigo-700 flex items-center justify-center transition">
+                                            <i class="fa-solid fa-pen text-xs"></i>
+                                        </a>
+
+                                        <a href="{% url 'delete_donation' donation.pk %}"
+                                           title="Delete donation"
+                                           class="w-9 h-9 rounded-lg bg-slate-100 text-slate-600 hover:bg-rose-100 hover:text-rose-700 flex items-center justify-center transition">
+                                            <i class="fa-solid fa-trash text-xs"></i>
+                                        </a>
+
+                                    </div>
+                                </td>
+
+                            </tr>
+
+                            {% empty %}
+
+                            <tr>
+                                <td colspan="7" class="px-5 py-16 text-center">
+                                    <span class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+                                        <i class="fa-solid fa-hand-holding-heart text-xl"></i>
+                                    </span>
+                                    <p class="mt-4 font-bold text-slate-700">No donations match these filters</p>
+                                    <p class="text-sm text-slate-400 mt-1">Clear the filters or record a new donation.</p>
+                                    <a href="{% url 'add_donation' %}"
+                                       class="inline-flex items-center gap-2 mt-5 px-5 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-bold hover:bg-emerald-500 transition">
+                                        <i class="fa-solid fa-plus"></i> Record donation
+                                    </a>
+                                </td>
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+            <!-- ================= SIDE PANELS ================= -->
+
+            <aside class="space-y-5">
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">By cause</h2>
+
+                    <div class="mt-4 space-y-4">
+
+                        {% for cause in causes %}
+                        <div>
+                            <div class="flex items-center justify-between gap-3">
+                                <span class="text-sm font-bold text-slate-700">{{ cause.label }}</span>
+                                <span class="text-xs font-black text-emerald-600">${{ cause.amount|floatformat:0 }}</span>
+                            </div>
+                            <div class="mt-2 h-2 rounded-full bg-slate-100 overflow-hidden">
+                                <div class="h-full rounded-full bg-emerald-500" style="width: {{ cause.percent }}%"></div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-sm text-slate-400">No completed gifts yet.</p>
+                        {% endfor %}
+
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Receipts</h2>
+
+                    <div class="mt-4 grid grid-cols-2 gap-4 text-center">
+                        <div class="rounded-2xl bg-emerald-50 py-4">
+                            <p class="text-xl font-black text-emerald-700">{{ donation_stats.receipts }}</p>
+                            <p class="text-[11px] uppercase tracking-wider text-emerald-600/80 mt-1">Sent</p>
+                        </div>
+                        <div class="rounded-2xl bg-slate-50 py-4">
+                            <p class="text-xl font-black text-slate-700">{{ donation_stats.count|add:"-"|add:donation_stats.receipts }}</p>
+                            <p class="text-[11px] uppercase tracking-wider text-slate-500 mt-1">Outstanding</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">By method</h2>
+
+                    <ul class="mt-4 space-y-3 text-sm">
+
+                        {% for method in payment_methods %}
+                        <li class="flex items-center justify-between gap-3">
+                            <span class="text-slate-600">{{ method.label }}</span>
+                            <span class="font-black text-slate-800">${{ method.amount|floatformat:0 }}</span>
+                        </li>
+                        {% empty %}
+                        <li class="text-slate-400">No payments recorded yet.</li>
+                        {% endfor %}
+
+                    </ul>
+                </div>
+
+            </aside>
+
+        </section>
+
+    </main>
+
+    {% include "footer.html" %}
+
+</div>
+
+{% endblock %}

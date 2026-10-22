@@ -1,0 +1,171 @@
+{% extends "header.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Record donation | FelloMarley Foundation{% endblock %}
+
+{% block content %}
+
+{% include "sidebar.html" %}
+
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
+
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
+
+        <!-- ================= FLASH ================= -->
+
+        {% if messages %}
+
+        <div class="mb-6 space-y-3">
+
+            {% for message in messages %}
+
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+        <!-- ================= HERO ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-emerald-900 to-teal-900 text-white shadow-2xl p-6 sm:p-10">
+
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:60px 60px;"></div>
+
+            <div class="absolute -top-24 -right-16 w-96 h-96 bg-emerald-400 rounded-full blur-3xl opacity-20"></div>
+
+            <div class="relative flex items-start justify-between gap-6 flex-wrap">
+
+                <div>
+
+                    <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                        <i class="fa-solid fa-hand-holding-heart"></i> Giving
+                    </p>
+
+                    <h1 class="mt-4 text-3xl sm:text-4xl font-black leading-tight">Record a donation</h1>
+
+                    <p class="mt-3 text-slate-300 max-w-2xl leading-relaxed">
+                        Log a gift that arrived outside the website — cash in hand, a bank
+                        transfer or a cheque — so the totals stay accurate.
+                    </p>
+
+                </div>
+
+                <a href="{% url 'donations' %}"
+                   class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                    <i class="fa-solid fa-arrow-left"></i> Back to donations
+                </a>
+
+            </div>
+
+        </section>
+
+        <!-- ================= FORM ================= -->
+
+        <section class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <div class="lg:col-span-2">
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <form method="POST" class="space-y-6">
+                        {% csrf_token %}
+
+                        {% include "_donation_form_fields.html" %}
+
+                        <div class="pt-6 border-t border-slate-100 flex items-center gap-3 flex-wrap">
+
+                            <button type="submit"
+                                    class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-500 transition shadow-md">
+                                <i class="fa-solid fa-check"></i> Save donation
+                            </button>
+
+                            <a href="{% url 'donations' %}"
+                               class="px-6 py-3 rounded-xl bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 transition">
+                                Cancel
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            <!-- ================= SIDE NOTES ================= -->
+
+            <aside class="space-y-5">
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">How the totals work</h2>
+
+                    <ul class="mt-4 space-y-3 text-sm text-slate-600">
+
+                        <li class="flex items-start gap-3">
+                            <span class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-check text-xs"></i>
+                            </span>
+                            Completed gifts feed the raised total, the charts and the public page.
+                        </li>
+
+                        <li class="flex items-start gap-3">
+                            <span class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-clock text-xs"></i>
+                            </span>
+                            Pending gifts are tracked separately until they settle.
+                        </li>
+
+                        <li class="flex items-start gap-3">
+                            <span class="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-eye-slash text-xs"></i>
+                            </span>
+                            Anonymous gifts still count towards every total, just not the donor list.
+                        </li>
+
+                    </ul>
+
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Live totals</h2>
+
+                    <div class="mt-4 space-y-3 text-sm">
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-600">Raised so far</span>
+                            <span class="font-black text-slate-800">${{ donation_stats.total|floatformat:0 }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-600">Gifts completed</span>
+                            <span class="font-black text-slate-800">{{ donation_stats.count }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-600">Pending value</span>
+                            <span class="font-black text-amber-600">${{ donation_stats.pending|floatformat:0 }}</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </aside>
+
+        </section>
+
+    </main>
+
+    {% include "footer.html" %}
+
+</div>
+
+{% endblock %}

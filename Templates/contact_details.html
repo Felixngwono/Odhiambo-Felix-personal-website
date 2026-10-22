@@ -3,58 +3,87 @@
         {% include "sidebar.html" %}
 
 
-<div class="flex flex-col sm:ml-64 h-screen">
+<div class="flex flex-col sm:ml-64 min-h-screen">
 
     <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6">
+    <main class="flex-1 pt-20 p-6">
     <div class="container mx-auto max-w-4xl bg-white shadow-lg rounded-lg p-6">
-        <!-- Contact Image -->
-        {% if contdetail.image %}
-        <div class="w-full h-72 bg-gray-200 rounded-lg overflow-hidden shadow-md">
-            <img src="{{ contdetail.image.url }}" alt="{{ contdetail.title }}" class="w-full h-full object-cover">
-        </div>
-        {% endif %}
 
-        <!-- Contact Details -->
-        <div class="mt-6 text-center">
-            <h2 class="text-3xl font-bold text-gray-800">{{ contdetail.name }}</h2>
-            <p class="text-lg text-gray-600 mt-2">{{ contdetail.email }}</p>
+        <!-- Contact Summary -->
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 border-b border-slate-200 pb-6">
+
+            <div>
+
+                <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-600 bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-full">
+                    <i class="fa-solid fa-envelope-open-text"></i> Contact inquiry
+                </p>
+
+                <h2 class="mt-3 text-3xl font-bold text-gray-800">{{ contdetail.name }}</h2>
+
+                <p class="text-lg text-gray-600 mt-1">{{ contdetail.email }}</p>
+
+                {% if contdetail.date_created %}
+                <p class="text-xs text-gray-400 mt-2">
+                    Received {{ contdetail.date_created|date:"M d, Y H:i" }} &middot; {{ contdetail.date_created|timesince }} ago
+                </p>
+                {% endif %}
+
+            </div>
+
+            <a href="{% url 'admins' %}"
+               class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-700 transition self-start">
+                <i class="fa-solid fa-arrow-left"></i> Back to console
+            </a>
+
         </div>
 
         <!-- Contact Info -->
         <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-800">
             <div class="flex items-center gap-3">
                 <i class="fa-solid fa-phone text-blue-500 text-xl"></i>
-                <p class="text-lg font-medium">{{ contdetail.phone }}</p>
+                <p class="text-lg font-medium">{{ contdetail.phone|default:"Not provided" }}</p>
             </div>
-            <div class="flex items-start gap-3">
+            <div class="flex items-center gap-3">
                 <i class="fa-solid fa-envelope text-blue-500 text-xl"></i>
-                <p class="text-lg font-medium">{{ contdetail.message }}</p>
+                <p class="text-lg font-medium">{{ contdetail.email }}</p>
+            </div>
+        </div>
+
+        <!-- Message -->
+        <div class="mt-6">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500">Message</h3>
+            <div class="mt-2 p-4 rounded-xl bg-slate-50 border border-slate-200 text-gray-700 leading-relaxed whitespace-pre-line">
+                {{ contdetail.message }}
             </div>
         </div>
 
         <!-- Admin Response Form -->
         <div class="mt-8">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500">Reply to sender</h3>
+
+            {% if request.user.is_superuser %}
+
             <form method="POST" action="{% url 'send_response' contdetail.id %}">
                 {% csrf_token %}
                 <label class="block text-gray-700 font-bold mb-2">Response Message:</label>
-                <textarea name="response_message" rows="4" required 
+                <textarea name="response_message" rows="4" required
                           class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
-                
-                <button type="submit" 
+
+                <button type="submit"
                         class="mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg transition shadow-md">
                     Send Response
                 </button>
             </form>
+
+            {% else %}
+
+            <p class="mt-2 p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm text-gray-500">
+                Only administrators can reply to inquiries.
+            </p>
+
+            {% endif %}
         </div>
 
-        <!-- Back Button -->
-        <div class="mt-8 flex justify-center">
-            <a href="{% url 'admins' %}" 
-               class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition shadow-md flex items-center gap-2">
-                <i class="fa-solid fa-arrow-left"></i> Back to Home
-            </a>
-        </div>
     </div>
 </main>
 </div>

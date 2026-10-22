@@ -1,66 +1,288 @@
 {% extends "header.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}{{ task.title }} | FelloMarley Foundation{% endblock %}
 
 {% block content %}
-        {% include "sidebar.html" %}
 
-<div class="flex flex-col sm:ml-64 h-screen">
+{% include "sidebar.html" %}
 
-    <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6">
-{% for message in messages %}
-<p id="messages" class="font-semibold text-lg">{{ message }}</p>
-{% endfor %}
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
 
-<div class="flex justify-center">
-    
-        
-    
-        
-    <div class="max-w-4xl w-full bg-white shadow-lg rounded-lg p-8">
-     
-        <h2 class="text-4xl font-bold text-center mb-6 text-gray-900">{{ taskdetails.title }}</h2>
-        <p class="text-lg text-center mb-6 text-gray-500">{{ taskdetails.description }}</p>
-        <p class="text-lg text-center mb-6 text-gray-500">{{ taskdetails.created_at  }}</p>
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
 
-        
+        <!-- ================= FLASH ================= -->
 
-        <div class="text-lg text-gray-700 mb-6">
-            <strong>due_date:</strong> {{ taskdetails.due_date }}
-        </div>
-        <div class="text-lg text-gray-700 mb-6">
-            <strong>completed:</strong> {{ taskdetails.completed }}
-        </div>
-        <div class="text-lg text-gray-700 mb-6">
-            <strong>completed_at:</strong> {{ taskdetails.completed_at }}
-        </div>
-        <div class="text-lg text-gray-700 mb-6">
-            <strong>assigned_to:</strong> {{ taskdetails.assigned_to }}
-        </div>
-        <div class="text-lg text-gray-700 mb-6">
-            <strong>created_by:</strong> {{ taskdetails.created_by }}
+        {% if messages %}
+
+        <div class="mb-6 space-y-3">
+
+            {% for message in messages %}
+
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% elif message.tags == 'info' %}bg-indigo-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
+            </div>
+
+            {% endfor %}
+
         </div>
 
-        {% if request.user.is_superuser %}
-        <div class="mt-4 text-center flex justify-center space-x-4">
-            <a href="{% url 'update_task' taskdetails.id %}" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-500 transition-all shadow-md">
-                ✏️ Update 
-            </a>
+        {% endif %}
 
-            <a href="{% url 'delete_task' taskdetails.id %}" class="inline-block bg-red-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-500 transition-all shadow-md">
-                🗑️ Delete 
-            </a>
-            {% endif %}
-            <a href="{% url 'tasks' %}" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-500 transition-all shadow-md">
-                No, Go Back
-            </a>
-        </div>
-       
-    </div>
+        <!-- ================= HERO ================= -->
+
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-900 to-blue-900 text-white shadow-2xl p-6 sm:p-10">
+
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:60px 60px;"></div>
+
+            <div class="absolute -top-24 -right-16 w-96 h-96 bg-indigo-400 rounded-full blur-3xl opacity-20"></div>
+
+            <div class="relative flex items-start justify-between gap-6 flex-wrap">
+
+                <div class="min-w-0">
+
+                    <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                        <i class="fa-solid fa-list-check"></i> {{ task.status_label }} &middot; {{ task.priority_label }} priority
+                    </p>
+
+                    <h1 class="mt-4 text-3xl sm:text-4xl font-black leading-tight break-words">{{ task.title }}</h1>
+
+                    <p class="mt-3 text-slate-300 flex items-center gap-3 flex-wrap text-sm">
+                        <span class="inline-flex items-center gap-1.5">
+                            <i class="fa-regular fa-clock"></i>
+                            {% if task.is_overdue %}
+                                Overdue since {{ task.due_date|date:"d M Y" }}
+                            {% else %}
+                                Due {{ task.due_date|date:"d M Y" }}
+                            {% endif %}
+                        </span>
+                        <span class="inline-flex items-center gap-1.5">
+                            <i class="fa-solid fa-tag"></i> {{ task.category_label }}
+                        </span>
+                        <span class="inline-flex items-center gap-1.5">
+                            <i class="fa-solid fa-user"></i> {{ task.assignee_name }}
+                        </span>
+                    </p>
+
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3">
+
+                    <a href="{% url 'tasks' %}"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                        <i class="fa-solid fa-arrow-left"></i> Board
+                    </a>
+
+                    <a href="{% url 'update_task' task.pk %}"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-indigo-500 text-white font-bold hover:bg-indigo-400 transition shadow-lg">
+                        <i class="fa-solid fa-pen"></i> Edit
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= DETAIL ================= -->
+
+        <section class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <div class="lg:col-span-2 space-y-6">
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <div class="flex items-center justify-between gap-4 flex-wrap">
+                        <h2 class="text-lg font-black text-slate-800">Progress</h2>
+                        <span class="text-2xl font-black {% if task.completed %}text-emerald-600{% else %}text-indigo-600{% endif %}">{{ task.progress }}%</span>
+                    </div>
+
+                    <div class="mt-3 h-3 rounded-full bg-slate-100 overflow-hidden">
+                        <div class="h-full rounded-full {% if task.completed %}bg-emerald-500{% elif task.status_slug == 'blocked' %}bg-rose-500{% else %}bg-indigo-500{% endif %}"
+                             style="width: {{ task.progress }}%"></div>
+                    </div>
+
+                    <form method="POST" action="{% url 'toggle_task' task.pk %}" class="mt-6">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="inline-flex items-center gap-2 px-6 py-3 rounded-xl {% if task.completed %}bg-slate-100 text-slate-700 hover:bg-slate-200{% else %}bg-emerald-600 text-white hover:bg-emerald-500{% endif %} font-bold transition shadow-md">
+                            <i class="fa-solid {% if task.completed %}fa-rotate-left{% else %}fa-check{% endif %} text-xs"></i>
+                            {% if task.completed %}Reopen this task{% else %}Mark as done{% endif %}
+                        </button>
+                    </form>
+
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <h2 class="text-lg font-black text-slate-800">Description</h2>
+
+                    <p class="mt-4 text-sm leading-relaxed text-slate-600 whitespace-pre-line">{{ task.description }}</p>
+
+                    {% if task.tag_list %}
+                    <div class="mt-6 flex flex-wrap gap-2">
+                        {% for tag in task.tag_list %}
+                        <span class="text-[11px] font-bold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-lg">#{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                </div>
+
+                {% if task.notes %}
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <h2 class="text-lg font-black text-slate-800">Notes</h2>
+
+                    <p class="mt-4 text-sm leading-relaxed text-slate-600 whitespace-pre-line">{{ task.notes }}</p>
+
+                </div>
+
+                {% endif %}
+
+                <!-- Related -->
+
+                {% if related_tasks %}
+
+                <div class="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+
+                    <h2 class="text-lg font-black text-slate-800">Related tasks</h2>
+
+                    <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                        {% for related in related_tasks %}
+                        <a href="{% url 'task_details' related.pk %}"
+                           class="rounded-2xl border border-slate-100 bg-slate-50/60 p-4 hover:border-indigo-200 hover:bg-white transition">
+                            <p class="font-bold text-slate-800 text-sm leading-snug">{{ related.title }}</p>
+                            <p class="mt-2 text-xs text-slate-400">
+                                {{ related.status_label }} &middot; {{ related.priority_label }} &middot; {{ related.category_label }}
+                            </p>
+                        </a>
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            <!-- ================= SIDE PANEL ================= -->
+
+            <aside class="space-y-5">
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Details</h2>
+
+                    <dl class="mt-4 space-y-4 text-sm">
+
+                        <div class="flex items-start justify-between gap-3">
+                            <dt class="text-slate-500">Status</dt>
+                            <dd class="font-black text-slate-800">{{ task.status_label }}</dd>
+                        </div>
+
+                        <div class="flex items-start justify-between gap-3">
+                            <dt class="text-slate-500">Priority</dt>
+                            <dd class="font-black text-slate-800">{{ task.priority_label }}</dd>
+                        </div>
+
+                        <div class="flex items-start justify-between gap-3">
+                            <dt class="text-slate-500">Category</dt>
+                            <dd class="font-black text-slate-800">{{ task.category_label }}</dd>
+                        </div>
+
+                        <div class="flex items-start justify-between gap-3">
+                            <dt class="text-slate-500">Assignee</dt>
+                            <dd class="font-black text-slate-800">{{ task.assignee_name }}</dd>
+                        </div>
+
+                        <div class="flex items-start justify-between gap-3">
+                            <dt class="text-slate-500">Created by</dt>
+                            <dd class="font-black text-slate-800">{{ task.creator_name }}</dd>
+                        </div>
+
+                        <div class="flex items-start justify-between gap-3">
+                            <dt class="text-slate-500">Created</dt>
+                            <dd class="font-black text-slate-800">{{ task.created_at|date:"d M Y" }}</dd>
+                        </div>
+
+                        <div class="flex items-start justify-between gap-3">
+                            <dt class="text-slate-500">Due</dt>
+                            <dd class="font-black {% if task.is_overdue %}text-rose-600{% else %}text-slate-800{% endif %}">{{ task.due_date|date:"d M Y" }}</dd>
+                        </div>
+
+                        {% if task.completed_at %}
+                        <div class="flex items-start justify-between gap-3">
+                            <dt class="text-slate-500">Completed</dt>
+                            <dd class="font-black text-emerald-600">{{ task.completed_at|date:"d M Y" }}</dd>
+                        </div>
+                        {% endif %}
+
+                        {% if task.estimated_hours %}
+                        <div class="flex items-start justify-between gap-3">
+                            <dt class="text-slate-500">Estimate</dt>
+                            <dd class="font-black text-slate-800">{{ task.estimated_hours }} hrs</dd>
+                        </div>
+                        {% endif %}
+
+                    </dl>
+
+                    <a href="{% url 'delete_task' task.pk %}"
+                       class="mt-6 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-rose-50 text-rose-700 font-bold hover:bg-rose-100 transition">
+                        <i class="fa-solid fa-trash text-xs"></i> Delete task
+                    </a>
+
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-md p-6">
+
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Timeline</h2>
+
+                    <ul class="mt-4 space-y-4 text-sm">
+
+                        <li class="flex items-start gap-3">
+                            <span class="w-2 h-2 mt-2 rounded-full bg-indigo-500 shrink-0"></span>
+                            <span>
+                                <span class="block font-bold text-slate-700">Created</span>
+                                <span class="block text-xs text-slate-400">{{ task.created_at|date:"d M Y, H:i" }} by {{ task.creator_name }}</span>
+                            </span>
+                        </li>
+
+                        <li class="flex items-start gap-3">
+                            <span class="w-2 h-2 mt-2 rounded-full {% if task.due_soon %}bg-amber-500{% else %}bg-slate-300{% endif %} shrink-0"></span>
+                            <span>
+                                <span class="block font-bold text-slate-700">Due</span>
+                                <span class="block text-xs text-slate-400">{{ task.due_date|date:"d M Y, H:i" }}</span>
+                            </span>
+                        </li>
+
+                        <li class="flex items-start gap-3">
+                            <span class="w-2 h-2 mt-2 rounded-full {% if task.completed %}bg-emerald-500{% else %}bg-slate-300{% endif %} shrink-0"></span>
+                            <span>
+                                <span class="block font-bold text-slate-700">{% if task.completed %}Completed{% else %}Still open{% endif %}</span>
+                                <span class="block text-xs text-slate-400">
+                                    {% if task.completed %}{{ task.completed_at|date:"d M Y, H:i" }}{% else %}{{ task.progress }}% done{% endif %}
+                                </span>
+                            </span>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </aside>
+
+        </section>
+
+    </main>
+
+    {% include "footer.html" %}
+
 </div>
-</div>
-</main>
-</div>
-
-{% include "footer.html" %}
 
 {% endblock %}

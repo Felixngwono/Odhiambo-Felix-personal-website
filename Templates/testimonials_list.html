@@ -1,98 +1,366 @@
 {% extends "header.html" %}
-{% load static %}
+
+{% block title %}Testimonials | FelloMarley Foundation{% endblock %}
+
 {% block content %}
+
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+<style>
+    [x-cloak] { display: none !important; }
+</style>
+
 {% include "sidebar.html" %}
-{% load widget_tweaks %}
 
+<div class="flex flex-col sm:ml-64 min-h-screen bg-slate-100">
 
-<div class="flex flex-col sm:ml-64 h-screen">
+    <main class="flex-1 pt-20 p-4 sm:p-6 lg:p-8">
 
-    <!-- Scrollable Content -->
-    <main class="flex-1 overflow-y-auto p-6">
-            <!-- Messages -->
-    <div class="text-green-500 p-4 mb-6 w-full sm:w-1/2 mx-auto text-center">
-        {% for message in messages %}
-            <p id="messages" class="font-semibold text-lg">{{ message }}</p>
-        {% endfor %}
-    </div>
+        <!-- ================= FLASH ================= -->
 
-    <!-- Title -->
-    <h2 class="text-3xl sm:text-4xl font-extrabold text-center text-green-700 mb-8 tracking-tight">
-        Community Testimonials
-    </h2>
+        {% if messages %}
 
-    <p class="text-base sm:text-lg text-gray-700 text-center mb-10 max-w-3xl mx-auto">
-        Here are some heartfelt testimonials from our community members. These stories reflect the impact and experiences shared by those who have been part of our journey.
-    </p>
+        <div class="mb-6 space-y-3">
 
-    <!-- Testimonials Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
+            {% for message in messages %}
 
-        {% for testimonial in testimonials %}
-        <div class="bg-white rounded-2xl shadow-md p-6 flex flex-col items-center text-center hover:shadow-xl transition-shadow duration-300">
-
-            {% if testimonial.image %}
-                <a href="{{ testimonial.image.url }}">
-                    <img src="{{ testimonial.image.url }}" alt="Profile Picture"
-                         class="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-green-500 object-cover mb-4 hover:scale-105 transition-transform duration-300">
-                </a>
-            {% else %}
-                <div class="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm mb-4 border-2 border-dashed border-gray-400">
-                    No Image
-                </div>
-            {% endif %}
-
-            <h3 class="text-lg sm:text-xl font-semibold text-gray-800">
-                {{ testimonial.name }}
-            </h3>
-
-            <p class="text-sm text-green-600 mb-2 italic">
-                {{ testimonial.designation }}
-            </p>
-
-            <p class="text-gray-600 text-sm sm:text-base leading-relaxed mt-2 italic">
-                “{{ testimonial.message }}”
-            </p>
-
-            {% if request.user.is_superuser %}
-            <div class="flex flex-wrap justify-center gap-3 mt-auto pt-4">
-
-                <a href="{% url 'update_testimonial' testimonial.pk %}"
-                   class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg shadow text-sm transition-all">
-                   ✏️ Update
-                </a>
-
-                <a href="{% url 'delete_testimonial' testimonial.pk %}"
-                   class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg shadow text-sm transition-all">
-                   🗑️ Delete
-                </a>
-
+            <div class="rounded-2xl px-5 py-4 shadow-md text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500 text-white{% elif message.tags == 'error' %}bg-rose-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                {{ message }}
             </div>
-            {% endif %}
+
+            {% endfor %}
 
         </div>
 
-        {% empty %}
-        <p class="text-center col-span-full text-gray-500">
-            No testimonials available at the moment.
-        </p>
-        {% endfor %}
+        {% endif %}
 
-    </div>
+        <!-- ================= HERO ================= -->
 
-    <!-- Add Testimonial Button -->
-    <div class="text-center mt-12">
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-emerald-900 to-teal-900 text-white shadow-2xl p-6 sm:p-10">
 
-        <a href="{% url 'add_testimonial' %}"
-           class="bg-green-600 hover:bg-green-500 text-white font-semibold py-3 px-6 sm:px-8 rounded-xl shadow-lg transition-all duration-300 inline-flex items-center gap-2">
+            <div class="absolute inset-0 opacity-[0.07]"
+                 style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:60px 60px;"></div>
 
-            <span class="text-xl">➕</span> Add Testimonial
+            <div class="absolute -top-20 right-0 w-96 h-96 bg-emerald-400 rounded-full blur-3xl opacity-20"></div>
 
-        </a>
+            <div class="relative grid lg:grid-cols-3 gap-8 items-center">
 
-    </div>
-</main>
+                <div class="lg:col-span-2">
+
+                    <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+                        <i class="fa-solid fa-quote-left"></i> Voices
+                    </p>
+
+                    <h1 class="mt-4 text-3xl sm:text-5xl font-black leading-tight">
+                        What the people<br class="hidden sm:block"> we worked with say.
+                    </h1>
+
+                    <p class="mt-4 text-slate-300 max-w-2xl leading-relaxed">
+                        Unedited words from the developers, students, clients and community
+                        members who showed up, learned, shipped and gave back.
+                    </p>
+
+                    <div class="mt-7 flex flex-wrap gap-3">
+
+                        <a href="#voices"
+                           class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white font-bold text-slate-900 hover:bg-slate-100 transition">
+                            <i class="fa-solid fa-arrow-down"></i> Read them all
+                        </a>
+
+                        <a href="{% url 'add_testimonial' %}"
+                           class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-semibold transition">
+                            <i class="fa-solid fa-plus"></i> Share your experience
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <!-- Hero stats -->
+
+                <div class="grid grid-cols-2 gap-3">
+
+                    <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                        <p class="text-3xl font-black">{{ testimonial_stats.total }}</p>
+                        <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">Testimonials</p>
+                    </div>
+
+                    <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                        <p class="text-3xl font-black">{{ testimonial_stats.people }}</p>
+                        <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">People</p>
+                    </div>
+
+                    <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                        <p class="text-3xl font-black">{{ testimonial_stats.words }}</p>
+                        <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">Words shared</p>
+                    </div>
+
+                    <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur">
+                        <p class="text-3xl font-black">{{ testimonial_stats.themes }}</p>
+                        <p class="text-xs uppercase tracking-wider text-slate-300 mt-1">Communities</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= FEATURED ================= -->
+
+        {% if featured_testimonial %}
+
+        <section class="mt-6">
+
+            <p class="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-emerald-700 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-full">
+                <i class="fa-solid fa-star"></i> Featured voice
+            </p>
+
+            <div class="mt-3 bg-white rounded-3xl shadow-md p-6 sm:p-10 relative overflow-hidden">
+
+                <i class="fa-solid fa-quote-left absolute -top-4 -right-4 text-[120px] text-emerald-50 leading-none select-none"></i>
+
+                <div class="relative grid lg:grid-cols-4 gap-8 items-center">
+
+                    <div class="lg:col-span-3">
+
+                        <p class="text-xl sm:text-2xl leading-relaxed text-slate-700 font-medium">
+                            “{{ featured_testimonial.message }}”
+                        </p>
+
+                        <div class="mt-7 flex items-center gap-4">
+
+                            {% if featured_testimonial.image %}
+                            <img src="{{ featured_testimonial.image.url }}"
+                                 alt="{{ featured_testimonial.name }}"
+                                 class="w-14 h-14 rounded-full object-cover ring-4 ring-emerald-100">
+                            {% else %}
+                            <span class="w-14 h-14 rounded-full bg-emerald-600 text-white flex items-center justify-center text-lg font-black">
+                                {{ featured_testimonial.initials }}
+                            </span>
+                            {% endif %}
+
+                            <div>
+                                <p class="font-bold text-slate-900">{{ featured_testimonial.name }}</p>
+                                <p class="text-sm text-emerald-700 font-semibold">
+                                    {{ featured_testimonial.designation|default:"Community member" }}
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="lg:col-span-1 grid grid-cols-2 lg:grid-cols-1 gap-3">
+
+                        <div class="rounded-2xl bg-slate-50 border border-slate-100 p-4">
+                            <p class="text-2xl font-black text-slate-900">{{ featured_testimonial.words }}</p>
+                            <p class="text-xs uppercase tracking-wider text-slate-400 mt-1">Words shared</p>
+                        </div>
+
+                        <div class="rounded-2xl bg-slate-50 border border-slate-100 p-4">
+                            <p class="text-2xl font-black text-slate-900">{{ testimonial_stats.average_words }}</p>
+                            <p class="text-xs uppercase tracking-wider text-slate-400 mt-1">Average length</p>
+                        </div>
+
+                        <div class="rounded-2xl bg-slate-50 border border-slate-100 p-4">
+                            <p class="text-2xl font-black text-slate-900">{{ testimonial_stats.with_photo }}</p>
+                            <p class="text-xs uppercase tracking-wider text-slate-400 mt-1">With a photo</p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
+        <!-- ================= WALL ================= -->
+
+        <section id="voices"
+                 class="mt-6 bg-white rounded-3xl shadow-md p-6 sm:p-8"
+                 x-data="{ q: '', role: 'all', count: 0 }"
+                 x-effect="count = Array.from($refs.wall.querySelectorAll('[data-card]')).filter(el => el.style.display !== 'none').length">
+
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+
+                <div>
+
+                    <h2 class="text-xl font-bold text-slate-900">The wall of voices</h2>
+
+                    <p class="text-sm text-slate-500 mt-1">
+                        Every word here was written by someone who was part of the work.
+                    </p>
+
+                </div>
+
+                <div class="relative w-full lg:w-80">
+
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+
+                    <input type="search"
+                           x-model="q"
+                           placeholder="Search names, roles, words..."
+                           class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none text-sm">
+
+                </div>
+
+            </div>
+
+            <!-- Role filters -->
+
+            {% if testimonial_themes %}
+
+            <div class="mt-6 flex flex-wrap items-center gap-2">
+
+                <button type="button"
+                        @click="role = 'all'"
+                        :class="role === 'all' ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-100 text-slate-700 border-transparent hover:bg-slate-200'"
+                        class="px-4 py-2 rounded-xl text-sm font-semibold border transition">
+                    Everyone <span class="opacity-70">({{ testimonial_stats.total }})</span>
+                </button>
+
+                {% for theme in testimonial_themes %}
+
+                <button type="button"
+                        @click="role = '{{ theme.name }}'"
+                        :class="role === '{{ theme.name }}' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-slate-100 text-slate-700 border-transparent hover:bg-slate-200'"
+                        class="px-4 py-2 rounded-xl text-sm font-semibold border transition">
+                    {{ theme.name }} <span class="opacity-70">({{ theme.count }})</span>
+                </button>
+
+                {% endfor %}
+
+            </div>
+
+            {% endif %}
+
+            <!-- Cards -->
+
+            <div class="mt-8 columns-1 md:columns-2 xl:columns-3 gap-6" x-ref="wall">
+
+                {% for testimonial in testimonials %}
+
+                <figure class="mb-6 break-inside-avoid bg-slate-50 hover:bg-white border border-slate-200 hover:border-emerald-200 rounded-2xl p-6 transition duration-300"
+                        data-card
+                        data-role="{{ testimonial.designation|default:'Community member' }}"
+                        data-search="{{ testimonial.name }} {{ testimonial.designation }} {{ testimonial.message }}"
+                        x-show="(role === 'all' || role === $el.dataset.role) && $el.dataset.search.toLowerCase().includes(q.toLowerCase())">
+
+                    <i class="fa-solid fa-quote-left text-emerald-200 text-2xl"></i>
+
+                    <blockquote class="mt-3 text-slate-700 leading-relaxed">
+                        {{ testimonial.message }}
+                    </blockquote>
+
+                    <figcaption class="mt-6 pt-5 border-t border-slate-200 flex items-center gap-3">
+
+                        {% if testimonial.image %}
+                        <img src="{{ testimonial.image.url }}"
+                             alt="{{ testimonial.name }}"
+                             class="w-11 h-11 rounded-full object-cover">
+                        {% else %}
+                        <span class="w-11 h-11 rounded-full bg-emerald-600 text-white flex items-center justify-center text-sm font-black">
+                            {{ testimonial.initials }}
+                        </span>
+                        {% endif %}
+
+                        <div class="min-w-0 flex-1">
+
+                            <p class="font-bold text-slate-900 truncate">{{ testimonial.name }}</p>
+
+                            <p class="text-xs text-emerald-700 font-semibold truncate">
+                                {{ testimonial.designation|default:"Community member" }}
+                            </p>
+
+                        </div>
+
+                        {% if testimonial.created_at %}
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold shrink-0">
+                            {{ testimonial.created_at|date:"M Y" }}
+                        </span>
+                        {% endif %}
+
+                    </figcaption>
+
+                    {% if request.user.is_superuser %}
+
+                    <div class="mt-4 flex gap-2 pt-4 border-t border-slate-200">
+
+                        <a href="{% url 'update_testimonial' testimonial.pk %}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 text-xs font-bold hover:bg-blue-100 transition">
+                            <i class="fa-solid fa-pen"></i> Edit
+                        </a>
+
+                        <a href="{% url 'delete_testimonial' testimonial.pk %}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 text-rose-600 text-xs font-bold hover:bg-rose-100 transition">
+                            <i class="fa-solid fa-trash"></i> Delete
+                        </a>
+
+                    </div>
+
+                    {% endif %}
+
+                </figure>
+
+                {% empty %}
+
+                <div class="col-span-full text-center py-16">
+                    <i class="fa-regular fa-comment-dots text-5xl text-slate-300 mb-4"></i>
+                    <p class="text-lg font-semibold text-slate-600">No testimonials yet</p>
+                    <p class="text-sm text-slate-400 mt-2">Be the first to share what the work meant to you.</p>
+                </div>
+
+                {% endfor %}
+
+                <!-- No-match state -->
+
+                <div x-show="count === 0 && testimonial_stats.total > 0"
+                     x-cloak
+                     class="col-span-full text-center py-16">
+                    <i class="fa-solid fa-filter-circle-xmark text-5xl text-slate-300 mb-4"></i>
+                    <p class="text-lg font-semibold text-slate-600">No voices match that filter</p>
+                    <p class="text-sm text-slate-400 mt-2">Try a different keyword or pick another community.</p>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= CTA ================= -->
+
+        <section class="mt-6 rounded-3xl bg-gradient-to-r from-emerald-600 to-teal-700 text-white shadow-xl p-8 sm:p-10 text-center">
+
+            <h2 class="text-2xl sm:text-3xl font-black">Your turn to say something</h2>
+
+            <p class="mt-3 text-emerald-50 max-w-2xl mx-auto leading-relaxed">
+                Whether you were in the room, reviewed the code, or mentored a beginner —
+                your experience helps the next person take the first step.
+            </p>
+
+            <div class="mt-7 flex flex-wrap justify-center gap-3">
+
+                <a href="{% url 'add_testimonial' %}"
+                   class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-emerald-700 font-bold hover:bg-emerald-50 transition">
+                    <i class="fa-solid fa-pen-to-square"></i> Write a testimonial
+                </a>
+
+                <a href="{% url 'contactus' %}"
+                   class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/15 hover:bg-white/25 border border-white/25 font-semibold transition">
+                    <i class="fa-solid fa-paper-plane"></i> Get in touch
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    {% include "footer.html" %}
+
 </div>
 
-{% include "footer.html" %}
-{% endblock content %}
+{% endblock %}
