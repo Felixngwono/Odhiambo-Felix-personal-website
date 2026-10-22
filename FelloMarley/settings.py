@@ -53,13 +53,15 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
 
     # Third-party apps
-    'widget_tweaks',
+    'corsheaders',
 
     # Local apps
     'StoryTeller',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -195,7 +197,7 @@ LOGGING = {
 }
 
 # Default primary key field type
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Custom user model
 AUTH_USER_MODEL = 'StoryTeller.Myuser'

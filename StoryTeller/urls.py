@@ -2,9 +2,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from django.contrib.sitemaps.views import sitemap
-from django.urls import path
+from django.urls import include, path
 
 from .seo import SITEMAPS, robots_txt
+
+from .api_url import urlpatterns as api_urlpatterns
 from .views import (
     AdminsDashboard,
     ContactusPage,
@@ -334,6 +336,8 @@ urlpatterns = [
 
 
 ]
+
+urlpatterns += api_urlpatterns
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
